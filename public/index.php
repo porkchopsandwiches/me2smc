@@ -14,7 +14,67 @@ $config = require("../config/config.php");
 	</head>
 	<body>
 		<div id="app">
+			<!-- ko with: stager.ui.stage -->
+				<h2 data-bind="text: ui.label"></h2>
+				<!-- ko if: ui.id == "Setup" -->
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Teammate</th>
+								<th>Is Recruited</th>
+								<th>Is Loyal</th>
+								<th>Is Dead</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- ko foreach: ui.teammates -->
+								<tr>
+									<td data-bind="text: teammate.henchman.name"></td>
+									<td>
+										<input type="checkbox" data-bind="checked: is_recruited" />
+									</td>
+									<td>
+										<input type="checkbox" data-bind="checked: is_loyal" />
+									</td>
+									<td>
+										<input type="checkbox" data-bind="checked: is_dead" />
+									</td>
+								</tr>
+							<!-- /ko -->
+						</tbody>
+					</table>
+				<!-- /ko -->
+				<!-- ko if: ui.id == "Occulus" -->
+					<div>
+						<label>Squadmate #1</label>
+						<select data-bind="options: ui.occulus_squadmate_1_candidates, optionsText: ui.renderTeammateForSelect, value: ui.occulus_squadmate_1"></select>
+					</div>
+					<div>
+						<label>Squadmate #2</label>
+						<select data-bind="options: ui.occulus_squadmate_2_candidates, optionsText: ui.renderTeammateForSelect, value: ui.occulus_squadmate_2"></select>
+					</div>
+				<!-- /ko -->
 
+				<!-- ko if: ui.id == "Vents" -->
+					<div>
+						<label>Ventmate</label>
+						<select data-bind="options: ui.vent_ventmate_candidates, optionsText: ui.renderTeammateForSelect, value: ui.vent_ventmate"></select>
+					</div>
+					<div>
+						<label>Leader</label>
+						<select data-bind="options: ui.vent_leader_candidates, optionsText: ui.renderTeammateForSelect, value: ui.vent_leader"></select>
+					</div>
+					<div>
+						<label>Squadmate #1</label>
+						<select data-bind="options: ui.vent_squadmate_1_candidates, optionsText: ui.renderTeammateForSelect, value: ui.vent_squadmate_1"></select>
+					</div>
+					<div>
+						<label>Squadmate #2</label>
+						<select data-bind="options: ui.vent_squadmate_2_candidates, optionsText: ui.renderTeammateForSelect, value: ui.vent_squadmate_2"></select>
+					</div>
+				<!-- /ko -->
+				<button data-bind="click: function () { $root.stager.nextStage() }">Next</button>
+			<!-- /ko -->
 		</div>
 
 		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
@@ -27,14 +87,13 @@ $config = require("../config/config.php");
 		<script>
 			$(function () {
 
-				// Create the app instance
-				//var app = new App.Game("<?php echo $config["uris"]["api-proxy"]; ?>", "<?php echo $config["uris"]["cdn"] ?>");
+				var app = new App.Application();
 
 				// Initialise Knockout
-				//ko.applyBindings(app);
+				ko.applyBindings(app);
 
 				// Debugging
-				//window.app = app;
+				window.app = app;
 			});
 		</script>
 	</body>
