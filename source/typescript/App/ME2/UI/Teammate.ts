@@ -9,41 +9,19 @@ module App {
                 is_dead: KnockoutObservable<boolean>;
             }
 
-            export class Teammate implements ITeammate {
+            export class Teammate extends App.ME2.UI.Proxy implements ITeammate {
                 public teammate: App.ME2.Teammate;
                 public is_recruited: KnockoutObservable<boolean>    = ko.observable(undefined);
                 public is_loyal: KnockoutObservable<boolean>        = ko.observable(undefined);
                 public is_dead: KnockoutObservable<boolean>         = ko.observable(undefined);
 
-                static proxy<T, T2, T3> (proxy: T, target: T2, property: string): void {
-                    var observable: KnockoutObservable<T3>;
-                    observable = proxy[property];
-
-                    // Set initial value
-                    observable(target[property]);
-
-                    // Observe changes on the proxy
-                    observable.subscribe((new_value: T3) => {
-                        target[property] = new_value;
-                    });
-                }
-
                 constructor (teammate: App.ME2.Teammate) {
+                    super();
                     this.teammate = teammate;
 
-                    Teammate.proxy<Teammate, App.ME2.Teammate, boolean>(this, this.teammate, "is_recruited");
-                    Teammate.proxy<Teammate, App.ME2.Teammate, boolean>(this, this.teammate, "is_loyal");
-                    Teammate.proxy<Teammate, App.ME2.Teammate, boolean>(this, this.teammate, "is_dead");
-
-                    /*
-                    this.is_recruited(this.teammate.is_recruited);
-                    this.is_loyal(this.teammate.is_loyal);
-                    this.is_dead(this.teammate.is_dead);
-
-                    this.is_recruited.subscribe((is_recruited: boolean) => {
-                        this.teammate.is_recruited = is_recruited;
-                    })
-                    */
+                    this.link<App.ME2.Teammate, boolean>(this.teammate, "is_recruited");
+                    this.link<App.ME2.Teammate, boolean>(this.teammate, "is_loyal");
+                    this.link<App.ME2.Teammate, boolean>(this.teammate, "is_dead");
                 }
             }
         }

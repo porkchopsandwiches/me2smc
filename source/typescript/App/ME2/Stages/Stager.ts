@@ -14,6 +14,7 @@ module App {
                 is_loyal: boolean;
                 is_recruited: boolean;
                 is_dead: boolean;
+                roles: App.ME2.TeammateRoles[];
                 death_cause: App.ME2.TeammateDeathCauses;
             }
 
@@ -65,7 +66,8 @@ module App {
                             is_loyal: teammate.is_loyal,
                             is_recruited: teammate.is_recruited,
                             is_dead: teammate.is_dead,
-                            death_cause: teammate.death_cause
+                            death_cause: teammate.death_cause,
+                            roles: teammate.roles
                         };
                     });
 
@@ -80,6 +82,7 @@ module App {
                         var teammate: App.ME2.Teammate;
                         teammate = new App.ME2.Teammate(this.app.getHenchman(frosted.henchman_id), frosted.is_loyal, frosted.is_recruited, frosted.is_dead);
                         teammate.death_cause = frosted.death_cause;
+                        teammate.roles = frosted.roles;
                         return teammate;
                     });
                 }

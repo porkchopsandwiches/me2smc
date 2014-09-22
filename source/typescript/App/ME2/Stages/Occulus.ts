@@ -24,14 +24,13 @@ module App {
                     var armour_death: App.ME2.Teammate;
                     var thanix_cannon_death: App.ME2.Teammate;
 
-                    // Temporary -- select the first two people as squaddies
-                    // @todo remove
-                    //this.occulus_squadmate_1 = this.teammates[0];
-                    //this.occulus_squadmate_2 = this.teammates[1];
+                    // Assign roles
+                    this.occulus_squadmate_1.addRole(App.ME2.TeammateRoles.OcculusSquadmate);
+                    this.occulus_squadmate_2.addRole(App.ME2.TeammateRoles.OcculusSquadmate);
 
-                    // Remove squadmates from teammates list
+                    // Get candidates for death
                     death_pool = _.filter(this.teammates, (teammate: App.ME2.Teammate): boolean => {
-                        return teammate.henchman.id !== this.occulus_squadmate_1.henchman.id && teammate.henchman.id !== this.occulus_squadmate_2.henchman.id;
+                        return !teammate.is_dead && !teammate.hasRole(App.ME2.TeammateRoles.OcculusSquadmate);
                     });
 
                     // Apply deaths
@@ -39,7 +38,6 @@ module App {
                         death_pool = _.sortBy(death_pool, (teammate: App.ME2.Teammate): number => {
                             return teammate.henchman.shielding_death_priority;
                         });
-                        console.log("shielding deaths", death_pool);
                         shielding_death = death_pool.pop();
                         shielding_death.die(App.ME2.TeammateDeathCauses.ShieldingFailure);
                     }

@@ -1,6 +1,6 @@
+///<reference path="../../references.ts" />
 module App {
     export module ME2 {
-
         export enum TeammateDeathCauses {
             ArmourFailure,
             ShieldingFailure,
@@ -12,12 +12,25 @@ module App {
             HoldTheLine
         }
 
+        export enum TeammateRoles {
+            OcculusSquadmate,
+            VentsSquadmate,
+            VentsVenter,
+            VentsLeader,
+            LongWalkSquadmate,
+            LongWalkEscort,
+            LongWalkBubbler,
+            LongWalkLeader,
+            BossSquadmate
+        }
+
         export interface ITeammate {
             henchman: App.ME2.Henchman;
             is_loyal: boolean;
             is_recruited: boolean;
             is_dead: boolean;
             death_cause: TeammateDeathCauses;
+            roles: TeammateRoles[];
         }
 
         export class Teammate implements ITeammate {
@@ -26,6 +39,7 @@ module App {
             public is_recruited: boolean = false;
             public is_loyal: boolean = false;
             public is_dead: boolean = false;
+            public roles: TeammateRoles[] = [];
 
             constructor (
                 henchman: App.ME2.Henchman,
@@ -44,9 +58,25 @@ module App {
                 return this;
             }
 
+            public addRole (role: TeammateRoles): Teammate {
+                if (!this.hasRole(role)) {
+                    this.roles.push(role);
+                }
+                return this;
+            }
+
+            public hasRole (role: TeammateRoles): boolean {
+                return _.indexOf(this.roles, role) !== -1;
+            }
+
+            public getHoldTheLineScore (): number {
+                return this.henchman.htl_value + (this.is_loyal ? 1 : 0);
+            }
+
             public die (death_cause: TeammateDeathCauses): Teammate {
                 this.is_dead = true;
                 this.death_cause = death_cause;
+                console.log("[Teammate]", this.henchman.name, "died because", TeammateDeathCauses[death_cause]);
                 return this;
             }
         }

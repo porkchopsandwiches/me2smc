@@ -11,6 +11,14 @@ module App {
                     Boss
                 }
 
+                export interface ITeammateFieldFilter {
+                    (teammate: App.ME2.Teammate): boolean;
+                }
+
+                export interface ITeammateFields {
+                    [key: string]: ITeammateFieldFilter;
+                }
+
                 export interface IStage {
                     id: string;
                     label: string;
@@ -21,40 +29,41 @@ module App {
                     bootstrapTeammateFields: () => void;
                     setupTeammateField: (field: string) => void;
                     setupTeammateFields: () => void;
-                    teammate_fields: string[];
+                    teammate_fields: ITeammateFields;
                 }
 
                 export class Stage implements IStage {
                     public id: string;
                     public label: string;
                     public stage: App.ME2.Stages.IStage;
-                    public teammate_fields: string[] = [];
+                    public teammate_fields: ITeammateFields = {};
 
+                    static genericTeammateFieldFilter (teammate: App.ME2.Teammate): boolean {
+                        return true;
+                    }
 
                     constructor (stage: App.ME2.Stages.IStage) {
                         this.stage = stage;
                     }
 
-                    public getOtherTeammateFields (field) {
-                        return _.without(this.teammate_fields, field);
-                    }
-
                     public getTeammateCandidatesFor (field): App.ME2.Teammate[] {
-                        var i: number;
-                        var l: number;
-                        var fields: string[];
                         var candidates: App.ME2.Teammate[];
-                        fields = this.getOtherTeammateFields(field);
-                        l = fields.length;
+                        var found: boolean;
 
-                        candidates = _.filter(this.getLivingCandidates(), (candidate: App.ME2.Teammate): boolean => {
-                            for (i = 0; i < l; ++i) {
-                                if (this.stage[fields[i]] === candidate) {
-                                    return false;
+                        // Apply the teammate field's own filter first
+                        candidates = _.filter(this.getLivingCandidates(), this.teammate_fields[field]);
+
+                        // Filter out users who are already in use in other fields
+                        candidates = _.filter(candidates, (candidate: App.ME2.Teammate): boolean => {
+                            found = false;
+
+                            _.each(this.teammate_fields, (filter: ITeammateFieldFilter, key: string) => {
+                                if (key !== field && this.stage[key] === candidate) {
+                                    found = true;
                                 }
-                            }
+                            });
 
-                            return true;
+                            return !found;
                         });
 
                         return candidates;
@@ -63,28 +72,26 @@ module App {
                     public bootstrapTeammateField (field: string): void {
                         this[field] = ko.observable(undefined);
                         this[field + "_candidates"] = ko.forcibleComputed(() => {
-                            console.log("getting teammates for ", field);
                             return this.getTeammateCandidatesFor(field);
                         });
                     }
 
                     public bootstrapTeammateFields (): void {
-                        this.teammate_fields.forEach((field) => {
+                        _.each(_.keys(this.teammate_fields), (field) => {
                             this.bootstrapTeammateField(field);
                         });
                     }
 
                     public setupTeammateField (field: string): void {
-
                         this[field].subscribe((new_value: App.ME2.Teammate) => {
-                            var fields = this.getOtherTeammateFields(field);
 
                             // Reflect new value
                             this.stage[field] = new_value;
 
-                            // Notify other fields
-                            fields.forEach((other_field: string) => {
-                                this[other_field + "_candidates"].evaluateImmediate();
+                            _.each(this.teammate_fields, (filter: ITeammateFieldFilter, key: string) => {
+                                if (key !== field) {
+                                    this[key + "_candidates"].evaluateImmediate();
+                                }
                             });
                         });
 
@@ -93,12 +100,12 @@ module App {
                     }
 
                     public setupTeammateFields (): void {
-                        this.teammate_fields.forEach((field: string) => {
+                        _.each(_.keys(this.teammate_fields), (field: string) => {
                             this.setupTeammateField(field);
                         });
 
                         // Do an initial update
-                        this.teammate_fields.forEach((field: string) => {
+                        _.each(_.keys(this.teammate_fields), (field: string) => {
                             this[field + "_candidates"].evaluateImmediate();
                         });
                     }

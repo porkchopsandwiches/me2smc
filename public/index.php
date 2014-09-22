@@ -43,7 +43,21 @@ $config = require("../config/config.php");
 							<!-- /ko -->
 						</tbody>
 					</table>
+					<h3>Normandy</h3>
+					<div>
+						<label>Has Armour</label>
+						<input type="checkbox" data-bind="checked: ui.normandy.has_armour" />
+					</div>
+					<div>
+						<label>Has Shielding</label>
+						<input type="checkbox" data-bind="checked: ui.normandy.has_shielding" />
+					</div>
+					<div>
+						<label>Has Thanix Cannon</label>
+						<input type="checkbox" data-bind="checked: ui.normandy.has_thanix_cannon" />
+					</div>
 				<!-- /ko -->
+
 				<!-- ko if: ui.id == "Occulus" -->
 					<div>
 						<label>Squadmate #1</label>
@@ -57,8 +71,8 @@ $config = require("../config/config.php");
 
 				<!-- ko if: ui.id == "Vents" -->
 					<div>
-						<label>Ventmate</label>
-						<select data-bind="options: ui.vent_ventmate_candidates, optionsText: ui.renderTeammateForSelect, value: ui.vent_ventmate"></select>
+						<label>Venter</label>
+						<select data-bind="options: ui.vent_venter_candidates, optionsText: ui.renderTeammateForSelect, value: ui.vent_venter"></select>
 					</div>
 					<div>
 						<label>Leader</label>
@@ -73,6 +87,41 @@ $config = require("../config/config.php");
 						<select data-bind="options: ui.vent_squadmate_2_candidates, optionsText: ui.renderTeammateForSelect, value: ui.vent_squadmate_2"></select>
 					</div>
 				<!-- /ko -->
+
+				<!-- ko if: ui.id == "LongWalk" -->
+					<div>
+						<label>Escort</label>
+						<select data-bind="options: ui.long_walk_escort_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_escort"></select>
+					</div>
+					<div>
+						<label>Bubbler</label>
+						<select data-bind="options: ui.long_walk_bubbler_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_bubbler"></select>
+					</div>
+					<div>
+						<label>Leader</label>
+						<select data-bind="options: ui.long_walk_leader_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_leader"></select>
+					</div>
+					<div>
+						<label>Squadmate #1</label>
+						<select data-bind="options: ui.long_walk_squadmate_1_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_squadmate_1"></select>
+					</div>
+					<div>
+						<label>Squadmate #2</label>
+						<select data-bind="options: ui.long_walk_squadmate_2_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_squadmate_2"></select>
+					</div>
+				<!-- /ko -->
+
+				<!-- ko if: ui.id == "Boss" -->
+					<div>
+						<label>Squadmate #1</label>
+						<select data-bind="options: ui.boss_squadmate_1_candidates, optionsText: ui.renderTeammateForSelect, value: ui.boss_squadmate_1"></select>
+					</div>
+					<div>
+						<label>Squadmate #2</label>
+						<select data-bind="options: ui.boss_squadmate_2_candidates, optionsText: ui.renderTeammateForSelect, value: ui.boss_squadmate_2"></select>
+					</div>
+				<!-- /ko -->
+
 				<button data-bind="click: function () { $root.stager.nextStage() }">Next</button>
 			<!-- /ko -->
 		</div>
