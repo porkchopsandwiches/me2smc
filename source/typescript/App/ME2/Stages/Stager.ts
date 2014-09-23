@@ -23,23 +23,26 @@ module App {
                 public stages: App.ME2.Stages.IStage[];
                 private stage: App.ME2.Stages.IStage;
                 private freezes: string[];
-                private teammates: App.ME2.Teammate[];
+                public teammates: App.ME2.Teammate[];
                 public ui: App.ME2.Stages.UI.Stager;
 
                 constructor (app: App.Application) {
                     this.app = app;
 
                     this.freezes = [];
-                    this.teammates = [];
+
                     this.stages = [
                         (new App.ME2.Stages.Setup()).setStager(this),
                         (new App.ME2.Stages.Occulus()).setStager(this),
                         (new App.ME2.Stages.Vents()).setStager(this),
                         (new App.ME2.Stages.LongWalk()).setStager(this),
-                        (new App.ME2.Stages.Boss()).setStager(this)
+                        (new App.ME2.Stages.Boss()).setStager(this),
+                        (new App.ME2.Stages.Summary()).setStager(this)
                     ];
 
-                    this.ui = (new App.ME2.Stages.UI.Stager()).setStager(this);
+                    this.ui = new App.ME2.Stages.UI.Stager(this);
+
+                    this.setTeammates([]);
                 }
 
                 private getIndexOfStage (stage: App.ME2.Stages.IStage): number {
@@ -54,7 +57,8 @@ module App {
 
                     this.freezes[this.getIndexOfStage(stage)] = this.freeze(teammates);
 
-                    this.teammates = teammates;
+                    //this.teammates = teammates;
+                    this.setTeammates(teammates);
                 }
 
                 private freeze (teammates: App.ME2.Teammate[]): string {
@@ -92,22 +96,35 @@ module App {
                     if (this.stage) {
                         index = this.getIndexOfStage(this.stage) - 1;
                         this.setStage(this.stages[index]);
-                        this.teammates = this.defrost(this.freezes[index]);
+                        this.setTeammates(this.defrost(this.freezes[index]));
                     }
                 }
 
                 public nextStage () {
+                    var index: number;
+
 
                     if (this.stage) {
-                        if (this.stage.isEvaluatable() || true) {
+                        index = this.getIndexOfStage(this.stage);
+
+                        if (this.stage.isEvaluatable()) {
                             this.freezeStage(this.stage);
-                            this.setStage(this.stages[this.getIndexOfStage(this.stage) + 1]);
+
+                            if (index < this.stages.length - 1) {
+                                this.setStage(this.stages[this.getIndexOfStage(this.stage) + 1]);
+                            }
                         } else {
                             throw new Error("Current Stage is not evaluatable.");
                         }
                     } else {
                         this.setStage(this.stages[0]);
                     }
+                }
+
+                private setTeammates (teammates: App.ME2.Teammate[]) {
+                    this.teammates = teammates;
+                    //this.ui.teammates(this.teammates);
+                    this.ui.teammates.evaluateImmediate();
                 }
 
                 private setStage (stage: App.ME2.Stages.IStage) {

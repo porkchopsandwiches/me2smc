@@ -90,16 +90,16 @@ $config = require("../config/config.php");
 
 				<!-- ko if: ui.id == "LongWalk" -->
 					<div>
-						<label>Escort</label>
-						<select data-bind="options: ui.long_walk_escort_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_escort"></select>
-					</div>
-					<div>
 						<label>Bubbler</label>
 						<select data-bind="options: ui.long_walk_bubbler_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_bubbler"></select>
 					</div>
 					<div>
 						<label>Leader</label>
 						<select data-bind="options: ui.long_walk_leader_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_leader"></select>
+					</div>
+					<div>
+						<label>Escort</label>
+						<select data-bind="options: ui.long_walk_escort_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_escort"></select>
 					</div>
 					<div>
 						<label>Squadmate #1</label>
@@ -122,8 +122,75 @@ $config = require("../config/config.php");
 					</div>
 				<!-- /ko -->
 
+				<!-- ko if: ui.id == "Summary" -->
+					<table class="table">
+						<thead>
+							<tr>
+								<th>Teammate</th>
+								<th>Is Recruited</th>
+								<th>Is Loyal</th>
+								<th>Is Dead</th>
+							</tr>
+						</thead>
+						<tbody>
+							<!-- ko foreach: ui.teammates -->
+								<tr>
+									<td data-bind="text: teammate.henchman.name"></td>
+									<td>
+										<input type="checkbox" data-bind="checked: is_recruited" />
+									</td>
+									<td>
+										<input type="checkbox" data-bind="checked: is_loyal" />
+									</td>
+									<td>
+										<input type="checkbox" data-bind="checked: is_dead" />
+									</td>
+								</tr>
+							<!-- /ko -->
+						</tbody>
+					</table>
+				<!-- /ko -->
+
 				<button data-bind="click: function () { $root.stager.nextStage() }">Next</button>
 			<!-- /ko -->
+
+			<!-- ko with: stager.ui.teammates -->
+				<table class="table">
+					<thead>
+						<tr>
+							<th>Teammates</th>
+							<td>Is recruited?</td>
+							<td>Is loyal?</td>
+							<td>Is dead?</td>
+							<td>How dead?</td>
+							<td>Roles</td>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- ko foreach: $data -->
+							<tr>
+								<td><span data-bind="text: henchman.name"></span></td>
+								<td><span data-bind="text: is_recruited"></span></td>
+								<td><span data-bind="text: is_loyal"></span></td>
+								<td><span data-bind="text: is_dead"></span></td>
+								<td>
+									<!-- ko if: is_dead -->
+										<span data-bind="text: $root.formatTeammateDeathCause(death_cause)"></span>
+									<!-- /ko -->
+								</td>
+								<td>
+									<ul>
+										<!-- ko foreach: roles -->
+											<li><span data-bind="text: $root.formatTeammateRole($data)"></span></li>
+										<!-- /ko -->
+									</ul>
+								</td>
+							</tr>
+						<!-- /ko -->
+					</tbody>
+				</table>
+			<!-- /ko -->
+
 		</div>
 
 		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>

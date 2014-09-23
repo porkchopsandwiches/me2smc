@@ -28,25 +28,10 @@ module App {
 
                 public evaluate (): App.ME2.Teammate[] {
                     return this.teammates;
-                    /*
-                    var henchmen: App.ME2.Henchman[];
-                    var teammates: App.ME2.Teammate[];
-                    henchmen = this.stager.app.getHenchmen();
+                }
 
-                    teammates = _.map(henchmen, (henchman: App.ME2.Henchman): App.ME2.Teammate => {
-                        if (henchman.id !== App.ME2.HenchmanIDs.Morinth) {
-                            return new App.ME2.Teammate(henchman, true, true, false);
-                        }
-
-                        return undefined;
-                    });
-
-                    teammates = _.filter(teammates, (v: any) => {
-                        return !!v;
-                    });
-
-                    return teammates;
-                    */
+                public isEvaluatable (): boolean {
+                    return true;
                 }
             }
         }

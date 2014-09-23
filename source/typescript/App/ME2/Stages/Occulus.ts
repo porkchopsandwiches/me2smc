@@ -60,6 +60,10 @@ module App {
 
                     return this.teammates;
                 }
+
+                public isEvaluatable (): boolean {
+                    return !!this.occulus_squadmate_1 && !!this.occulus_squadmate_2;
+                }
             }
         }
     }

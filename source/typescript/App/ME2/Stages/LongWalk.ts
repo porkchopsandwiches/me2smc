@@ -53,6 +53,10 @@ module App {
 
                     return this.teammates;
                 }
+
+                public isEvaluatable (): boolean {
+                    return !!this.long_walk_bubbler && !!this.long_walk_escort && !!this.long_walk_leader && !!this.long_walk_squadmate_1 && !!this.long_walk_squadmate_2;
+                }
             }
         }
     }

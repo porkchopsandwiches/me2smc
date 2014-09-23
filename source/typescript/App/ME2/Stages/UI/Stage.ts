@@ -8,7 +8,8 @@ module App {
                     Occulus,
                     Vents,
                     LongWalk,
-                    Boss
+                    Boss,
+                    Summary
                 }
 
                 export interface ITeammateFieldFilter {

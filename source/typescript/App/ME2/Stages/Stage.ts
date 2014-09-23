@@ -35,7 +35,7 @@ module App {
                 }
 
                 public isEvaluatable (): boolean {
-                    return true;
+                    return false;
                 }
             }
         }

@@ -40,5 +40,13 @@ module App {
                 return henchman.id === id;
             });
         }
+
+        public formatTeammateDeathCause (death_cause: App.ME2.TeammateDeathCauses): string {
+            return App.ME2.TeammateDeathCauses[death_cause];
+        }
+
+        public formatTeammateRole (role: App.ME2.TeammateRoles): string {
+            return App.ME2.TeammateRoles[role];
+        }
     }
 }

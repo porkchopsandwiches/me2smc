@@ -31,6 +31,14 @@ var App;
                 return henchman.id === id;
             });
         };
+
+        Application.prototype.formatTeammateDeathCause = function (death_cause) {
+            return App.ME2.TeammateDeathCauses[death_cause];
+        };
+
+        Application.prototype.formatTeammateRole = function (role) {
+            return App.ME2.TeammateRoles[role];
+        };
         return Application;
     })();
     App.Application = Application;
@@ -171,7 +179,7 @@ var App;
                 };
 
                 Stage.prototype.isEvaluatable = function () {
-                    return true;
+                    return false;
                 };
                 return Stage;
             })();
@@ -216,16 +224,19 @@ var App;
                     this.app = app;
 
                     this.freezes = [];
-                    this.teammates = [];
+
                     this.stages = [
                         (new App.ME2.Stages.Setup()).setStager(this),
                         (new App.ME2.Stages.Occulus()).setStager(this),
                         (new App.ME2.Stages.Vents()).setStager(this),
                         (new App.ME2.Stages.LongWalk()).setStager(this),
-                        (new App.ME2.Stages.Boss()).setStager(this)
+                        (new App.ME2.Stages.Boss()).setStager(this),
+                        (new App.ME2.Stages.Summary()).setStager(this)
                     ];
 
-                    this.ui = (new App.ME2.Stages.UI.Stager()).setStager(this);
+                    this.ui = new App.ME2.Stages.UI.Stager(this);
+
+                    this.setTeammates([]);
                 }
                 Stager.prototype.getIndexOfStage = function (stage) {
                     return _.indexOf(this.stages, stage);
@@ -238,7 +249,7 @@ var App;
 
                     this.freezes[this.getIndexOfStage(stage)] = this.freeze(teammates);
 
-                    this.teammates = teammates;
+                    this.setTeammates(teammates);
                 };
 
                 Stager.prototype.freeze = function (teammates) {
@@ -277,21 +288,34 @@ var App;
                     if (this.stage) {
                         index = this.getIndexOfStage(this.stage) - 1;
                         this.setStage(this.stages[index]);
-                        this.teammates = this.defrost(this.freezes[index]);
+                        this.setTeammates(this.defrost(this.freezes[index]));
                     }
                 };
 
                 Stager.prototype.nextStage = function () {
+                    var index;
+
                     if (this.stage) {
-                        if (this.stage.isEvaluatable() || true) {
+                        index = this.getIndexOfStage(this.stage);
+
+                        if (this.stage.isEvaluatable()) {
                             this.freezeStage(this.stage);
-                            this.setStage(this.stages[this.getIndexOfStage(this.stage) + 1]);
+
+                            if (index < this.stages.length - 1) {
+                                this.setStage(this.stages[this.getIndexOfStage(this.stage) + 1]);
+                            }
                         } else {
                             throw new Error("Current Stage is not evaluatable.");
                         }
                     } else {
                         this.setStage(this.stages[0]);
                     }
+                };
+
+                Stager.prototype.setTeammates = function (teammates) {
+                    this.teammates = teammates;
+
+                    this.ui.teammates.evaluateImmediate();
                 };
 
                 Stager.prototype.setStage = function (stage) {
@@ -357,6 +381,10 @@ var App;
 
                     return this.teammates;
                 };
+
+                Occulus.prototype.isEvaluatable = function () {
+                    return !!this.occulus_squadmate_1 && !!this.occulus_squadmate_2;
+                };
                 return Occulus;
             })(Stages.Stage);
             Stages.Occulus = Occulus;
@@ -387,6 +415,10 @@ var App;
                     }
 
                     return this.teammates;
+                };
+
+                Vents.prototype.isEvaluatable = function () {
+                    return !!this.vent_leader && !!this.vent_venter && !!this.vent_squadmate_1 && !!this.vent_squadmate_2;
                 };
                 return Vents;
             })(Stages.Stage);
@@ -433,6 +465,10 @@ var App;
 
                     return this.teammates;
                 };
+
+                LongWalk.prototype.isEvaluatable = function () {
+                    return !!this.long_walk_bubbler && !!this.long_walk_escort && !!this.long_walk_leader && !!this.long_walk_squadmate_1 && !!this.long_walk_squadmate_2;
+                };
                 return LongWalk;
             })(Stages.Stage);
             Stages.LongWalk = LongWalk;
@@ -465,9 +501,39 @@ var App;
                 Setup.prototype.evaluate = function () {
                     return this.teammates;
                 };
+
+                Setup.prototype.isEvaluatable = function () {
+                    return true;
+                };
                 return Setup;
             })(Stages.Stage);
             Stages.Setup = Setup;
+        })(ME2.Stages || (ME2.Stages = {}));
+        var Stages = ME2.Stages;
+    })(App.ME2 || (App.ME2 = {}));
+    var ME2 = App.ME2;
+})(App || (App = {}));
+var App;
+(function (App) {
+    (function (ME2) {
+        (function (Stages) {
+            var Summary = (function (_super) {
+                __extends(Summary, _super);
+                function Summary() {
+                    _super.call(this);
+                    this.ui = new App.ME2.Stages.UI.Summary(this);
+                }
+                Summary.prototype.setup = function (teammates) {
+                    this.teammates = teammates;
+                    this.ui.setup();
+                };
+
+                Summary.prototype.evaluate = function () {
+                    return this.teammates;
+                };
+                return Summary;
+            })(Stages.Stage);
+            Stages.Summary = Summary;
         })(ME2.Stages || (ME2.Stages = {}));
         var Stages = ME2.Stages;
     })(App.ME2 || (App.ME2 = {}));
@@ -553,13 +619,15 @@ var App;
         (function (Stages) {
             (function (UI) {
                 var Stager = (function () {
-                    function Stager() {
+                    function Stager(stager) {
+                        var _this = this;
                         this.stage = ko.observable(undefined);
-                    }
-                    Stager.prototype.setStager = function (stager) {
                         this.stager = stager;
-                        return this;
-                    };
+                        this.teammates = ko.forcibleComputed(function () {
+                            console.log("getting stager teammates.");
+                            return _this.stager.teammates;
+                        });
+                    }
                     return Stager;
                 })();
                 UI.Stager = Stager;
@@ -581,6 +649,7 @@ var App;
                     StageIDs[StageIDs["Vents"] = 2] = "Vents";
                     StageIDs[StageIDs["LongWalk"] = 3] = "LongWalk";
                     StageIDs[StageIDs["Boss"] = 4] = "Boss";
+                    StageIDs[StageIDs["Summary"] = 5] = "Summary";
                 })(UI.StageIDs || (UI.StageIDs = {}));
                 var StageIDs = UI.StageIDs;
 
@@ -750,17 +819,17 @@ var App;
                         this.id = UI.StageIDs[3 /* LongWalk */];
                         this.label = "Long Walk";
                         this.teammate_fields = {
-                            "long_walk_squadmate_1": UI.Stage.genericTeammateFieldFilter,
-                            "long_walk_squadmate_2": UI.Stage.genericTeammateFieldFilter,
-                            "long_walk_escort": function (teammate) {
-                                return teammate.henchman.is_escort_candidate;
-                            },
                             "long_walk_bubbler": function (teammate) {
                                 return teammate.henchman.is_bubble_candidate;
                             },
                             "long_walk_leader": function (teammate) {
                                 return teammate.henchman.is_long_walk_leader_candidate;
-                            }
+                            },
+                            "long_walk_escort": function (teammate) {
+                                return teammate.henchman.is_escort_candidate;
+                            },
+                            "long_walk_squadmate_1": UI.Stage.genericTeammateFieldFilter,
+                            "long_walk_squadmate_2": UI.Stage.genericTeammateFieldFilter
                         };
                         this.bootstrapTeammateFields();
                     }
@@ -869,6 +938,39 @@ var App;
                     return Vents;
                 })(UI.Stage);
                 UI.Vents = Vents;
+            })(Stages.UI || (Stages.UI = {}));
+            var UI = Stages.UI;
+        })(ME2.Stages || (ME2.Stages = {}));
+        var Stages = ME2.Stages;
+    })(App.ME2 || (App.ME2 = {}));
+    var ME2 = App.ME2;
+})(App || (App = {}));
+var App;
+(function (App) {
+    (function (ME2) {
+        (function (Stages) {
+            (function (UI) {
+                var Summary = (function (_super) {
+                    __extends(Summary, _super);
+                    function Summary(stage) {
+                        _super.call(this, stage);
+                        this.id = UI.StageIDs[5 /* Summary */];
+                        this.label = "Summary";
+                    }
+                    Summary.prototype.setup = function () {
+                        this.bootstrapTeammates();
+                    };
+
+                    Summary.prototype.bootstrapTeammates = function () {
+                        this.teammates = _.map(this.stage.teammates, function (teammate) {
+                            return new App.ME2.UI.Teammate(teammate);
+                        });
+
+                        this.normandy = new App.ME2.UI.Normandy(this.stage.stager.app.normandy);
+                    };
+                    return Summary;
+                })(UI.Stage);
+                UI.Summary = Summary;
             })(Stages.UI || (Stages.UI = {}));
             var UI = Stages.UI;
         })(ME2.Stages || (ME2.Stages = {}));
@@ -1031,14 +1133,17 @@ var App;
                         htl_pool = _.sortBy(htl_pool, function (teammate) {
                             return teammate.henchman.htl_death_priority + (!teammate.is_loyal ? 100 : 0);
                         });
-                        console.log("death order", htl_pool);
 
-                        htl_pool = htl_pool.slice(-1 * this.getHTLDeathCount(htl_total, htl_pool.length));
-
-                        console.log("death section", htl_pool);
+                        htl_pool.slice(-1 * this.getHTLDeathCount(htl_total, htl_pool.length)).forEach(function (teammate) {
+                            teammate.die(7 /* HoldTheLine */);
+                        });
                     }
 
                     return this.teammates;
+                };
+
+                Boss.prototype.isEvaluatable = function () {
+                    return !!this.boss_squadmate_1 && !!this.boss_squadmate_2;
                 };
                 return Boss;
             })(Stages.Stage);

@@ -36,6 +36,10 @@ module App {
 
                     return this.teammates;
                 }
+
+                public isEvaluatable (): boolean {
+                    return !!this.vent_leader && !!this.vent_venter && !!this.vent_squadmate_1 && !!this.vent_squadmate_2;
+                }
             }
         }
     }

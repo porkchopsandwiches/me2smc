@@ -10,10 +10,14 @@ module App {
                 export class Stager implements IStager {
                     public stager: App.ME2.Stages.Stager;
                     public stage: KnockoutObservable<App.ME2.Stages.IStage>      = ko.observable(undefined);
+                    public teammates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
 
-                    public setStager (stager: App.ME2.Stages.Stager): Stager {
+                    constructor (stager: App.ME2.Stages.Stager) {
                         this.stager = stager;
-                        return this;
+                        this.teammates = ko.forcibleComputed(() => {
+                            console.log("getting stager teammates.");
+                            return this.stager.teammates;
+                        });
                     }
                 }
             }
