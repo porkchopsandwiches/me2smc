@@ -65,6 +65,9 @@ module App {
                     var htl_pool: App.ME2.Teammate[];
                     var htl_total: number;
 
+                    this.boss_squadmate_1.addRole(App.ME2.TeammateRoles.BossSquadmate);
+                    this.boss_squadmate_2.addRole(App.ME2.TeammateRoles.BossSquadmate);
+
                     // The two squadmates survive if loyal
                     if (!this.boss_squadmate_1.is_loyal) {
                         this.boss_squadmate_1.die(App.ME2.TeammateDeathCauses.Boss);
@@ -76,6 +79,10 @@ module App {
                     // For hold the line, include all remaining teammates except the escort and the two squadmates
                     htl_pool = _.filter(this.teammates, (teammate: App.ME2.Teammate): boolean => {
                         return !teammate.is_dead && teammate.henchman.id !== this.boss_squadmate_1.henchman.id && teammate.henchman.id !== this.boss_squadmate_2.henchman.id && !teammate.hasRole(App.ME2.TeammateRoles.LongWalkEscort);
+                    });
+
+                    htl_pool.forEach((teammate) => {
+                        teammate.addRole(App.ME2.TeammateRoles.HeldTheLine);
                     });
 
                     // Determine total HTL score

@@ -33,13 +33,13 @@ module App {
 
                     public teammate_fields: ITeammateFields = {
                         "long_walk_bubbler": (teammate: App.ME2.Teammate): boolean => {
-                            return teammate.henchman.is_bubble_candidate;
+                            return !teammate.is_dead && teammate.henchman.is_bubble_candidate;
                         },
                         "long_walk_leader": (teammate: App.ME2.Teammate): boolean => {
-                            return teammate.henchman.is_long_walk_leader_candidate;
+                            return !teammate.is_dead && teammate.henchman.is_long_walk_leader_candidate;
                         },
                         "long_walk_escort": (teammate: App.ME2.Teammate): boolean => {
-                            return teammate.henchman.is_escort_candidate;
+                            return !teammate.is_dead && teammate.henchman.is_escort_candidate;
                         },
                         "long_walk_squadmate_1": Stage.genericTeammateFieldFilter,
                         "long_walk_squadmate_2": Stage.genericTeammateFieldFilter

@@ -16,7 +16,7 @@ module App {
 
                 private bootstrapTeammates (): void {
                     this.teammates = _.map(this.stager.app.getHenchmen(), (henchman: App.ME2.Henchman): App.ME2.Teammate => {
-                        return new App.ME2.Teammate(henchman, true, true, false);
+                        return new App.ME2.Teammate(henchman, henchman.is_essential, false, false);
                     });
                 }
 
@@ -27,7 +27,9 @@ module App {
                 }
 
                 public evaluate (): App.ME2.Teammate[] {
-                    return this.teammates;
+                    return _.filter(this.teammates, (teammate: App.ME2.Teammate): boolean => {
+                        return teammate.is_recruited;
+                    });
                 }
 
                 public isEvaluatable (): boolean {

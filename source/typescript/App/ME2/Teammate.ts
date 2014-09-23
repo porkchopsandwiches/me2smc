@@ -21,7 +21,8 @@ module App {
             LongWalkEscort,
             LongWalkBubbler,
             LongWalkLeader,
-            BossSquadmate
+            BossSquadmate,
+            HeldTheLine
         }
 
         export interface ITeammate {

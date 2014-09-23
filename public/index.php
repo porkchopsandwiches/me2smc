@@ -4,7 +4,7 @@ $config = require("../config/config.php");
 
 
 ?><!DOCTYPE html>
-<html>
+<html lang="en">
 	<head>
 		<meta charset="utf-8" />
 		<meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -13,17 +13,17 @@ $config = require("../config/config.php");
 		<link rel="stylesheet" href="../cdn/stylesheets/app-1.0.0.min.css" />
 	</head>
 	<body>
-		<div id="app">
+		<div id="app" class="container">
 			<!-- ko with: stager.ui.stage -->
 				<h2 data-bind="text: ui.label"></h2>
 				<!-- ko if: ui.id == "Setup" -->
-					<table class="table">
+					<h3>Teammates</h3>
+					<table class="table table-striped setup-table">
 						<thead>
 							<tr>
 								<th>Teammate</th>
-								<th>Is Recruited</th>
-								<th>Is Loyal</th>
-								<th>Is Dead</th>
+								<th><label><input type="checkbox" data-bind="checked: ui.all_recruited" /> Is Recruited</label></th>
+								<th><label><input type="checkbox" data-bind="checked: ui.all_loyal" /> Is Loyal</label></th>
 							</tr>
 						</thead>
 						<tbody>
@@ -31,42 +31,45 @@ $config = require("../config/config.php");
 								<tr>
 									<td data-bind="text: teammate.henchman.name"></td>
 									<td>
-										<input type="checkbox" data-bind="checked: is_recruited" />
+										<label>
+											<input type="checkbox" data-bind="attr: recruited_attributes, checked: is_recruited" />
+										</label>
 									</td>
 									<td>
-										<input type="checkbox" data-bind="checked: is_loyal" />
-									</td>
-									<td>
-										<input type="checkbox" data-bind="checked: is_dead" />
+										<label>
+											<input type="checkbox" data-bind="attr: loyal_attributes, checked: is_loyal" />
+										</label>
 									</td>
 								</tr>
 							<!-- /ko -->
 						</tbody>
 					</table>
 					<h3>Normandy</h3>
-					<div>
-						<label>Has Armour</label>
-						<input type="checkbox" data-bind="checked: ui.normandy.has_armour" />
-					</div>
-					<div>
-						<label>Has Shielding</label>
-						<input type="checkbox" data-bind="checked: ui.normandy.has_shielding" />
-					</div>
-					<div>
-						<label>Has Thanix Cannon</label>
-						<input type="checkbox" data-bind="checked: ui.normandy.has_thanix_cannon" />
-					</div>
+					<form role="form">
+						<div class="checkbox">
+							<label><input type="checkbox" data-bind="checked: ui.normandy.has_armour" /> Has Armour upgrade?</label>
+						</div>
+						<div class="checkbox">
+							<label><input type="checkbox" data-bind="checked: ui.normandy.has_shielding" /> Has Shielding upgrade?</label>
+						</div>
+						<div class="checkbox">
+							<label><input type="checkbox" data-bind="checked: ui.normandy.has_thanix_cannon" /> Has Thanix Cannon?</label>
+						</div>
+					</form>
+
 				<!-- /ko -->
 
 				<!-- ko if: ui.id == "Occulus" -->
-					<div>
-						<label>Squadmate #1</label>
-						<select data-bind="options: ui.occulus_squadmate_1_candidates, optionsText: ui.renderTeammateForSelect, value: ui.occulus_squadmate_1"></select>
-					</div>
-					<div>
-						<label>Squadmate #2</label>
-						<select data-bind="options: ui.occulus_squadmate_2_candidates, optionsText: ui.renderTeammateForSelect, value: ui.occulus_squadmate_2"></select>
-					</div>
+					<form role="form">
+						<div class="form-group">
+							<label>Squadmate #1</label>
+							<select class="form-control" data-bind="options: ui.occulus_squadmate_1_candidates, optionsText: ui.renderTeammateForSelect, value: ui.occulus_squadmate_1"></select>
+						</div>
+						<div class="form-group">
+							<label>Squadmate #2</label>
+							<select class="form-control" data-bind="options: ui.occulus_squadmate_2_candidates, optionsText: ui.renderTeammateForSelect, value: ui.occulus_squadmate_2"></select>
+						</div>
+					</form>
 				<!-- /ko -->
 
 				<!-- ko if: ui.id == "Vents" -->
@@ -123,73 +126,48 @@ $config = require("../config/config.php");
 				<!-- /ko -->
 
 				<!-- ko if: ui.id == "Summary" -->
-					<table class="table">
+					<div>Shepard lives?: <span data-bind="text: ui.shepard_lives"></span></div>
+				<!-- /ko -->
+
+
+			<!-- /ko -->
+
+			<!-- ko with: stager.ui.teammates -->
+				<!-- ko if: $data.length > 0 -->
+					<table class="table table-striped summary-table">
 						<thead>
 							<tr>
-								<th>Teammate</th>
-								<th>Is Recruited</th>
-								<th>Is Loyal</th>
-								<th>Is Dead</th>
+								<th>Teammates</th>
+								<th>Is loyal?</th>
+								<th>Died?</th>
+								<th>Roles</th>
 							</tr>
 						</thead>
 						<tbody>
-							<!-- ko foreach: ui.teammates -->
+							<!-- ko foreach: $data -->
 								<tr>
-									<td data-bind="text: teammate.henchman.name"></td>
+									<td><span data-bind="text: henchman.name"></span></td>
+									<td><span data-bind="text: $root.formatYesNo(is_loyal)"></span></td>
 									<td>
-										<input type="checkbox" data-bind="checked: is_recruited" />
+										<!-- ko if: is_dead -->
+											<span data-bind="text: $root.formatTeammateDeathCause(death_cause)"></span>
+										<!-- /ko -->
 									</td>
 									<td>
-										<input type="checkbox" data-bind="checked: is_loyal" />
-									</td>
-									<td>
-										<input type="checkbox" data-bind="checked: is_dead" />
+										<ul class="roles">
+											<!-- ko foreach: roles -->
+												<li><span data-bind="text: $root.formatTeammateRole($data)"></span></li>
+											<!-- /ko -->
+										</ul>
 									</td>
 								</tr>
 							<!-- /ko -->
 						</tbody>
 					</table>
 				<!-- /ko -->
-
-				<button data-bind="click: function () { $root.stager.nextStage() }">Next</button>
 			<!-- /ko -->
 
-			<!-- ko with: stager.ui.teammates -->
-				<table class="table">
-					<thead>
-						<tr>
-							<th>Teammates</th>
-							<td>Is recruited?</td>
-							<td>Is loyal?</td>
-							<td>Is dead?</td>
-							<td>How dead?</td>
-							<td>Roles</td>
-						</tr>
-					</thead>
-					<tbody>
-						<!-- ko foreach: $data -->
-							<tr>
-								<td><span data-bind="text: henchman.name"></span></td>
-								<td><span data-bind="text: is_recruited"></span></td>
-								<td><span data-bind="text: is_loyal"></span></td>
-								<td><span data-bind="text: is_dead"></span></td>
-								<td>
-									<!-- ko if: is_dead -->
-										<span data-bind="text: $root.formatTeammateDeathCause(death_cause)"></span>
-									<!-- /ko -->
-								</td>
-								<td>
-									<ul>
-										<!-- ko foreach: roles -->
-											<li><span data-bind="text: $root.formatTeammateRole($data)"></span></li>
-										<!-- /ko -->
-									</ul>
-								</td>
-							</tr>
-						<!-- /ko -->
-					</tbody>
-				</table>
-			<!-- /ko -->
+			<button class="btn btn-primary" data-bind="click: function () { $root.stager.nextStage() }">Next</button>
 
 		</div>
 

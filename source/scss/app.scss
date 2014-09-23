@@ -1,3 +1,6 @@
+@import "../../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
+
+/*
 *{
 	box-sizing: border-box;
 }
@@ -6,3 +9,35 @@
 html,body{
 	margin: 0;
 }
+*/
+
+.setup-table{
+	label{
+		width: 100%;
+	}
+}
+
+.summary-table{
+	.roles{
+		list-style: none;
+		margin: 0;
+		padding: 0;
+
+		li{
+			display: inline-block;
+			padding-right: 1em;
+			margin: 0;
+		}
+	}
+}
+
+/*
+#app{
+	background-color :white;
+}
+
+
+body, html{
+	background-color: #888;
+}
+*/

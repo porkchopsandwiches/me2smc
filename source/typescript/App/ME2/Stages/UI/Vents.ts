@@ -31,10 +31,10 @@ module App {
                         "vent_squadmate_1": Stage.genericTeammateFieldFilter,
                         "vent_squadmate_2": Stage.genericTeammateFieldFilter,
                         "vent_venter": (teammate: App.ME2.Teammate): boolean => {
-                            return teammate.henchman.is_vent_candidate;
+                            return !teammate.is_dead && teammate.henchman.is_vent_candidate;
                         },
                         "vent_leader": (teammate: App.ME2.Teammate): boolean => {
-                            return teammate.henchman.is_vent_leader_candidate;
+                            return !teammate.is_dead && teammate.henchman.is_vent_leader_candidate;
                         }
                     }
 

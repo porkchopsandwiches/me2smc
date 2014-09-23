@@ -39,8 +39,9 @@ module App {
                     public stage: App.ME2.Stages.IStage;
                     public teammate_fields: ITeammateFields = {};
 
+                    // Generic filter only requires the teammate be alive
                     static genericTeammateFieldFilter (teammate: App.ME2.Teammate): boolean {
-                        return true;
+                        return !teammate.is_dead;
                     }
 
                     constructor (stage: App.ME2.Stages.IStage) {
@@ -52,7 +53,7 @@ module App {
                         var found: boolean;
 
                         // Apply the teammate field's own filter first
-                        candidates = _.filter(this.getLivingCandidates(), this.teammate_fields[field]);
+                        candidates = _.filter(this.stage.teammates, this.teammate_fields[field]);
 
                         // Filter out users who are already in use in other fields
                         candidates = _.filter(candidates, (candidate: App.ME2.Teammate): boolean => {
@@ -115,12 +116,6 @@ module App {
                         this[property_name](this.stage[property_name]);
                         this[property_name].subscribe((new_value: T) => {
                             this.stage[property_name] = new_value;
-                        });
-                    }
-
-                    public getLivingCandidates (): App.ME2.Teammate[] {
-                        return _.filter(this.stage.teammates, (teammate: App.ME2.Teammate) => {
-                            return !teammate.is_dead;
                         });
                     }
 

@@ -20,6 +20,7 @@ module App {
         export interface IHenchman {
             id: HenchmanIDs;
             name: string;
+            is_essential: boolean;
             htl_value: number;
             htl_death_priority: number;
             armour_death_priority: number;
@@ -41,6 +42,7 @@ module App {
         export class Henchman implements IHenchman {
             public id: HenchmanIDs;
             public name: string = "";
+            public is_essential: boolean = false;
             public htl_value: number = 0;
             public htl_death_priority: number = 0;
             public armour_death_priority: number;
@@ -61,6 +63,7 @@ module App {
             constructor (
                 id: HenchmanIDs,
                 name: string = "",
+                is_essential: boolean = false,
                 htl_value: number = 0,
                 htl_death_priority: number = 0,
                 armour_death_priority: number = 0,
@@ -80,6 +83,7 @@ module App {
             ) {
                 this.id = id;
                 this.name = name;
+                this.is_essential = is_essential;
                 this.htl_value = htl_value;
                 this.htl_death_priority = htl_death_priority;
                 this.armour_death_priority = armour_death_priority;

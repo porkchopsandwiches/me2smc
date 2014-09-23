@@ -2,7 +2,6 @@
 ///<reference path="../vendor/knockout/knockout.d.ts" />
 ///<reference path="./extensions.ts" />
 ///<reference path="App/ME2/Stages/Stage.ts" />
-///<reference path="App/ME2/Stages/SquadmatesStage.ts" />
 ///<reference path="App/ME2/Stages/Stager.ts" />
 ///<reference path="App/ME2/Stages/Occulus.ts" />
 ///<reference path="App/ME2/Stages/Vents.ts" />
@@ -15,7 +14,6 @@
 ///<reference path="App/ME2/Normandy.ts" />
 ///<reference path="App/ME2/Stages/UI/Stager.ts" />
 ///<reference path="App/ME2/Stages/UI/Stage.ts" />
-///<reference path="App/ME2/Stages/UI/SquadmatesStage.ts" />
 ///<reference path="App/ME2/Stages/UI/Boss.ts" />
 ///<reference path="App/ME2/Stages/UI/LongWalk.ts" />
 ///<reference path="App/ME2/Stages/UI/Occulus.ts" />
