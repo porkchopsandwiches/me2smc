@@ -73,56 +73,62 @@ $config = require("../config/config.php");
 				<!-- /ko -->
 
 				<!-- ko if: ui.id == "Vents" -->
-					<div>
-						<label>Venter</label>
-						<select data-bind="options: ui.vent_venter_candidates, optionsText: ui.renderTeammateForSelect, value: ui.vent_venter"></select>
-					</div>
-					<div>
-						<label>Leader</label>
-						<select data-bind="options: ui.vent_leader_candidates, optionsText: ui.renderTeammateForSelect, value: ui.vent_leader"></select>
-					</div>
-					<div>
-						<label>Squadmate #1</label>
-						<select data-bind="options: ui.vent_squadmate_1_candidates, optionsText: ui.renderTeammateForSelect, value: ui.vent_squadmate_1"></select>
-					</div>
-					<div>
-						<label>Squadmate #2</label>
-						<select data-bind="options: ui.vent_squadmate_2_candidates, optionsText: ui.renderTeammateForSelect, value: ui.vent_squadmate_2"></select>
-					</div>
+					<form role="form">
+						<div class="form-group">
+							<label>Venter</label>
+							<select class="form-control" data-bind="options: ui.vent_venter_candidates, optionsText: ui.renderTeammateForSelect, value: ui.vent_venter"></select>
+						</div>
+						<div class="form-group">
+							<label>Leader</label>
+							<select class="form-control" data-bind="options: ui.vent_leader_candidates, optionsText: ui.renderTeammateForSelect, value: ui.vent_leader"></select>
+						</div>
+						<div class="form-group">
+							<label>Squadmate #1</label>
+							<select class="form-control" data-bind="options: ui.vent_squadmate_1_candidates, optionsText: ui.renderTeammateForSelect, value: ui.vent_squadmate_1"></select>
+						</div>
+						<div class="form-group">
+							<label>Squadmate #2</label>
+							<select class="form-control" data-bind="options: ui.vent_squadmate_2_candidates, optionsText: ui.renderTeammateForSelect, value: ui.vent_squadmate_2"></select>
+						</div>
+					</form>
 				<!-- /ko -->
 
 				<!-- ko if: ui.id == "LongWalk" -->
-					<div>
-						<label>Bubbler</label>
-						<select data-bind="options: ui.long_walk_bubbler_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_bubbler"></select>
-					</div>
-					<div>
-						<label>Leader</label>
-						<select data-bind="options: ui.long_walk_leader_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_leader"></select>
-					</div>
-					<div>
-						<label>Escort</label>
-						<select data-bind="options: ui.long_walk_escort_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_escort"></select>
-					</div>
-					<div>
-						<label>Squadmate #1</label>
-						<select data-bind="options: ui.long_walk_squadmate_1_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_squadmate_1"></select>
-					</div>
-					<div>
-						<label>Squadmate #2</label>
-						<select data-bind="options: ui.long_walk_squadmate_2_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_squadmate_2"></select>
-					</div>
+					<form role="form">
+						<div class="form-group">
+							<label>Bubbler</label>
+							<select class="form-control" data-bind="options: ui.long_walk_bubbler_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_bubbler"></select>
+						</div>
+						<div class="form-group">
+							<label>Leader</label>
+							<select class="form-control" data-bind="options: ui.long_walk_leader_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_leader"></select>
+						</div>
+						<div class="form-group">
+							<label>Escort</label>
+							<select class="form-control" data-bind="options: ui.long_walk_escort_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_escort"></select>
+						</div>
+						<div class="form-group">
+							<label>Squadmate #1</label>
+							<select class="form-control" data-bind="options: ui.long_walk_squadmate_1_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_squadmate_1"></select>
+						</div>
+						<div class="form-group">
+							<label>Squadmate #2</label>
+							<select class="form-control" data-bind="options: ui.long_walk_squadmate_2_candidates, optionsText: ui.renderTeammateForSelect, value: ui.long_walk_squadmate_2"></select>
+						</div>
+					</form>
 				<!-- /ko -->
 
 				<!-- ko if: ui.id == "Boss" -->
-					<div>
-						<label>Squadmate #1</label>
-						<select data-bind="options: ui.boss_squadmate_1_candidates, optionsText: ui.renderTeammateForSelect, value: ui.boss_squadmate_1"></select>
-					</div>
-					<div>
-						<label>Squadmate #2</label>
-						<select data-bind="options: ui.boss_squadmate_2_candidates, optionsText: ui.renderTeammateForSelect, value: ui.boss_squadmate_2"></select>
-					</div>
+					<form role="form">
+						<div class="form-group">
+							<label>Squadmate #1</label>
+							<select class="form-control" data-bind="options: ui.boss_squadmate_1_candidates, optionsText: ui.renderTeammateForSelect, value: ui.boss_squadmate_1"></select>
+						</div>
+						<div class="form-group">
+							<label>Squadmate #2</label>
+							<select class="form-control" data-bind="options: ui.boss_squadmate_2_candidates, optionsText: ui.renderTeammateForSelect, value: ui.boss_squadmate_2"></select>
+						</div>
+					</form>
 				<!-- /ko -->
 
 				<!-- ko if: ui.id == "Summary" -->

@@ -475,9 +475,11 @@ var App;
                     this.ui = new App.ME2.Stages.UI.Setup(this);
                 }
                 Setup.prototype.bootstrapTeammates = function () {
-                    this.teammates = _.map(this.stager.app.getHenchmen(), function (henchman) {
+                    this.teammates = _.chain(this.stager.app.getHenchmen()).map(function (henchman) {
                         return new App.ME2.Teammate(henchman, henchman.is_essential, false, false);
-                    });
+                    }).sortBy(function (teammate) {
+                        return teammate.henchman.name;
+                    }).value();
                 };
 
                 Setup.prototype.setup = function (teammates) {
@@ -751,8 +753,12 @@ var App;
                         this.id = UI.StageIDs[4 /* Boss */];
                         this.label = "Boss";
                         this.teammate_fields = {
-                            "boss_squadmate_1": UI.Stage.genericTeammateFieldFilter,
-                            "boss_squadmate_2": UI.Stage.genericTeammateFieldFilter
+                            "boss_squadmate_1": function (teammate) {
+                                return !teammate.is_dead && !teammate.hasRole(5 /* LongWalkEscort */);
+                            },
+                            "boss_squadmate_2": function (teammate) {
+                                return !teammate.is_dead && !teammate.hasRole(5 /* LongWalkEscort */);
+                            }
                         };
                         this.bootstrapTeammateFields();
                     }

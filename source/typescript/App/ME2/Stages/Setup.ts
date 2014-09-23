@@ -15,9 +15,11 @@ module App {
                 }
 
                 private bootstrapTeammates (): void {
-                    this.teammates = _.map(this.stager.app.getHenchmen(), (henchman: App.ME2.Henchman): App.ME2.Teammate => {
+                    this.teammates = _.chain<App.ME2.Henchman>(this.stager.app.getHenchmen()).map<App.ME2.Teammate>((henchman: App.ME2.Henchman): App.ME2.Teammate => {
                         return new App.ME2.Teammate(henchman, henchman.is_essential, false, false);
-                    });
+                    }).sortBy((teammate: App.ME2.Teammate) => {
+                        return teammate.henchman.name;
+                    }).value();
                 }
 
                 public setup (teammates: App.ME2.Teammate[]): void {
