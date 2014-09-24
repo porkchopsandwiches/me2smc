@@ -494,7 +494,7 @@ var App;
                 };
 
                 Setup.prototype.isEvaluatable = function () {
-                    return true;
+                    return this.ui.is_evaluatable();
                 };
                 return Setup;
             })(Stages.Stage);
@@ -903,6 +903,18 @@ var App;
                                 }
                             },
                             owner: this
+                        });
+
+                        this.is_evaluatable = ko.pureComputed(function () {
+                            var is_evaluatable;
+
+                            is_evaluatable = _.filter(_this.teammates, function (teammate) {
+                                return teammate.is_recruited();
+                            }).length >= 8;
+
+                            console.log("checking is evaluatable", is_evaluatable);
+
+                            return is_evaluatable;
                         });
                     };
 

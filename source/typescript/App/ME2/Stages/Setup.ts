@@ -12,6 +12,7 @@ module App {
                 constructor () {
                     super();
                     this.ui = new App.ME2.Stages.UI.Setup(this);
+
                 }
 
                 private bootstrapTeammates (): void {
@@ -35,7 +36,7 @@ module App {
                 }
 
                 public isEvaluatable (): boolean {
-                    return true;
+                    return this.ui.is_evaluatable();
                 }
             }
         }

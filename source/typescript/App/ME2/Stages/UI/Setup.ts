@@ -15,6 +15,7 @@ module App {
                     public normandy: App.ME2.UI.Normandy;
                     public all_recruited: KnockoutComputed<boolean>;
                     public all_loyal: KnockoutComputed<boolean>;
+                    //public is_evaluatable: KnockoutComputed<boolean>;
 
                     constructor (stage: App.ME2.Stages.IStage) {
                         super(stage);
@@ -68,6 +69,18 @@ module App {
                                 }
                             },
                             owner: this
+                        });
+
+                        this.is_evaluatable = ko.pureComputed((): boolean => {
+                            var is_evaluatable: boolean;
+
+                            is_evaluatable = _.filter(this.teammates, (teammate: App.ME2.UI.Teammate): boolean => {
+                                return teammate.is_recruited();
+                            }).length >= 8;
+
+                            console.log("checking is evaluatable", is_evaluatable);
+
+                            return is_evaluatable;
                         });
                     }
 

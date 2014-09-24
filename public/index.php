@@ -134,8 +134,6 @@ $config = require("../config/config.php");
 				<!-- ko if: ui.id == "Summary" -->
 					<div>Shepard lives?: <span data-bind="text: ui.shepard_lives"></span></div>
 				<!-- /ko -->
-
-
 			<!-- /ko -->
 
 			<!-- ko with: stager.ui.teammates -->
@@ -173,8 +171,7 @@ $config = require("../config/config.php");
 				<!-- /ko -->
 			<!-- /ko -->
 
-			<button class="btn btn-primary" data-bind="click: function () { $root.stager.nextStage() }">Next</button>
-
+			<button class="btn btn-primary" data-bind="enable: $root.stager.ui.stage().ui.is_evaluatable, click: function () { $root.stager.nextStage() }">Next</button>
 		</div>
 
 		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>

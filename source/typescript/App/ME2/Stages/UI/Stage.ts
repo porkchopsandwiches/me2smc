@@ -31,6 +31,7 @@ module App {
                     setupTeammateField: (field: string) => void;
                     setupTeammateFields: () => void;
                     teammate_fields: ITeammateFields;
+                    is_evaluatable: KnockoutComputed<boolean>;
                 }
 
                 export class Stage implements IStage {
@@ -38,6 +39,7 @@ module App {
                     public label: string;
                     public stage: App.ME2.Stages.IStage;
                     public teammate_fields: ITeammateFields = {};
+                    public is_evaluatable: KnockoutComputed<boolean>;
 
                     // Generic filter only requires the teammate be alive
                     static genericTeammateFieldFilter (teammate: App.ME2.Teammate): boolean {
