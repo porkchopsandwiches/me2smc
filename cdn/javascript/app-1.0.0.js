@@ -5,18 +5,18 @@ var App;
             this.normandy = new App.ME2.Normandy(true, true, true);
 
             this.henchmen = [
-                new App.ME2.Henchman(0 /* Garrus */, "Garrus Vakarian", true, 3, 5, 0, 8, 11, 10, 2, false, false, true, false, true, true, false, true, true),
-                new App.ME2.Henchman(1 /* Grunt */, "Grunt", false, 3, 0, 0, 6, 9, 8, 4, false, false, false, false, true, false, false, true, true),
-                new App.ME2.Henchman(12 /* Zaeed */, "Zaeed Masani", false, 3, 1, 0, 7, 10, 2, 10, false, false, false, false, true, false, false, true, true),
-                new App.ME2.Henchman(6 /* Miranda */, "Miranda Lawson", true, 1, 7, 0, 0, 0, -1, 11, false, false, true, true, false, false, true, true, true),
-                new App.ME2.Henchman(3 /* Jacob */, "Jacob Taylor", true, 1, 6, 0, 0, 0, 6, 7, false, false, true, false, true, true, true, true, true),
-                new App.ME2.Henchman(9 /* Samara */, "Samara", false, 1, 4, 0, 4, 7, 7, 5, false, true, false, false, true, false, true, true, true),
-                new App.ME2.Henchman(11 /* Thane */, "Thane", false, 1, 2, 0, 9, 12, 12, 0, false, false, false, false, true, true, true, true, true),
-                new App.ME2.Henchman(5 /* Legion */, "Legion", false, 1, 3, 0, 11, 0, 9, 3, true, false, false, false, true, true, false, true, true),
-                new App.ME2.Henchman(4 /* Kasumi */, "Kasumi Goto", false, 0, 9, 0, 12, 0, 3, 9, true, false, false, false, true, true, false, true, true),
-                new App.ME2.Henchman(10 /* Tali */, "Tali'zorah", false, 0, 10, 0, 10, 0, 4, 8, true, false, false, false, true, true, false, true, true),
-                new App.ME2.Henchman(2 /* Jack */, "Jack", true, 0, 8, 12, 5, 8, 11, 1, false, true, false, false, true, false, true, true, true),
-                new App.ME2.Henchman(7 /* Mordin */, "Mordin Solus", true, 0, 11, 0, 0, 0, 5, 6, false, false, false, false, true, true, false, true, true)
+                new App.ME2.Henchman(0 /* Garrus */, "Garrus Vakarian", true, 3, 5, 0, 8, 11, 10, 2, 11, 8, 0, false, false, true, false, true, true, false, true, true),
+                new App.ME2.Henchman(1 /* Grunt */, "Grunt", false, 3, 0, 0, 6, 9, 8, 4, 9, 12, 0, false, false, false, false, true, false, false, true, true),
+                new App.ME2.Henchman(2 /* Jack */, "Jack", true, 0, 8, 12, 5, 8, 11, 1, 12, 0, 8, false, true, false, false, true, false, true, true, true),
+                new App.ME2.Henchman(3 /* Jacob */, "Jacob Taylor", true, 1, 6, 0, 0, 0, 6, 7, 8, 0, 10, false, false, true, false, true, true, true, true, true),
+                new App.ME2.Henchman(4 /* Kasumi */, "Kasumi Goto", false, 0, 9, 0, 12, 0, 3, 9, 4, 0, 9, true, false, false, false, true, true, false, true, true),
+                new App.ME2.Henchman(5 /* Legion */, "Legion", false, 1, 3, 0, 11, 0, 9, 3, 10, 9, 0, true, false, false, false, true, true, false, true, true),
+                new App.ME2.Henchman(6 /* Miranda */, "Miranda Lawson", true, 1, 7, 0, 0, 0, -1, 11, 2, 13, 0, false, false, true, true, false, false, true, true, true),
+                new App.ME2.Henchman(7 /* Mordin */, "Mordin Solus", true, 0, 11, 0, 0, 0, 5, 6, 6, 10, 0, false, false, false, false, true, true, false, true, true),
+                new App.ME2.Henchman(9 /* Samara */, "Samara", false, 1, 4, 0, 4, 7, 7, 5, 7, 0, 12, false, true, false, false, true, false, true, true, true),
+                new App.ME2.Henchman(10 /* Tali */, "Tali'zorah", false, 0, 10, 0, 10, 0, 4, 8, 5, 0, 11, true, false, false, false, true, true, false, true, true),
+                new App.ME2.Henchman(11 /* Thane */, "Thane", false, 1, 2, 0, 9, 12, 12, 0, 13, 0, 13, false, false, false, false, true, true, true, true, true),
+                new App.ME2.Henchman(12 /* Zaeed */, "Zaeed Masani", false, 3, 1, 0, 7, 10, 2, 10, 3, 11, 0, false, false, false, false, true, false, false, true, true)
             ];
 
             this.stager = new App.ME2.Stages.Stager(this);
@@ -32,16 +32,80 @@ var App;
             });
         };
 
-        Application.prototype.formatTeammateDeathCause = function (death_cause) {
-            return App.ME2.TeammateDeathCauses[death_cause];
-        };
-
         Application.prototype.formatTeammateRole = function (role) {
+            switch (role) {
+                case 0 /* OcculusSquadmate */:
+                    return "Occulus Squadmate";
+                case 3 /* VentsLeader */:
+                    return "Vents Leader";
+                case 2 /* VentsVenter */:
+                    return "Vents Tech Expert";
+                case 1 /* VentsSquadmate */:
+                    return "Vents Squadmate";
+                case 6 /* LongWalkBubbler */:
+                    return "Long Walk Biotic Expert";
+                case 5 /* LongWalkEscort */:
+                    return "Escort";
+                case 7 /* LongWalkLeader */:
+                    return "Long Walk Leader";
+                case 4 /* LongWalkSquadmate */:
+                    return "Long Walk Squadmate";
+                case 8 /* BossSquadmate */:
+                    return "Boss Squadmate";
+                case 9 /* HeldTheLine */:
+                    return "Held the line";
+            }
+
             return App.ME2.TeammateRoles[role];
         };
 
         Application.prototype.formatYesNo = function (value) {
             return value ? "Yes" : "No";
+        };
+
+        Application.prototype.renderTeammateForSelect = function (teammate) {
+            if (teammate.henchman) {
+                return teammate.henchman.name;
+            } else {
+                return "-- None --";
+            }
+        };
+
+        Application.prototype.renderTeammateName = function (teammate) {
+            console.log("render teammate", teammate);
+
+            if (teammate && teammate.henchman) {
+                return teammate.henchman.name;
+            } else {
+                return "-- None -- ";
+            }
+        };
+
+        Application.prototype.formatTeammateDeathCause = function (death_cause) {
+            switch (death_cause) {
+                case 0 /* ArmourFailure */:
+                    return "Advanced Armour not acquired";
+                case 1 /* ShieldingFailure */:
+                    return "Advanced Shielding not acquired";
+                case 2 /* CannonFailure */:
+                    return "Thanix Cannon not acquired";
+                case 4 /* VentsBadLeader */:
+                    return "Bad vents leader";
+                case 3 /* VentsBadVenter */:
+                    return "Bad vents choice";
+                case 7 /* Escort */:
+                    return "Disloyal escort";
+                case 5 /* LongWalkBadBubbler */:
+                    return "Bad long walk bubbler";
+                case 6 /* LongWalkBadLeader */:
+                    return "Bad long walk leader";
+                case 8 /* Boss */:
+                    return "Disloyal Boss squadmate";
+                case 9 /* HoldTheLine */:
+                    return "Failed to hold the line";
+                default:
+                    return App.ME2.TeammateDeathCauses[death_cause];
+            }
         };
         return Application;
     })();
@@ -68,7 +132,7 @@ var App;
         var HenchmanIDs = ME2.HenchmanIDs;
 
         var Henchman = (function () {
-            function Henchman(id, name, is_essential, htl_value, htl_death_priority, armour_death_priority, shielding_death_priority, cannon_death_priority, long_walk_death_priority, cutscene_rescue_priority, is_tech_expert, is_biotic_expert, is_leader, is_super_leader, is_escort_candidate, is_vent_candidate, is_bubble_candidate, is_vent_leader_candidate, is_long_walk_leader_candidate) {
+            function Henchman(id, name, is_essential, htl_value, htl_death_priority, armour_death_priority, shielding_death_priority, cannon_death_priority, long_walk_death_priority, cutscene_rescue_priority, defence_report_priority, keep_base_priority, destroy_base_priority, is_tech_expert, is_biotic_expert, is_leader, is_super_leader, is_escort_candidate, is_vent_candidate, is_bubble_candidate, is_vent_leader_candidate, is_long_walk_leader_candidate) {
                 if (typeof name === "undefined") { name = ""; }
                 if (typeof is_essential === "undefined") { is_essential = false; }
                 if (typeof htl_value === "undefined") { htl_value = 0; }
@@ -78,6 +142,9 @@ var App;
                 if (typeof cannon_death_priority === "undefined") { cannon_death_priority = 0; }
                 if (typeof long_walk_death_priority === "undefined") { long_walk_death_priority = 0; }
                 if (typeof cutscene_rescue_priority === "undefined") { cutscene_rescue_priority = 0; }
+                if (typeof defence_report_priority === "undefined") { defence_report_priority = 0; }
+                if (typeof keep_base_priority === "undefined") { keep_base_priority = 0; }
+                if (typeof destroy_base_priority === "undefined") { destroy_base_priority = 0; }
                 if (typeof is_tech_expert === "undefined") { is_tech_expert = false; }
                 if (typeof is_biotic_expert === "undefined") { is_biotic_expert = false; }
                 if (typeof is_leader === "undefined") { is_leader = false; }
@@ -88,20 +155,6 @@ var App;
                 if (typeof is_vent_leader_candidate === "undefined") { is_vent_leader_candidate = false; }
                 if (typeof is_long_walk_leader_candidate === "undefined") { is_long_walk_leader_candidate = false; }
                 this.name = "";
-                this.is_essential = false;
-                this.htl_value = 0;
-                this.htl_death_priority = 0;
-                this.shielding_death_priority = 0;
-                this.cutscene_rescue_priority = 0;
-                this.is_tech_expert = false;
-                this.is_biotic_expert = false;
-                this.is_leader = false;
-                this.is_super_leader = false;
-                this.is_escort_candidate = false;
-                this.is_vent_candidate = false;
-                this.is_bubble_candidate = false;
-                this.is_vent_leader_candidate = false;
-                this.is_long_walk_leader_candidate = false;
                 this.id = id;
                 this.name = name;
                 this.is_essential = is_essential;
@@ -112,6 +165,9 @@ var App;
                 this.cannon_death_priority = cannon_death_priority;
                 this.long_walk_death_priority = long_walk_death_priority;
                 this.cutscene_rescue_priority = cutscene_rescue_priority;
+                this.defence_report_priority = defence_report_priority;
+                this.keep_base_priority = keep_base_priority;
+                this.destroy_base_priority = destroy_base_priority;
                 this.is_tech_expert = is_tech_expert;
                 this.is_biotic_expert = is_biotic_expert;
                 this.is_leader = is_leader;
@@ -300,9 +356,9 @@ var App;
                 };
 
                 Stager.prototype.setStage = function (stage) {
+                    stage.setup(this.teammates);
                     this.stage = stage;
                     this.ui.stage(stage);
-                    stage.setup(this.teammates);
                 };
                 return Stager;
             })();
@@ -370,7 +426,7 @@ var App;
                 };
 
                 Occulus.prototype.isEvaluatable = function () {
-                    return !!this.occulus_squadmate_1 && !!this.occulus_squadmate_2;
+                    return this.ui.is_evaluatable();
                 };
                 return Occulus;
             })(Stages.Stage);
@@ -396,9 +452,10 @@ var App;
                     this.vent_venter.addRole(2 /* VentsVenter */);
                     this.vent_leader.addRole(3 /* VentsLeader */);
 
-                    if (this.vent_venter.henchman.is_tech_expert && this.vent_venter.is_loyal && this.vent_leader.henchman.is_leader && this.vent_leader.is_loyal) {
-                    } else {
-                        this.vent_venter.die(3 /* Vents */);
+                    if (!this.vent_venter.henchman.is_tech_expert || !this.vent_venter.is_loyal) {
+                        this.vent_venter.die(3 /* VentsBadVenter */);
+                    } else if (!this.vent_leader.henchman.is_leader || !this.vent_leader.is_loyal) {
+                        this.vent_venter.die(4 /* VentsBadLeader */);
                     }
 
                     return this.teammates;
@@ -433,21 +490,21 @@ var App;
                     this.long_walk_bubbler.addRole(6 /* LongWalkBubbler */);
 
                     if (!this.long_walk_escort.is_loyal) {
-                        this.long_walk_escort.die(5 /* Escort */);
+                        this.long_walk_escort.die(7 /* Escort */);
                     }
 
                     if (this.long_walk_bubbler.is_loyal && this.long_walk_bubbler.henchman.is_biotic_expert) {
                     } else {
                         if (this.long_walk_squadmate_1.henchman.long_walk_death_priority > this.long_walk_squadmate_2.henchman.long_walk_death_priority) {
-                            this.long_walk_squadmate_1.die(4 /* LongWalk */);
+                            this.long_walk_squadmate_1.die(5 /* LongWalkBadBubbler */);
                         } else {
-                            this.long_walk_squadmate_2.die(4 /* LongWalk */);
+                            this.long_walk_squadmate_2.die(5 /* LongWalkBadBubbler */);
                         }
                     }
 
                     if (this.long_walk_leader.henchman.is_long_walk_leader_candidate && (this.long_walk_leader.is_loyal || this.long_walk_leader.henchman.is_super_leader)) {
                     } else {
-                        this.long_walk_leader.die(4 /* LongWalk */);
+                        this.long_walk_leader.die(6 /* LongWalkBadLeader */);
                     }
 
                     return this.teammates;
@@ -537,11 +594,13 @@ var App;
             TeammateDeathCauses[TeammateDeathCauses["ArmourFailure"] = 0] = "ArmourFailure";
             TeammateDeathCauses[TeammateDeathCauses["ShieldingFailure"] = 1] = "ShieldingFailure";
             TeammateDeathCauses[TeammateDeathCauses["CannonFailure"] = 2] = "CannonFailure";
-            TeammateDeathCauses[TeammateDeathCauses["Vents"] = 3] = "Vents";
-            TeammateDeathCauses[TeammateDeathCauses["LongWalk"] = 4] = "LongWalk";
-            TeammateDeathCauses[TeammateDeathCauses["Escort"] = 5] = "Escort";
-            TeammateDeathCauses[TeammateDeathCauses["Boss"] = 6] = "Boss";
-            TeammateDeathCauses[TeammateDeathCauses["HoldTheLine"] = 7] = "HoldTheLine";
+            TeammateDeathCauses[TeammateDeathCauses["VentsBadVenter"] = 3] = "VentsBadVenter";
+            TeammateDeathCauses[TeammateDeathCauses["VentsBadLeader"] = 4] = "VentsBadLeader";
+            TeammateDeathCauses[TeammateDeathCauses["LongWalkBadBubbler"] = 5] = "LongWalkBadBubbler";
+            TeammateDeathCauses[TeammateDeathCauses["LongWalkBadLeader"] = 6] = "LongWalkBadLeader";
+            TeammateDeathCauses[TeammateDeathCauses["Escort"] = 7] = "Escort";
+            TeammateDeathCauses[TeammateDeathCauses["Boss"] = 8] = "Boss";
+            TeammateDeathCauses[TeammateDeathCauses["HoldTheLine"] = 9] = "HoldTheLine";
         })(ME2.TeammateDeathCauses || (ME2.TeammateDeathCauses = {}));
         var TeammateDeathCauses = ME2.TeammateDeathCauses;
 
@@ -647,73 +706,78 @@ var App;
 
                 var Stage = (function () {
                     function Stage(stage) {
-                        this.teammate_fields = {};
+                        this.teammate_fields = [];
                         this.stage = stage;
                     }
                     Stage.genericTeammateFieldFilter = function (teammate) {
                         return !teammate.is_dead;
                     };
 
+                    Stage.prototype.getTeammateFieldByName = function (name) {
+                        return _.find(this.teammate_fields, function (field) {
+                            return field.name === name;
+                        });
+                    };
+
                     Stage.prototype.getTeammateCandidatesFor = function (field) {
                         var _this = this;
                         var candidates;
-                        var found;
 
-                        candidates = _.filter(this.stage.teammates, this.teammate_fields[field]);
+                        candidates = _.filter(this.stage.teammates, field.filter);
 
                         candidates = _.filter(candidates, function (candidate) {
-                            found = false;
-
-                            _.each(_this.teammate_fields, function (filter, key) {
-                                if (key !== field && _this.stage[key] === candidate) {
-                                    found = true;
-                                }
+                            return !_.find(_this.teammate_fields, function (other_field) {
+                                return other_field.name !== field.name && _this.stage[other_field.name] === candidate;
                             });
-
-                            return !found;
                         });
+
+                        candidates.unshift(Stage.no_teammate);
 
                         return candidates;
                     };
 
-                    Stage.prototype.bootstrapTeammateField = function (field) {
-                        var _this = this;
-                        this[field] = ko.observable(undefined);
-                        this[field + "_candidates"] = ko.forcibleComputed(function () {
-                            return _this.getTeammateCandidatesFor(field);
-                        });
-                    };
-
                     Stage.prototype.bootstrapTeammateFields = function () {
                         var _this = this;
-                        _.each(_.keys(this.teammate_fields), function (field) {
-                            _this.bootstrapTeammateField(field);
-                        });
-                    };
-
-                    Stage.prototype.setupTeammateField = function (field) {
-                        var _this = this;
-                        this[field].subscribe(function (new_value) {
-                            _this.stage[field] = new_value;
-
-                            _.each(_this.teammate_fields, function (filter, key) {
-                                if (key !== field) {
-                                    _this[key + "_candidates"].evaluateImmediate();
-                                }
+                        _.each(this.teammate_fields, function (field) {
+                            _this[field.name] = ko.observable(undefined);
+                            _this[field.name + "_candidates"] = ko.forcibleComputed(function () {
+                                return _this.getTeammateCandidatesFor(field);
                             });
                         });
-
-                        this[field](this.stage[field]);
                     };
 
                     Stage.prototype.setupTeammateFields = function () {
                         var _this = this;
-                        _.each(_.keys(this.teammate_fields), function (field) {
-                            _this.setupTeammateField(field);
+                        _.each(this.teammate_fields, function (field) {
+                            _this[field.name].subscribe(function (new_value) {
+                                _this.stage[field.name] = new_value;
+
+                                _.each(_this.teammate_fields, function (other_field) {
+                                    if (other_field.name !== field.name) {
+                                        _this[other_field.name + "_candidates"].evaluateImmediate();
+                                    }
+                                });
+                            });
+
+                            _this[field.name](_this.stage[field.name]);
                         });
 
-                        _.each(_.keys(this.teammate_fields), function (field) {
-                            _this[field + "_candidates"].evaluateImmediate();
+                        _.each(this.teammate_fields, function (field) {
+                            _this[field.name + "_candidates"].evaluateImmediate();
+                        });
+                    };
+
+                    Stage.prototype.linkIsEvaluatableToTeammateFields = function () {
+                        var _this = this;
+                        this.is_evaluatable = ko.pureComputed(function () {
+                            var observable;
+                            var teammate;
+
+                            return !_.find(_this.teammate_fields, function (field) {
+                                observable = _this[field.name];
+                                teammate = observable();
+                                return teammate ? !teammate.henchman : true;
+                            });
                         });
                     };
 
@@ -725,12 +789,9 @@ var App;
                         });
                     };
 
-                    Stage.prototype.renderTeammateForSelect = function (teammate) {
-                        return teammate.henchman.name;
-                    };
-
                     Stage.prototype.setup = function () {
                     };
+                    Stage.no_teammate = new App.ME2.Teammate();
                     return Stage;
                 })();
                 UI.Stage = Stage;
@@ -752,18 +813,25 @@ var App;
                         _super.call(this, stage);
                         this.id = UI.StageIDs[4 /* Boss */];
                         this.label = "Boss";
-                        this.teammate_fields = {
-                            "boss_squadmate_1": function (teammate) {
-                                return !teammate.is_dead && !teammate.hasRole(5 /* LongWalkEscort */);
+                        this.teammate_fields = [
+                            {
+                                name: "boss_squadmate_1",
+                                filter: function (teammate) {
+                                    return !teammate.is_dead && !teammate.hasRole(5 /* LongWalkEscort */);
+                                }
                             },
-                            "boss_squadmate_2": function (teammate) {
-                                return !teammate.is_dead && !teammate.hasRole(5 /* LongWalkEscort */);
+                            {
+                                name: "boss_squadmate_2",
+                                filter: function (teammate) {
+                                    return !teammate.is_dead && !teammate.hasRole(5 /* LongWalkEscort */);
+                                }
                             }
-                        };
+                        ];
                         this.bootstrapTeammateFields();
                     }
                     Boss.prototype.setup = function () {
                         this.setupTeammateFields();
+                        this.linkIsEvaluatableToTeammateFields();
                     };
                     return Boss;
                 })(UI.Stage);
@@ -786,23 +854,39 @@ var App;
                         _super.call(this, stage);
                         this.id = UI.StageIDs[3 /* LongWalk */];
                         this.label = "Long Walk";
-                        this.teammate_fields = {
-                            "long_walk_bubbler": function (teammate) {
-                                return !teammate.is_dead && teammate.henchman.is_bubble_candidate;
+                        this.teammate_fields = [
+                            {
+                                name: "long_walk_bubbler",
+                                filter: function (teammate) {
+                                    return !teammate.is_dead && teammate.henchman.is_bubble_candidate;
+                                }
                             },
-                            "long_walk_leader": function (teammate) {
-                                return !teammate.is_dead && teammate.henchman.is_long_walk_leader_candidate;
+                            {
+                                name: "long_walk_leader",
+                                filter: function (teammate) {
+                                    return !teammate.is_dead && teammate.henchman.is_long_walk_leader_candidate;
+                                }
                             },
-                            "long_walk_escort": function (teammate) {
-                                return !teammate.is_dead && teammate.henchman.is_escort_candidate;
+                            {
+                                name: "long_walk_escort",
+                                filter: function (teammate) {
+                                    return !teammate.is_dead && teammate.henchman.is_escort_candidate;
+                                }
                             },
-                            "long_walk_squadmate_1": UI.Stage.genericTeammateFieldFilter,
-                            "long_walk_squadmate_2": UI.Stage.genericTeammateFieldFilter
-                        };
+                            {
+                                name: "long_walk_squadmate_1",
+                                filter: UI.Stage.genericTeammateFieldFilter
+                            },
+                            {
+                                name: "long_walk_squadmate_2",
+                                filter: UI.Stage.genericTeammateFieldFilter
+                            }
+                        ];
                         this.bootstrapTeammateFields();
                     }
                     LongWalk.prototype.setup = function () {
                         this.setupTeammateFields();
+                        this.linkIsEvaluatableToTeammateFields();
                     };
                     return LongWalk;
                 })(UI.Stage);
@@ -825,14 +909,21 @@ var App;
                         _super.call(this, stage);
                         this.id = UI.StageIDs[1 /* Occulus */];
                         this.label = "Occulus";
-                        this.teammate_fields = {
-                            "occulus_squadmate_1": UI.Stage.genericTeammateFieldFilter,
-                            "occulus_squadmate_2": UI.Stage.genericTeammateFieldFilter
-                        };
+                        this.teammate_fields = [
+                            {
+                                name: "occulus_squadmate_1",
+                                filter: UI.Stage.genericTeammateFieldFilter
+                            },
+                            {
+                                name: "occulus_squadmate_2",
+                                filter: UI.Stage.genericTeammateFieldFilter
+                            }
+                        ];
                         this.bootstrapTeammateFields();
                     }
                     Occulus.prototype.setup = function () {
                         this.setupTeammateFields();
+                        this.linkIsEvaluatableToTeammateFields();
                     };
                     return Occulus;
                 })(UI.Stage);
@@ -949,20 +1040,33 @@ var App;
                         _super.call(this, stage);
                         this.id = UI.StageIDs[2 /* Vents */];
                         this.label = "Vents";
-                        this.teammate_fields = {
-                            "vent_squadmate_1": UI.Stage.genericTeammateFieldFilter,
-                            "vent_squadmate_2": UI.Stage.genericTeammateFieldFilter,
-                            "vent_venter": function (teammate) {
-                                return !teammate.is_dead && teammate.henchman.is_vent_candidate;
+                        this.teammate_fields = [
+                            {
+                                name: "vent_squadmate_1",
+                                filter: UI.Stage.genericTeammateFieldFilter
                             },
-                            "vent_leader": function (teammate) {
-                                return !teammate.is_dead && teammate.henchman.is_vent_leader_candidate;
+                            {
+                                name: "vent_squadmate_2",
+                                filter: UI.Stage.genericTeammateFieldFilter
+                            },
+                            {
+                                name: "vent_venter",
+                                filter: function (teammate) {
+                                    return !teammate.is_dead && teammate.henchman.is_vent_candidate;
+                                }
+                            },
+                            {
+                                name: "vent_leader",
+                                filter: function (teammate) {
+                                    return !teammate.is_dead && teammate.henchman.is_vent_leader_candidate;
+                                }
                             }
-                        };
+                        ];
                         this.bootstrapTeammateFields();
                     }
                     Vents.prototype.setup = function () {
                         this.setupTeammateFields();
+                        this.linkIsEvaluatableToTeammateFields();
                     };
                     return Vents;
                 })(UI.Stage);
@@ -986,14 +1090,62 @@ var App;
                         this.id = UI.StageIDs[5 /* Summary */];
                         this.label = "Summary";
                         this.shepard_lives = ko.observable(undefined);
+                        this.shepard_pulled_up_by = ko.observable(undefined);
+                        this.defence_reporter = ko.observable(undefined);
+                        this.keep_base_advocate = ko.observable(undefined);
+                        this.destroy_base_advocate = ko.observable(undefined);
                     }
-                    Summary.prototype.setup = function () {
-                        var living_teammates;
-                        living_teammates = _.filter(this.stage.teammates, function (teammate) {
+                    Summary.prototype.getLivingTeammates = function () {
+                        return _.filter(this.stage.teammates, function (teammate) {
                             return !teammate.is_dead;
                         });
+                    };
 
-                        this.shepard_lives(living_teammates.length > 1);
+                    Summary.prototype.getShepardLives = function () {
+                        return this.getLivingTeammates().length > 1;
+                    };
+
+                    Summary.prototype.getShepardCatcher = function () {
+                        var living_teammates;
+                        var score;
+                        living_teammates = _.sortBy(this.getLivingTeammates(), function (teammate) {
+                            score = teammate.henchman.cutscene_rescue_priority + (teammate.hasRole(8 /* BossSquadmate */) ? 100 : 0);
+                            return score;
+                        });
+
+                        return living_teammates.length > 1 ? living_teammates.pop() : undefined;
+                    };
+
+                    Summary.prototype.getDefenceReporter = function () {
+                        return _.chain(this.stage.teammates).filter(function (teammate) {
+                            return teammate.hasRole(9 /* HeldTheLine */);
+                        }).sortBy(function (teammate) {
+                            return teammate.henchman.defence_report_priority;
+                        }).pop().value();
+                    };
+
+                    Summary.prototype.getKeepBaseAdvocate = function () {
+                        return _.chain(this.stage.teammates).filter(function (teammate) {
+                            return teammate.hasRole(8 /* BossSquadmate */) && teammate.henchman.keep_base_priority > 0;
+                        }).sortBy(function (teammate) {
+                            return teammate.henchman.keep_base_priority;
+                        }).pop().value();
+                    };
+
+                    Summary.prototype.getDestroyBaseAdvocate = function () {
+                        return _.chain(this.stage.teammates).filter(function (teammate) {
+                            return teammate.hasRole(8 /* BossSquadmate */) && teammate.henchman.destroy_base_priority > 0;
+                        }).sortBy(function (teammate) {
+                            return teammate.henchman.destroy_base_priority;
+                        }).pop().value();
+                    };
+
+                    Summary.prototype.setup = function () {
+                        this.defence_reporter(this.getDefenceReporter());
+                        this.shepard_lives(this.getShepardLives());
+                        this.shepard_pulled_up_by(this.getShepardCatcher());
+                        this.keep_base_advocate(this.getKeepBaseAdvocate());
+                        this.destroy_base_advocate(this.getDestroyBaseAdvocate());
                     };
                     return Summary;
                 })(UI.Stage);
@@ -1178,10 +1330,10 @@ var App;
                     this.boss_squadmate_2.addRole(8 /* BossSquadmate */);
 
                     if (!this.boss_squadmate_1.is_loyal) {
-                        this.boss_squadmate_1.die(6 /* Boss */);
+                        this.boss_squadmate_1.die(8 /* Boss */);
                     }
                     if (!this.boss_squadmate_2.is_loyal) {
-                        this.boss_squadmate_2.die(6 /* Boss */);
+                        this.boss_squadmate_2.die(8 /* Boss */);
                     }
 
                     htl_pool = _.filter(this.teammates, function (teammate) {
@@ -1204,7 +1356,7 @@ var App;
                         });
 
                         htl_pool.slice(-1 * this.getHTLDeathCount(htl_total, htl_pool.length)).forEach(function (teammate) {
-                            teammate.die(7 /* HoldTheLine */);
+                            teammate.die(9 /* HoldTheLine */);
                         });
                     }
 

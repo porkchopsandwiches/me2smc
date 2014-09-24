@@ -31,19 +31,34 @@ module App {
                     public long_walk_leader: KnockoutObservable<App.ME2.Teammate>;
                     public long_walk_leader_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
 
-                    public teammate_fields: ITeammateFields = {
-                        "long_walk_bubbler": (teammate: App.ME2.Teammate): boolean => {
-                            return !teammate.is_dead && teammate.henchman.is_bubble_candidate;
+                    public teammate_fields: ITeammateField[] = [
+                        {
+                            name: "long_walk_bubbler",
+                            filter: (teammate: App.ME2.Teammate): boolean => {
+                                return !teammate.is_dead && teammate.henchman.is_bubble_candidate;
+                            }
                         },
-                        "long_walk_leader": (teammate: App.ME2.Teammate): boolean => {
-                            return !teammate.is_dead && teammate.henchman.is_long_walk_leader_candidate;
+                        {
+                            name: "long_walk_leader",
+                            filter: (teammate: App.ME2.Teammate): boolean => {
+                                return !teammate.is_dead && teammate.henchman.is_long_walk_leader_candidate;
+                            }
                         },
-                        "long_walk_escort": (teammate: App.ME2.Teammate): boolean => {
-                            return !teammate.is_dead && teammate.henchman.is_escort_candidate;
+                        {
+                            name: "long_walk_escort",
+                            filter: (teammate: App.ME2.Teammate): boolean => {
+                                return !teammate.is_dead && teammate.henchman.is_escort_candidate;
+                            }
                         },
-                        "long_walk_squadmate_1": Stage.genericTeammateFieldFilter,
-                        "long_walk_squadmate_2": Stage.genericTeammateFieldFilter
-                    }
+                        {
+                            name: "long_walk_squadmate_1",
+                            filter: Stage.genericTeammateFieldFilter
+                        },
+                        {
+                            name: "long_walk_squadmate_2",
+                            filter: Stage.genericTeammateFieldFilter
+                        }
+                    ];
 
                     constructor (stage: App.ME2.Stages.IStage) {
                         super(stage);
@@ -52,6 +67,7 @@ module App {
 
                     public setup () {
                         this.setupTeammateFields();
+                        this.linkIsEvaluatableToTeammateFields();
                     }
                 }
             }

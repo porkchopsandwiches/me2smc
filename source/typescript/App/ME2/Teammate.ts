@@ -5,8 +5,10 @@ module App {
             ArmourFailure,
             ShieldingFailure,
             CannonFailure,
-            Vents,
-            LongWalk,
+            VentsBadVenter,
+            VentsBadLeader,
+            LongWalkBadBubbler,
+            LongWalkBadLeader,
             Escort,
             Boss,
             HoldTheLine
@@ -43,7 +45,7 @@ module App {
             public roles: TeammateRoles[] = [];
 
             constructor (
-                henchman: App.ME2.Henchman,
+                henchman?: App.ME2.Henchman,
                 is_recruited: boolean = false,
                 is_loyal: boolean = false,
                 is_dead: boolean = false

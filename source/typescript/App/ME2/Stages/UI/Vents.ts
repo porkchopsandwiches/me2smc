@@ -27,16 +27,28 @@ module App {
                     public vent_venter_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
                     public vent_leader: KnockoutObservable<App.ME2.Teammate>;
                     public vent_leader_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
-                    public teammate_fields: ITeammateFields = {
-                        "vent_squadmate_1": Stage.genericTeammateFieldFilter,
-                        "vent_squadmate_2": Stage.genericTeammateFieldFilter,
-                        "vent_venter": (teammate: App.ME2.Teammate): boolean => {
-                            return !teammate.is_dead && teammate.henchman.is_vent_candidate;
+                    public teammate_fields: ITeammateField[] = [
+                        {
+                            name: "vent_squadmate_1",
+                            filter: Stage.genericTeammateFieldFilter
                         },
-                        "vent_leader": (teammate: App.ME2.Teammate): boolean => {
-                            return !teammate.is_dead && teammate.henchman.is_vent_leader_candidate;
+                        {
+                            name: "vent_squadmate_2",
+                            filter: Stage.genericTeammateFieldFilter
+                        },
+                        {
+                            name: "vent_venter",
+                            filter: (teammate: App.ME2.Teammate): boolean => {
+                                return !teammate.is_dead && teammate.henchman.is_vent_candidate;
+                            }
+                        },
+                        {
+                            name: "vent_leader",
+                            filter: (teammate: App.ME2.Teammate): boolean => {
+                                return !teammate.is_dead && teammate.henchman.is_vent_leader_candidate;
+                            }
                         }
-                    }
+                    ];
 
                     constructor (stage: App.ME2.Stages.IStage) {
                         super(stage);
@@ -45,6 +57,7 @@ module App {
 
                     public setup () {
                         this.setupTeammateFields();
+                        this.linkIsEvaluatableToTeammateFields();
                     }
                 }
             }

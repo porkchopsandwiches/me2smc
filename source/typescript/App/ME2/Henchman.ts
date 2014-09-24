@@ -28,6 +28,9 @@ module App {
             cannon_death_priority: number;
             long_walk_death_priority: number;
             cutscene_rescue_priority: number;
+            defence_report_priority: number;
+            keep_base_priority: number;
+            destroy_base_priority: number;
             is_tech_expert: boolean;
             is_biotic_expert: boolean;
             is_leader: boolean;
@@ -42,23 +45,26 @@ module App {
         export class Henchman implements IHenchman {
             public id: HenchmanIDs;
             public name: string = "";
-            public is_essential: boolean = false;
-            public htl_value: number = 0;
-            public htl_death_priority: number = 0;
+            public is_essential: boolean;
+            public htl_value: number;
+            public htl_death_priority: number;
             public armour_death_priority: number;
-            public shielding_death_priority: number = 0;
+            public shielding_death_priority: number;
             public cannon_death_priority: number;
             public long_walk_death_priority: number;
-            public cutscene_rescue_priority: number = 0;
-            public is_tech_expert: boolean = false;
-            public is_biotic_expert: boolean = false;
-            public is_leader: boolean = false;
-            public is_super_leader: boolean = false;
-            public is_escort_candidate: boolean = false;
-            public is_vent_candidate: boolean = false;
-            public is_bubble_candidate: boolean = false;
-            public is_vent_leader_candidate: boolean = false;
-            public is_long_walk_leader_candidate: boolean = false;
+            public cutscene_rescue_priority: number;
+            public defence_report_priority: number;
+            public keep_base_priority: number;
+            public destroy_base_priority: number;
+            public is_tech_expert: boolean;
+            public is_biotic_expert: boolean;
+            public is_leader: boolean;
+            public is_super_leader: boolean;
+            public is_escort_candidate: boolean;
+            public is_vent_candidate: boolean;
+            public is_bubble_candidate: boolean;
+            public is_vent_leader_candidate: boolean;
+            public is_long_walk_leader_candidate: boolean;
 
             constructor (
                 id: HenchmanIDs,
@@ -71,6 +77,9 @@ module App {
                 cannon_death_priority: number = 0,
                 long_walk_death_priority: number = 0,
                 cutscene_rescue_priority: number = 0,
+                defence_report_priority: number = 0,
+                keep_base_priority: number = 0,
+                destroy_base_priority: number = 0,
                 is_tech_expert: boolean = false,
                 is_biotic_expert: boolean = false,
                 is_leader: boolean = false,
@@ -91,6 +100,9 @@ module App {
                 this.cannon_death_priority = cannon_death_priority;
                 this.long_walk_death_priority = long_walk_death_priority;
                 this.cutscene_rescue_priority = cutscene_rescue_priority;
+                this.defence_report_priority = defence_report_priority;
+                this.keep_base_priority = keep_base_priority;
+                this.destroy_base_priority = destroy_base_priority;
                 this.is_tech_expert = is_tech_expert;
                 this.is_biotic_expert = is_biotic_expert;
                 this.is_leader = is_leader;

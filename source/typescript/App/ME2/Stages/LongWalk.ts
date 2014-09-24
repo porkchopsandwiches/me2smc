@@ -39,16 +39,16 @@ module App {
                         // OK
                     } else {
                         if (this.long_walk_squadmate_1.henchman.long_walk_death_priority > this.long_walk_squadmate_2.henchman.long_walk_death_priority) {
-                            this.long_walk_squadmate_1.die(App.ME2.TeammateDeathCauses.LongWalk);
+                            this.long_walk_squadmate_1.die(App.ME2.TeammateDeathCauses.LongWalkBadBubbler);
                         } else {
-                            this.long_walk_squadmate_2.die(App.ME2.TeammateDeathCauses.LongWalk);
+                            this.long_walk_squadmate_2.die(App.ME2.TeammateDeathCauses.LongWalkBadBubbler);
                         }
                     }
 
                     if (this.long_walk_leader.henchman.is_long_walk_leader_candidate && (this.long_walk_leader.is_loyal || this.long_walk_leader.henchman.is_super_leader)) {
                         // Leader survives
                     } else {
-                        this.long_walk_leader.die(App.ME2.TeammateDeathCauses.LongWalk);
+                        this.long_walk_leader.die(App.ME2.TeammateDeathCauses.LongWalkBadLeader);
                     }
 
                     return this.teammates;

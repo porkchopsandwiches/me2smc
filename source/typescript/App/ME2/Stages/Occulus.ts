@@ -62,7 +62,8 @@ module App {
                 }
 
                 public isEvaluatable (): boolean {
-                    return !!this.occulus_squadmate_1 && !!this.occulus_squadmate_2;
+                    //return !!this.occulus_squadmate_1 && !!this.occulus_squadmate_2;
+                    return this.ui.is_evaluatable();
                 }
             }
         }

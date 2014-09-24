@@ -28,10 +28,10 @@ module App {
                     this.vent_venter.addRole(App.ME2.TeammateRoles.VentsVenter);
                     this.vent_leader.addRole(App.ME2.TeammateRoles.VentsLeader);
 
-                    if (this.vent_venter.henchman.is_tech_expert && this.vent_venter.is_loyal && this.vent_leader.henchman.is_leader && this.vent_leader.is_loyal) {
-                        // Everyone lives
-                    } else {
-                        this.vent_venter.die(App.ME2.TeammateDeathCauses.Vents);
+                    if (!this.vent_venter.henchman.is_tech_expert || !this.vent_venter.is_loyal) {
+                        this.vent_venter.die(App.ME2.TeammateDeathCauses.VentsBadVenter);
+                    } else if (!this.vent_leader.henchman.is_leader || !this.vent_leader.is_loyal) {
+                        this.vent_venter.die(App.ME2.TeammateDeathCauses.VentsBadLeader);
                     }
 
                     return this.teammates;

@@ -18,14 +18,20 @@ module App {
                     public boss_squadmate_2: KnockoutObservable<App.ME2.Teammate>;
                     public boss_squadmate_1_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
                     public boss_squadmate_2_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
-                    public teammate_fields: ITeammateFields = {
-                        "boss_squadmate_1": (teammate: App.ME2.Teammate): boolean => {
-                            return !teammate.is_dead && !teammate.hasRole(App.ME2.TeammateRoles.LongWalkEscort);
+                    public teammate_fields: ITeammateField[] = [
+                        {
+                            name: "boss_squadmate_1",
+                            filter: (teammate: App.ME2.Teammate): boolean => {
+                                return !teammate.is_dead && !teammate.hasRole(App.ME2.TeammateRoles.LongWalkEscort);
+                            }
                         },
-                        "boss_squadmate_2": (teammate: App.ME2.Teammate): boolean => {
-                            return !teammate.is_dead && !teammate.hasRole(App.ME2.TeammateRoles.LongWalkEscort);
+                        {
+                            name: "boss_squadmate_2",
+                            filter: (teammate: App.ME2.Teammate): boolean => {
+                                return !teammate.is_dead && !teammate.hasRole(App.ME2.TeammateRoles.LongWalkEscort);
+                            }
                         }
-                    }
+                    ];
 
                     constructor (stage: App.ME2.Stages.IStage) {
                         super(stage);
@@ -34,6 +40,7 @@ module App {
 
                     public setup () {
                         this.setupTeammateFields();
+                        this.linkIsEvaluatableToTeammateFields();
                     }
                 }
             }

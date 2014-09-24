@@ -128,9 +128,9 @@ module App {
                 }
 
                 private setStage (stage: App.ME2.Stages.IStage) {
+                    stage.setup(this.teammates);
                     this.stage = stage;
                     this.ui.stage(stage);
-                    stage.setup(this.teammates);
                 }
             }
         }

@@ -19,10 +19,16 @@ module App {
                     public occulus_squadmate_1_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
                     public occulus_squadmate_2_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
                     //public teammate_fields: string[] = ["occulus_squadmate_1", "occulus_squadmate_2"];
-                    public teammate_fields: ITeammateFields = {
-                        "occulus_squadmate_1": Stage.genericTeammateFieldFilter,
-                        "occulus_squadmate_2": Stage.genericTeammateFieldFilter
-                    }
+                    public teammate_fields: ITeammateField[] = [
+                        {
+                            name: "occulus_squadmate_1",
+                            filter: Stage.genericTeammateFieldFilter
+                        },
+                        {
+                            name: "occulus_squadmate_2",
+                            filter: Stage.genericTeammateFieldFilter
+                        }
+                    ];
 
                     constructor (stage: App.ME2.Stages.IStage) {
                         super(stage);
@@ -31,6 +37,7 @@ module App {
 
                     public setup () {
                         this.setupTeammateFields();
+                        this.linkIsEvaluatableToTeammateFields();
                     }
                 }
             }
