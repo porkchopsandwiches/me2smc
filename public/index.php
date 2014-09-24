@@ -204,7 +204,10 @@ $config = require("../config/config.php");
 							<tr>
 								<th>Teammates</th>
 								<th>Death</th>
-								<th>Roles</th>
+								<th>Occulus</th>
+								<th>Vents</th>
+								<th>Long Walk</th>
+								<th>Boss</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -216,12 +219,41 @@ $config = require("../config/config.php");
 											<span data-bind="text: $root.formatTeammateDeathCause(death_cause)"></span>
 										<!-- /ko -->
 									</td>
+
 									<td>
-										<ul class="roles">
-											<!-- ko foreach: roles -->
-												<li><span class="badge" data-bind="text: $root.formatTeammateRole($data)"></span></li>
-											<!-- /ko -->
-										</ul>
+										<!-- ko if: hasRole(App.ME2.TeammateRoles.OcculusSquadmate) -->
+											<span class="glyphicon glyphicon-user"></span>
+										<!-- /ko -->
+									</td>
+									<td>
+										<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsSquadmate) -->
+											<span class="glyphicon glyphicon-user"></span>
+										<!-- /ko -->
+										<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsVenter) -->
+											<span class="glyphicon glyphicon-star"></span>
+										<!-- /ko -->
+										<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsLeader) -->
+											<span class="glyphicon glyphicon-fire"></span>
+										<!-- /ko -->
+									</td>
+									<td>
+										<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkSquadmate) -->
+											<span class="glyphicon glyphicon-user"></span>
+										<!-- /ko -->
+										<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkBubbler) -->
+											<span class="glyphicon glyphicon-star"></span>
+										<!-- /ko -->
+										<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkLeader) -->
+											<span class="glyphicon glyphicon-fire"></span>
+										<!-- /ko -->
+										<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkEscort) -->
+											<span class="glyphicon glyphicon-heart-empty"></span>
+										<!-- /ko -->
+									</td>
+									<td>
+										<!-- ko if: hasRole(App.ME2.TeammateRoles.BossSquadmate) -->
+											<span class="glyphicon glyphicon-user"></span>
+										<!-- /ko -->
 									</td>
 								</tr>
 							<!-- /ko -->
