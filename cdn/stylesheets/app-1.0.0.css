@@ -1,4 +1,4 @@
-/**//*! me2smc 2014-09-23 14:42 */
+/**//*! me2smc 2014-09-25 09:30 */
 
 /*! normalize.css v3.0.1 | MIT License | git.io/normalize */
 html {
@@ -5311,6 +5311,8 @@ html,body{
     display: inline-block;
     padding-right: 1em;
     margin: 0; }
+.summary-table .glyphicon-heart {
+  color: #c00; }
 
 /*
 #app{

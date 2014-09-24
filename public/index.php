@@ -167,25 +167,31 @@ $config = require("../config/config.php");
 
 				<!-- ko if: ui.id == "Summary" -->
 					<form role="form">
-						<div class="form-group">
-							<label>Reports on defence?</label>
-							<p class="form-control-static" data-bind="text: $root.renderTeammateName(ui.defence_reporter())"></p>
-						</div>
-						<div class="form-group">
-							<label>Advocates keeping the base</label>
-							<p class="form-control-static" data-bind="text: $root.renderTeammateName(ui.keep_base_advocate())"></p>
-						</div>
-						<div class="form-group">
-							<label>Advocates destroying the base</label>
-							<p class="form-control-static" data-bind="text: $root.renderTeammateName(ui.destroy_base_advocate())"></p>
-						</div>
-						<div class="form-group">
-							<label>Shepard lives?</label>
-							<p class="form-control-static" data-bind="text: $root.formatYesNo(ui.shepard_lives)"></p>
-						</div>
-						<div class="form-group">
-							<label>Shepard pulled up by</label>
-							<p class="form-control-static" data-bind="text: $root.renderTeammateName(ui.shepard_pulled_up_by())"></p>
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Reports on defence?</label>
+									<p class="form-control-static" data-bind="text: $root.renderTeammateName(ui.defence_reporter())"></p>
+								</div>
+								<div class="form-group">
+									<label>Advocates keeping the base</label>
+									<p class="form-control-static" data-bind="text: $root.renderTeammateName(ui.keep_base_advocate())"></p>
+								</div>
+								<div class="form-group">
+									<label>Advocates destroying the base</label>
+									<p class="form-control-static" data-bind="text: $root.renderTeammateName(ui.destroy_base_advocate())"></p>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Shepard lives?</label>
+									<p class="form-control-static" data-bind="text: $root.formatYesNo(ui.shepard_lives)"></p>
+								</div>
+								<div class="form-group">
+									<label>Shepard pulled up by</label>
+									<p class="form-control-static" data-bind="text: $root.renderTeammateName(ui.shepard_pulled_up_by())"></p>
+								</div>
+							</div>
 						</div>
 					</form>
 				<!-- /ko -->
