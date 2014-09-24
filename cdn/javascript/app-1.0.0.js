@@ -72,8 +72,6 @@ var App;
         };
 
         Application.prototype.renderTeammateName = function (teammate) {
-            console.log("render teammate", teammate);
-
             if (teammate && teammate.henchman) {
                 return teammate.henchman.name;
             } else {
@@ -655,7 +653,6 @@ var App;
             Teammate.prototype.die = function (death_cause) {
                 this.is_dead = true;
                 this.death_cause = death_cause;
-                console.log("[Teammate]", this.henchman.name, "died because", TeammateDeathCauses[death_cause]);
                 return this;
             };
             return Teammate;
@@ -675,7 +672,6 @@ var App;
                         this.stage = ko.observable(undefined);
                         this.stager = stager;
                         this.teammates = ko.forcibleComputed(function () {
-                            console.log("getting stager teammates.");
                             return _this.stager.teammates;
                         });
                     }
@@ -1002,8 +998,6 @@ var App;
                             is_evaluatable = _.filter(_this.teammates, function (teammate) {
                                 return teammate.is_recruited();
                             }).length >= 8;
-
-                            console.log("checking is evaluatable", is_evaluatable);
 
                             return is_evaluatable;
                         });

@@ -97,17 +97,11 @@ module App {
                         htl_pool = _.sortBy(htl_pool, (teammate: App.ME2.Teammate): number => {
                             return teammate.henchman.htl_death_priority + (!teammate.is_loyal ? 100 : 0); // Unloyal team members are prioritised over loyal ones
                         });
-                        //console.log("death order", htl_pool);
 
                         htl_pool.slice(-1 * this.getHTLDeathCount(htl_total, htl_pool.length)).forEach((teammate: App.ME2.Teammate) => {
                             teammate.die(App.ME2.TeammateDeathCauses.HoldTheLine);
                         });
-
-
-                        //console.log("death section", htl_pool);
                     }
-
-
 
                     return this.teammates;
                 }

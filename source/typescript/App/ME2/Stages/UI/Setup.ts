@@ -78,8 +78,6 @@ module App {
                                 return teammate.is_recruited();
                             }).length >= 8;
 
-                            console.log("checking is evaluatable", is_evaluatable);
-
                             return is_evaluatable;
                         });
                     }

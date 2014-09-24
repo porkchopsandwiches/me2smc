@@ -86,9 +86,7 @@ module App {
             }
         }
 
-        public renderTeammateName (teammate: any) {
-            console.log("render teammate", teammate);
-
+        public renderTeammateName (teammate: any): string {
             if (teammate && teammate.henchman) {
                 return teammate.henchman.name;
             } else {

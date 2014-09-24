@@ -79,7 +79,6 @@ module App {
             public die (death_cause: TeammateDeathCauses): Teammate {
                 this.is_dead = true;
                 this.death_cause = death_cause;
-                console.log("[Teammate]", this.henchman.name, "died because", TeammateDeathCauses[death_cause]);
                 return this;
             }
         }

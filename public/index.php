@@ -270,9 +270,6 @@ $config = require("../config/config.php");
 		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.compat.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/async/0.9.0/async.js"></script>
-		<script src="../source/vendor/finch/finch.min.js"></script>
-		<script src="../source/vendor/rx/rx.all.js"></script>
 		<script src="../cdn/javascript/app-1.0.0.js"></script>
 		<script>
 			$(function () {
