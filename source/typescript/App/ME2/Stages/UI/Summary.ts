@@ -31,7 +31,7 @@ module App {
                     }
 
                     private getLivingTeammates (): App.ME2.Teammate[] {
-                        return _.filter(this.stage.teammates, (teammate: App.ME2.Teammate): boolean => {
+                        return _.filter(this.stage.stager.teammates, (teammate: App.ME2.Teammate): boolean => {
                             return !teammate.is_dead;
                         });
                     }
@@ -52,7 +52,7 @@ module App {
                     }
 
                     private getDefenceReporter (): App.ME2.Teammate {
-                        return _.chain<App.ME2.Teammate>(this.stage.teammates).filter((teammate: App.ME2.Teammate): boolean => {
+                        return _.chain<App.ME2.Teammate>(this.stage.stager.teammates).filter((teammate: App.ME2.Teammate): boolean => {
                             return teammate.hasRole(App.ME2.TeammateRoles.HeldTheLine);
                         }).sortBy((teammate: App.ME2.Teammate): number => {
                             return teammate.henchman.defence_report_priority;
@@ -60,7 +60,7 @@ module App {
                     }
 
                     private getKeepBaseAdvocate (): App.ME2.Teammate {
-                        return _.chain<App.ME2.Teammate>(this.stage.teammates).filter((teammate: App.ME2.Teammate): boolean => {
+                        return _.chain<App.ME2.Teammate>(this.stage.stager.teammates).filter((teammate: App.ME2.Teammate): boolean => {
                             return teammate.hasRole(App.ME2.TeammateRoles.BossSquadmate) && teammate.henchman.keep_base_priority > 0;
                         }).sortBy((teammate: App.ME2.Teammate): number => {
                             return teammate.henchman.keep_base_priority;
@@ -68,7 +68,7 @@ module App {
                     }
 
                     private getDestroyBaseAdvocate (): App.ME2.Teammate {
-                        return _.chain<App.ME2.Teammate>(this.stage.teammates).filter((teammate: App.ME2.Teammate): boolean => {
+                        return _.chain<App.ME2.Teammate>(this.stage.stager.teammates).filter((teammate: App.ME2.Teammate): boolean => {
                             return teammate.hasRole(App.ME2.TeammateRoles.BossSquadmate) && teammate.henchman.destroy_base_priority > 0;
                         }).sortBy((teammate: App.ME2.Teammate): number => {
                             return teammate.henchman.destroy_base_priority;

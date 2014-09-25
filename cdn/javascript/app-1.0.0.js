@@ -307,7 +307,8 @@ var App;
     (function (ME2) {
         (function (Stages) {
             var Stage = (function () {
-                function Stage() {
+                function Stage(stager) {
+                    this.stager = stager;
                 }
                 Stage.prototype.setStager = function (stager) {
                     this.stager = stager;
@@ -315,11 +316,9 @@ var App;
                 };
 
                 Stage.prototype.evaluate = function () {
-                    return this.teammates;
                 };
 
-                Stage.prototype.setup = function (teammates) {
-                    this.teammates = teammates;
+                Stage.prototype.setup = function () {
                     this.ui.setup();
                 };
 
@@ -345,30 +344,35 @@ var App;
                     this.freezes = [];
 
                     this.stages = [
-                        (new App.ME2.Stages.Setup()).setStager(this),
-                        (new App.ME2.Stages.Occulus()).setStager(this),
-                        (new App.ME2.Stages.Vents()).setStager(this),
-                        (new App.ME2.Stages.LongWalk()).setStager(this),
-                        (new App.ME2.Stages.Boss()).setStager(this),
-                        (new App.ME2.Stages.Summary()).setStager(this)
+                        new App.ME2.Stages.Setup(this),
+                        new App.ME2.Stages.Occulus(this),
+                        new App.ME2.Stages.Vents(this),
+                        new App.ME2.Stages.LongWalk(this),
+                        new App.ME2.Stages.Boss(this),
+                        new App.ME2.Stages.Summary(this)
                     ];
 
                     this.ui = new App.ME2.Stages.UI.Stager(this);
 
-                    this.setTeammates([]);
+                    this.bootstrapTeammates();
                 }
+                Stager.prototype.bootstrapTeammates = function () {
+                    this.teammates = _.chain(this.app.getHenchmen()).map(function (henchman) {
+                        return new App.ME2.Teammate(henchman, henchman.is_essential, false, false);
+                    }).sortBy(function (teammate) {
+                        return teammate.henchman.name;
+                    }).value();
+                };
+
                 Stager.prototype.getIndexOfStage = function (stage) {
                     return _.indexOf(this.stages, stage);
                 };
 
                 Stager.prototype.freezeStage = function (stage) {
-                    var teammates;
+                    this.stage.evaluate();
+                    this.ui.teammates.evaluateImmediate();
 
-                    teammates = this.stage.evaluate(this.teammates);
-
-                    this.freezes[this.getIndexOfStage(stage)] = this.freeze(teammates);
-
-                    this.setTeammates(teammates);
+                    this.freezes[this.getIndexOfStage(stage)] = this.freeze(this.teammates);
                 };
 
                 Stager.prototype.freeze = function (teammates) {
@@ -377,6 +381,7 @@ var App;
                     frozen = _.map(teammates, function (teammate) {
                         return {
                             henchman_id: teammate.henchman.id,
+                            henchman_name: teammate.henchman.name,
                             is_loyal: teammate.is_loyal,
                             is_recruited: teammate.is_recruited,
                             is_dead: teammate.is_dead,
@@ -407,7 +412,8 @@ var App;
                     if (this.stage) {
                         index = this.getIndexOfStage(this.stage) - 1;
                         this.setStage(this.stages[index]);
-                        this.setTeammates(this.defrost(this.freezes[index]));
+                        this.teammates = this.defrost(this.freezes[index]);
+                        this.ui.teammates.evaluateImmediate();
                     }
                 };
 
@@ -431,14 +437,8 @@ var App;
                     }
                 };
 
-                Stager.prototype.setTeammates = function (teammates) {
-                    this.teammates = teammates;
-
-                    this.ui.teammates.evaluateImmediate();
-                };
-
                 Stager.prototype.setStage = function (stage) {
-                    stage.setup(this.teammates);
+                    stage.setup();
                     this.stage = stage;
                     this.ui.stage(stage);
                 };
@@ -462,9 +462,8 @@ var App;
         (function (Stages) {
             var Occulus = (function (_super) {
                 __extends(Occulus, _super);
-                function Occulus() {
-                    _super.call(this);
-
+                function Occulus(stager) {
+                    _super.call(this, stager);
                     this.ui = new App.ME2.Stages.UI.Occulus(this);
                 }
                 Occulus.prototype.evaluate = function () {
@@ -473,7 +472,7 @@ var App;
                     this.occulus_squadmate_1.addRole(0 /* OcculusSquadmate */);
                     this.occulus_squadmate_2.addRole(0 /* OcculusSquadmate */);
 
-                    dpt = (new App.ME2.Teammates(this.teammates)).withoutRole(0 /* OcculusSquadmate */);
+                    dpt = (new App.ME2.Teammates(this.stager.teammates)).withoutRole(0 /* OcculusSquadmate */);
 
                     if (!this.stager.app.normandy.has_shielding) {
                         dpt.alive().sortByShieldingDeathPriority().last().die(1 /* ShieldingFailure */);
@@ -486,8 +485,6 @@ var App;
                     if (!this.stager.app.normandy.has_thanix_cannon) {
                         dpt.alive().sortByCannonDeathPriority().last().die(2 /* CannonFailure */);
                     }
-
-                    return this.teammates;
                 };
 
                 Occulus.prototype.isEvaluatable = function () {
@@ -507,8 +504,8 @@ var App;
         (function (Stages) {
             var Vents = (function (_super) {
                 __extends(Vents, _super);
-                function Vents() {
-                    _super.call(this);
+                function Vents(stager) {
+                    _super.call(this, stager);
                     this.ui = new App.ME2.Stages.UI.Vents(this);
                 }
                 Vents.prototype.evaluate = function () {
@@ -522,8 +519,6 @@ var App;
                     } else if (!this.vent_leader.willBeEffectiveVentLeader()) {
                         this.vent_venter.die(4 /* VentsBadLeader */);
                     }
-
-                    return this.teammates;
                 };
 
                 Vents.prototype.isEvaluatable = function () {
@@ -543,8 +538,8 @@ var App;
         (function (Stages) {
             var LongWalk = (function (_super) {
                 __extends(LongWalk, _super);
-                function LongWalk() {
-                    _super.call(this);
+                function LongWalk(stager) {
+                    _super.call(this, stager);
                     this.ui = new App.ME2.Stages.UI.LongWalk(this);
                 }
                 LongWalk.prototype.evaluate = function () {
@@ -559,14 +554,12 @@ var App;
                     }
 
                     if (!this.long_walk_bubbler.willBeEffectiveLongWalkBubbler()) {
-                        (new App.ME2.Teammates(this.teammates)).withRole(4 /* LongWalkSquadmate */).sortByLongWalkDeathPriority().last().die(5 /* LongWalkBadBubbler */);
+                        (new App.ME2.Teammates(this.stager.teammates)).withRole(4 /* LongWalkSquadmate */).sortByLongWalkDeathPriority().last().die(5 /* LongWalkBadBubbler */);
                     }
 
                     if (!this.long_walk_leader.willBeEffectiveLongWalkLeader()) {
                         this.long_walk_leader.die(6 /* LongWalkBadLeader */);
                     }
-
-                    return this.teammates;
                 };
 
                 LongWalk.prototype.isEvaluatable = function () {
@@ -586,27 +579,12 @@ var App;
         (function (Stages) {
             var Setup = (function (_super) {
                 __extends(Setup, _super);
-                function Setup() {
-                    _super.call(this);
+                function Setup(stager) {
+                    _super.call(this, stager);
                     this.ui = new App.ME2.Stages.UI.Setup(this);
                 }
-                Setup.prototype.bootstrapTeammates = function () {
-                    this.teammates = _.chain(this.stager.app.getHenchmen()).map(function (henchman) {
-                        return new App.ME2.Teammate(henchman, henchman.is_essential, false, false);
-                    }).sortBy(function (teammate) {
-                        return teammate.henchman.name;
-                    }).value();
-                };
-
-                Setup.prototype.setup = function (teammates) {
-                    this.bootstrapTeammates();
-                    this.ui.setup();
-                };
-
                 Setup.prototype.evaluate = function () {
-                    return _.filter(this.teammates, function (teammate) {
-                        return teammate.is_recruited;
-                    });
+                    this.stager.teammates = (new App.ME2.Teammates(this.stager.teammates)).recruited().value();
                 };
 
                 Setup.prototype.isEvaluatable = function () {
@@ -626,18 +604,10 @@ var App;
         (function (Stages) {
             var Summary = (function (_super) {
                 __extends(Summary, _super);
-                function Summary() {
-                    _super.call(this);
+                function Summary(stager) {
+                    _super.call(this, stager);
                     this.ui = new App.ME2.Stages.UI.Summary(this);
                 }
-                Summary.prototype.setup = function (teammates) {
-                    this.teammates = teammates;
-                    this.ui.setup();
-                };
-
-                Summary.prototype.evaluate = function () {
-                    return this.teammates;
-                };
                 return Summary;
             })(Stages.Stage);
             Stages.Summary = Summary;
@@ -1015,7 +985,7 @@ var App;
                         var _this = this;
                         var candidates;
 
-                        candidates = _.filter(this.stage.teammates, field.filter);
+                        candidates = _.filter(this.stage.stager.teammates, field.filter);
 
                         candidates = _.filter(candidates, function (candidate) {
                             return !_.find(_this.teammate_fields, function (other_field) {
@@ -1300,7 +1270,7 @@ var App;
                     };
 
                     Setup.prototype.bootstrapTeammates = function () {
-                        this.teammates = _.map(this.stage.teammates, function (teammate) {
+                        this.teammates = _.map(this.stage.stager.teammates, function (teammate) {
                             var ui_teammate;
                             ui_teammate = new App.ME2.UI.Teammate(teammate);
 
@@ -1386,7 +1356,7 @@ var App;
                         this.destroy_base_advocate = ko.observable(undefined);
                     }
                     Summary.prototype.getLivingTeammates = function () {
-                        return _.filter(this.stage.teammates, function (teammate) {
+                        return _.filter(this.stage.stager.teammates, function (teammate) {
                             return !teammate.is_dead;
                         });
                     };
@@ -1407,7 +1377,7 @@ var App;
                     };
 
                     Summary.prototype.getDefenceReporter = function () {
-                        return _.chain(this.stage.teammates).filter(function (teammate) {
+                        return _.chain(this.stage.stager.teammates).filter(function (teammate) {
                             return teammate.hasRole(9 /* HeldTheLine */);
                         }).sortBy(function (teammate) {
                             return teammate.henchman.defence_report_priority;
@@ -1415,7 +1385,7 @@ var App;
                     };
 
                     Summary.prototype.getKeepBaseAdvocate = function () {
-                        return _.chain(this.stage.teammates).filter(function (teammate) {
+                        return _.chain(this.stage.stager.teammates).filter(function (teammate) {
                             return teammate.hasRole(8 /* BossSquadmate */) && teammate.henchman.keep_base_priority > 0;
                         }).sortBy(function (teammate) {
                             return teammate.henchman.keep_base_priority;
@@ -1423,7 +1393,7 @@ var App;
                     };
 
                     Summary.prototype.getDestroyBaseAdvocate = function () {
-                        return _.chain(this.stage.teammates).filter(function (teammate) {
+                        return _.chain(this.stage.stager.teammates).filter(function (teammate) {
                             return teammate.hasRole(8 /* BossSquadmate */) && teammate.henchman.destroy_base_priority > 0;
                         }).sortBy(function (teammate) {
                             return teammate.henchman.destroy_base_priority;
@@ -1563,8 +1533,8 @@ var App;
         (function (Stages) {
             var Boss = (function (_super) {
                 __extends(Boss, _super);
-                function Boss() {
-                    _super.call(this);
+                function Boss(stager) {
+                    _super.call(this, stager);
                     this.ui = new App.ME2.Stages.UI.Boss(this);
                 }
                 Boss.prototype.evaluate = function () {
@@ -1578,9 +1548,7 @@ var App;
                         this.boss_squadmate_2.die(8 /* Boss */);
                     }
 
-                    (new App.ME2.Teammates(this.teammates)).alive().withoutRole(8 /* BossSquadmate */).addRole(9 /* HeldTheLine */).whoDieHoldingTheLine().die(9 /* HoldTheLine */);
-
-                    return this.teammates;
+                    (new App.ME2.Teammates(this.stager.teammates)).alive().withoutRole(8 /* BossSquadmate */).addRole(9 /* HeldTheLine */).whoDieHoldingTheLine().die(9 /* HoldTheLine */);
                 };
 
                 Boss.prototype.isEvaluatable = function () {

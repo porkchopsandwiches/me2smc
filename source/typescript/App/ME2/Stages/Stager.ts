@@ -32,17 +32,26 @@ module App {
                     this.freezes = [];
 
                     this.stages = [
-                        (new App.ME2.Stages.Setup()).setStager(this),
-                        (new App.ME2.Stages.Occulus()).setStager(this),
-                        (new App.ME2.Stages.Vents()).setStager(this),
-                        (new App.ME2.Stages.LongWalk()).setStager(this),
-                        (new App.ME2.Stages.Boss()).setStager(this),
-                        (new App.ME2.Stages.Summary()).setStager(this)
+                        new App.ME2.Stages.Setup(this),
+                        new App.ME2.Stages.Occulus(this),
+                        new App.ME2.Stages.Vents(this),
+                        new App.ME2.Stages.LongWalk(this),
+                        new App.ME2.Stages.Boss(this),
+                        new App.ME2.Stages.Summary(this)
                     ];
 
                     this.ui = new App.ME2.Stages.UI.Stager(this);
 
-                    this.setTeammates([]);
+                    //this.setTeammates([]);
+                    this.bootstrapTeammates();
+                }
+
+                private bootstrapTeammates (): void {
+                    this.teammates = _.chain<App.ME2.Henchman>(this.app.getHenchmen()).map<App.ME2.Teammate>((henchman: App.ME2.Henchman): App.ME2.Teammate => {
+                        return new App.ME2.Teammate(henchman, henchman.is_essential, false, false);
+                    }).sortBy((teammate: App.ME2.Teammate) => {
+                        return teammate.henchman.name;
+                    }).value();
                 }
 
                 private getIndexOfStage (stage: App.ME2.Stages.IStage): number {
@@ -50,15 +59,13 @@ module App {
                 }
 
                 private freezeStage (stage: App.ME2.Stages.IStage): void {
-                    var teammates: App.ME2.Teammate[];
 
                     // Evaluate the current stage
-                    teammates = this.stage.evaluate(this.teammates);
+                    //teammates = this.stage.evaluate(this.teammates);
+                    this.stage.evaluate();
+                    this.ui.teammates.evaluateImmediate();
 
-                    this.freezes[this.getIndexOfStage(stage)] = this.freeze(teammates);
-
-                    //this.teammates = teammates;
-                    this.setTeammates(teammates);
+                    this.freezes[this.getIndexOfStage(stage)] = this.freeze(this.teammates);
                 }
 
                 private freeze (teammates: App.ME2.Teammate[]): string {
@@ -67,6 +74,7 @@ module App {
                     frozen = _.map(teammates, (teammate: App.ME2.Teammate): IFrozenTeammate => {
                         return {
                             henchman_id: teammate.henchman.id,
+                            henchman_name: teammate.henchman.name,
                             is_loyal: teammate.is_loyal,
                             is_recruited: teammate.is_recruited,
                             is_dead: teammate.is_dead,
@@ -96,13 +104,13 @@ module App {
                     if (this.stage) {
                         index = this.getIndexOfStage(this.stage) - 1;
                         this.setStage(this.stages[index]);
-                        this.setTeammates(this.defrost(this.freezes[index]));
+                        this.teammates = this.defrost(this.freezes[index]);
+                        this.ui.teammates.evaluateImmediate();
                     }
                 }
 
                 public nextStage () {
                     var index: number;
-
 
                     if (this.stage) {
                         index = this.getIndexOfStage(this.stage);
@@ -121,14 +129,8 @@ module App {
                     }
                 }
 
-                private setTeammates (teammates: App.ME2.Teammate[]) {
-                    this.teammates = teammates;
-                    //this.ui.teammates(this.teammates);
-                    this.ui.teammates.evaluateImmediate();
-                }
-
                 private setStage (stage: App.ME2.Stages.IStage) {
-                    stage.setup(this.teammates);
+                    stage.setup();
                     this.stage = stage;
                     this.ui.stage(stage);
                 }

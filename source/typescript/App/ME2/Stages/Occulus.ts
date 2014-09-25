@@ -12,13 +12,12 @@ module App {
                 public occulus_squadmate_1: App.ME2.Teammate;
                 public occulus_squadmate_2: App.ME2.Teammate;
 
-                constructor () {
-                    super();
-
+                constructor (stager: App.ME2.Stages.Stager) {
+                    super(stager);
                     this.ui = new App.ME2.Stages.UI.Occulus(this);
                 }
 
-                public evaluate (): App.ME2.Teammate[] {
+                public evaluate () {
                     var dpt: App.ME2.Teammates;
 
                     // Assign roles
@@ -26,7 +25,7 @@ module App {
                     this.occulus_squadmate_2.addRole(App.ME2.TeammateRoles.OcculusSquadmate);
 
                     // Get candidates to die (that is, they were not Occulus Squadmates)
-                    dpt = (new App.ME2.Teammates(this.teammates)).withoutRole(App.ME2.TeammateRoles.OcculusSquadmate);
+                    dpt = (new App.ME2.Teammates(this.stager.teammates)).withoutRole(App.ME2.TeammateRoles.OcculusSquadmate);
 
                     // Apply deaths
                     if (!this.stager.app.normandy.has_shielding) {
@@ -40,8 +39,6 @@ module App {
                     if (!this.stager.app.normandy.has_thanix_cannon) {
                         dpt.alive().sortByCannonDeathPriority().last().die(App.ME2.TeammateDeathCauses.CannonFailure);
                     }
-
-                    return this.teammates;
                 }
 
                 public isEvaluatable (): boolean {

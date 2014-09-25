@@ -4,20 +4,19 @@ module App {
 
 
             export interface IStage {
-                evaluate: (teammates: App.ME2.Teammate[]) => App.ME2.Teammate[];
-                setup: (teammates: App.ME2.Teammate[]) => void;
-                isEvaluatable: () => boolean;
+                evaluate (): void;
+                setup (): void;
+                isEvaluatable (): boolean;
                 stager: App.ME2.Stages.Stager;
                 ui: App.ME2.Stages.UI.IStage;
-                teammates: App.ME2.Teammate[];
             }
 
             export class Stage implements IStage {
                 public stager: App.ME2.Stages.Stager;
                 public ui: App.ME2.Stages.UI.IStage;
-                public teammates: App.ME2.Teammate[];
 
-                constructor () {
+                constructor (stager: App.ME2.Stages.Stager) {
+                    this.stager = stager;
                 }
 
                 public setStager (stager: App.ME2.Stages.Stager): Stage {
@@ -25,12 +24,10 @@ module App {
                     return this;
                 }
 
-                public evaluate (): App.ME2.Teammate[] {
-                    return this.teammates;
+                public evaluate (): void {
                 }
 
-                public setup (teammates: App.ME2.Teammate[]): void {
-                    this.teammates = teammates;
+                public setup (): void {
                     this.ui.setup();
                 }
 

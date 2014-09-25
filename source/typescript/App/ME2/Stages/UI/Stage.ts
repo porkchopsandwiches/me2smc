@@ -62,7 +62,7 @@ module App {
                         //var found: boolean;
 
                         // Apply the teammate field's own filter first
-                        candidates = _.filter(this.stage.teammates, field.filter);
+                        candidates = _.filter(this.stage.stager.teammates, field.filter);
 
                         // Filter out users who are already in use in other fields
                         candidates = _.filter(candidates, (candidate: App.ME2.Teammate): boolean => {

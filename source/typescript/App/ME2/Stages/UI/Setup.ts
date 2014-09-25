@@ -83,7 +83,7 @@ module App {
                     }
 
                     private bootstrapTeammates () {
-                        this.teammates = _.map(this.stage.teammates, (teammate: App.ME2.Teammate): App.ME2.UI.Teammate => {
+                        this.teammates = _.map(this.stage.stager.teammates, (teammate: App.ME2.Teammate): App.ME2.UI.Teammate => {
                             var ui_teammate: App.ME2.UI.Teammate;
                             ui_teammate = new App.ME2.UI.Teammate(teammate);
 

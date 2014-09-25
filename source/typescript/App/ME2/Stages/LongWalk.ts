@@ -17,12 +17,12 @@ module App {
                 long_walk_leader: App.ME2.Teammate;
                 long_walk_bubbler: App.ME2.Teammate;
 
-                constructor () {
-                    super();
+                constructor (stager: App.ME2.Stages.Stager) {
+                    super(stager);
                     this.ui = new App.ME2.Stages.UI.LongWalk(this);
                 }
 
-                public evaluate (): App.ME2.Teammate[] {
+                public evaluate (): void {
                     this.long_walk_squadmate_1.addRole(App.ME2.TeammateRoles.LongWalkSquadmate);
                     this.long_walk_squadmate_2.addRole(App.ME2.TeammateRoles.LongWalkSquadmate);
                     this.long_walk_escort.addRole(App.ME2.TeammateRoles.LongWalkEscort);
@@ -36,15 +36,13 @@ module App {
 
                     // If bubbler is not an expert, or is not loyal, one of the squadmates dies
                     if (!this.long_walk_bubbler.willBeEffectiveLongWalkBubbler()) {
-                        (new App.ME2.Teammates(this.teammates)).withRole(App.ME2.TeammateRoles.LongWalkSquadmate).sortByLongWalkDeathPriority().last().die(App.ME2.TeammateDeathCauses.LongWalkBadBubbler);
+                        (new App.ME2.Teammates(this.stager.teammates)).withRole(App.ME2.TeammateRoles.LongWalkSquadmate).sortByLongWalkDeathPriority().last().die(App.ME2.TeammateDeathCauses.LongWalkBadBubbler);
                     }
 
                     // If leader is not loyal and not
                     if (!this.long_walk_leader.willBeEffectiveLongWalkLeader()) {
                         this.long_walk_leader.die(App.ME2.TeammateDeathCauses.LongWalkBadLeader);
                     }
-
-                    return this.teammates;
                 }
 
                 public isEvaluatable (): boolean {

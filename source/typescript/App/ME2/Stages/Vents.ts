@@ -17,12 +17,12 @@ module App {
                 public vent_leader: App.ME2.Teammate;
                 public ui: App.ME2.Stages.UI.Vents;
 
-                constructor () {
-                    super();
+                constructor (stager: App.ME2.Stages.Stager) {
+                    super(stager);
                     this.ui = new App.ME2.Stages.UI.Vents(this);
                 }
 
-                public evaluate (): App.ME2.Teammate[] {
+                public evaluate (): void {
                     this.vent_squadmate_1.addRole(App.ME2.TeammateRoles.VentsSquadmate);
                     this.vent_squadmate_2.addRole(App.ME2.TeammateRoles.VentsSquadmate);
                     this.vent_venter.addRole(App.ME2.TeammateRoles.VentsVenter);
@@ -33,8 +33,6 @@ module App {
                     } else if (!this.vent_leader.willBeEffectiveVentLeader()) {
                         this.vent_venter.die(App.ME2.TeammateDeathCauses.VentsBadLeader);
                     }
-
-                    return this.teammates;
                 }
 
                 public isEvaluatable (): boolean {
