@@ -47,19 +47,24 @@ $config = require("../config/config.php");
 					<h3>Normandy</h3>
 					<form role="form">
 						<div class="row">
-							<div class="col-md-4">
-								<div class="checkbox">
-									<label><input type="checkbox" data-bind="checked: ui.normandy.has_armour" /> Has Armour upgrade?</label>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Upgrades</label>
+									<div class="checkbox">
+										<label><input type="checkbox" data-bind="checked: ui.normandy.has_armour" /> Has Armour upgrade?</label>
+									</div>
+									<div class="checkbox">
+										<label><input type="checkbox" data-bind="checked: ui.normandy.has_shielding" /> Has Shielding upgrade?</label>
+									</div>
+									<div class="checkbox">
+										<label><input type="checkbox" data-bind="checked: ui.normandy.has_thanix_cannon" /> Has Thanix Cannon?</label>
+									</div>
 								</div>
 							</div>
-							<div class="col-md-4">
-								<div class="checkbox">
-									<label><input type="checkbox" data-bind="checked: ui.normandy.has_shielding" /> Has Shielding upgrade?</label>
-								</div>
-							</div>
-							<div class="col-md-4">
-								<div class="checkbox">
-									<label><input type="checkbox" data-bind="checked: ui.normandy.has_thanix_cannon" /> Has Thanix Cannon?</label>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label>Mission Delay</label>
+									<input class="form-control" type="number" data-bind="value: ui.normandy.delay" />
 								</div>
 							</div>
 						</div>
@@ -70,40 +75,14 @@ $config = require("../config/config.php");
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
-									<label>Squadmate #1</label>
-									<select class="form-control" data-bind="options: ui.occulus_squadmate_1_candidates, optionsText: $root.renderTeammateName, value: ui.occulus_squadmate_1"></select>
+									<label for="occulus-squadmate-1">Squadmate #1</label>
+									<select class="form-control" id="occulus-squadmate-1" data-bind="options: ui.occulus_squadmate_1_candidates, optionsText: App.Application.renderTeammateName, value: ui.occulus_squadmate_1"></select>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
-									<label>Squadmate #2</label>
-									<select class="form-control" data-bind="options: ui.occulus_squadmate_2_candidates, optionsText: $root.renderTeammateName, value: ui.occulus_squadmate_2"></select>
-								</div>
-							</div>
-						</div>
-					</form>
-				<!-- /ko -->
-				<!-- ko if: ui.id === App.ME2.Stages.UI.StageIDs.Vents -->
-					<form role="form">
-						<div class="row">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label>Venter</label>
-									<select class="form-control" data-bind="options: ui.vent_venter_candidates, optionsText: $root.renderTeammateName, value: ui.vent_venter"></select>
-								</div>
-								<div class="form-group">
-									<label>Leader</label>
-									<select class="form-control" data-bind="options: ui.vent_leader_candidates, optionsText: $root.renderTeammateName, value: ui.vent_leader"></select>
-								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="form-group">
-									<label>Squadmate #1</label>
-									<select class="form-control" data-bind="options: ui.vent_squadmate_1_candidates, optionsText: $root.renderTeammateName, value: ui.vent_squadmate_1"></select>
-								</div>
-								<div class="form-group">
-									<label>Squadmate #2</label>
-									<select class="form-control" data-bind="options: ui.vent_squadmate_2_candidates, optionsText: $root.renderTeammateName, value: ui.vent_squadmate_2"></select>
+									<label for="occulus-squadmate-2">Squadmate #2</label>
+									<select class="form-control" id="occulus-squadmate-2" data-bind="options: ui.occulus_squadmate_2_candidates, optionsText: App.Application.renderTeammateName, value: ui.occulus_squadmate_2"></select>
 								</div>
 							</div>
 						</div>
@@ -114,26 +93,52 @@ $config = require("../config/config.php");
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
-									<label>Bubbler</label>
-									<select class="form-control" data-bind="options: ui.long_walk_bubbler_candidates, optionsText: $root.renderTeammateName, value: ui.long_walk_bubbler"></select>
+									<label for="vent-venter">Venter</label>
+									<select class="form-control" id="vent-venter" data-bind="options: ui.vent_venter_candidates, optionsText: App.Application.renderTeammateNameVentVenter, value: ui.vent_venter"></select>
 								</div>
 								<div class="form-group">
-									<label>Leader</label>
-									<select class="form-control" data-bind="options: ui.long_walk_leader_candidates, optionsText: $root.renderTeammateName, value: ui.long_walk_leader"></select>
-								</div>
-								<div class="form-group">
-									<label>Escort</label>
-									<select class="form-control" data-bind="options: ui.long_walk_escort_candidates, optionsText: $root.renderTeammateName, value: ui.long_walk_escort"></select>
+									<label for="vent-leader">Leader</label>
+									<select class="form-control" id="vent-leader" data-bind="options: ui.vent_leader_candidates, optionsText: App.Application.renderTeammateNameVentLeader, value: ui.vent_leader"></select>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
-									<label>Squadmate #1</label>
-									<select class="form-control" data-bind="options: ui.long_walk_squadmate_1_candidates, optionsText: $root.renderTeammateName, value: ui.long_walk_squadmate_1"></select>
+									<label for="vent-squadmate-1">Squadmate #1</label>
+									<select class="form-control" id="vent-squadmate-1" data-bind="options: ui.vent_squadmate_1_candidates, optionsText: App.Application.renderTeammateName, value: ui.vent_squadmate_1"></select>
 								</div>
 								<div class="form-group">
-									<label>Squadmate #2</label>
-									<select class="form-control" data-bind="options: ui.long_walk_squadmate_2_candidates, optionsText: $root.renderTeammateName, value: ui.long_walk_squadmate_2"></select>
+									<label for="vent-squadmate-1">Squadmate #2</label>
+									<select class="form-control" id="vent-squadmate-1" data-bind="options: ui.vent_squadmate_2_candidates, optionsText: App.Application.renderTeammateName, value: ui.vent_squadmate_2"></select>
+								</div>
+							</div>
+						</div>
+					</form>
+				<!-- /ko -->
+				<!-- ko if: ui.id === App.ME2.Stages.UI.StageIDs.LongWalk -->
+					<form role="form">
+						<div class="row">
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="long-walk-bubbler">Bubbler</label>
+									<select class="form-control" id="long-walk-bubbler" data-bind="options: ui.long_walk_bubbler_candidates, optionsText: App.Application.renderTeammateNameLongWalkBubbler, value: ui.long_walk_bubbler"></select>
+								</div>
+								<div class="form-group">
+									<label for="long-walk-leader">Leader</label>
+									<select class="form-control" id="long-walk-leader" data-bind="options: ui.long_walk_leader_candidates, optionsText: App.Application.renderTeammateNameLongWalkLeader, value: ui.long_walk_leader"></select>
+								</div>
+								<div class="form-group">
+									<label for="long-walk-escort">Escort</label>
+									<select class="form-control" id="long-walk-escort" data-bind="options: ui.long_walk_escort_candidates, optionsText: App.Application.renderTeammateNameLongWalkEscort, value: ui.long_walk_escort"></select>
+								</div>
+							</div>
+							<div class="col-md-6">
+								<div class="form-group">
+									<label for="long-walk-squadmate-1">Squadmate #1</label>
+									<select class="form-control" id="long-walk-squadmate-1" data-bind="options: ui.long_walk_squadmate_1_candidates, optionsText: App.Application.renderTeammateName, value: ui.long_walk_squadmate_1"></select>
+								</div>
+								<div class="form-group">
+									<label for="long-walk-squadmate-2">Squadmate #2</label>
+									<select class="form-control" id="long-walk-squadmate-2" data-bind="options: ui.long_walk_squadmate_2_candidates, optionsText: App.Application.renderTeammateName, value: ui.long_walk_squadmate_2"></select>
 								</div>
 							</div>
 						</div>
@@ -144,14 +149,14 @@ $config = require("../config/config.php");
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
-									<label>Squadmate #1</label>
-									<select class="form-control" data-bind="options: ui.boss_squadmate_1_candidates, optionsText: $root.renderTeammateName, value: ui.boss_squadmate_1"></select>
+									<label for="boss-squadmate-1">Squadmate #1</label>
+									<select class="form-control" id="boss-squadmate-1" data-bind="options: ui.boss_squadmate_1_candidates, optionsText: App.Application.renderTeammateNameBossSquadmate, value: ui.boss_squadmate_1"></select>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
-									<label>Squadmate #2</label>
-									<select class="form-control" data-bind="options: ui.boss_squadmate_2_candidates, optionsText: $root.renderTeammateName, value: ui.boss_squadmate_2"></select>
+									<label for="boss-squadmate-2">Squadmate #2</label>
+									<select class="form-control" id="boss-squadmate-2" data-bind="options: ui.boss_squadmate_2_candidates, optionsText: App.Application.renderTeammateNameBossSquadmate, value: ui.boss_squadmate_2"></select>
 								</div>
 							</div>
 						</div>
@@ -162,26 +167,26 @@ $config = require("../config/config.php");
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
-									<label>Reports on defence?</label>
-									<p class="form-control-static" data-bind="text: $root.renderTeammateName(ui.defence_reporter())"></p>
+									<label>Reports on defence</label>
+									<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(ui.defence_reporter())"></p>
 								</div>
 								<div class="form-group">
 									<label>Advocates keeping the base</label>
-									<p class="form-control-static" data-bind="text: $root.renderTeammateName(ui.keep_base_advocate())"></p>
+									<p class="form-control-static" data-bind="text: App.Application.renderTeammateNameKeepBaseAdvocate(ui.keep_base_advocate())"></p>
 								</div>
 								<div class="form-group">
 									<label>Advocates destroying the base</label>
-									<p class="form-control-static" data-bind="text: $root.renderTeammateName(ui.destroy_base_advocate())"></p>
+									<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(ui.destroy_base_advocate())"></p>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
-									<label>Shepard lives?</label>
-									<p class="form-control-static" data-bind="text: $root.formatYesNo(ui.shepard_lives)"></p>
+									<label>Shepard lives</label>
+									<p class="form-control-static" data-bind="text: App.Application.formatYesNo(ui.shepard_lives)"></p>
 								</div>
 								<div class="form-group">
-									<label>Shepard pulled up by</label>
-									<p class="form-control-static" data-bind="text: $root.renderTeammateName(ui.shepard_pulled_up_by())"></p>
+									<label>Shepard caught by</label>
+									<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(ui.shepard_pulled_up_by())"></p>
 								</div>
 							</div>
 						</div>
@@ -189,20 +194,20 @@ $config = require("../config/config.php");
 				<!-- /ko -->
 			<!-- /ko -->
 
-			<!-- ko if: stager.ui.stage().ui.id !== App.ME2.Stages.UI.StageIDs.Setup -->
-				<table class="table table-striped summary-table">
-					<thead>
-						<tr>
-							<th>Teammates</th>
-							<th>Death</th>
-							<th>Occulus</th>
-							<th>Vents</th>
-							<th>Long Walk</th>
-							<th>Boss</th>
-						</tr>
-					</thead>
-					<tbody>
-						<!-- ko foreach: stager.ui.teammates -->
+			<table class="table table-striped summary-table" data-bind="visible: stager.ui.stage().ui.id !== App.ME2.Stages.UI.StageIDs.Setup">
+				<thead>
+					<tr>
+						<th>Teammates</th>
+						<th>Death</th>
+						<th>Occulus</th>
+						<th>Vents</th>
+						<th>Long Walk</th>
+						<th>Boss</th>
+					</tr>
+				</thead>
+				<tbody>
+					<!-- ko with: stager.ui.teammates -->
+						<!-- ko foreach: $data -->
 							<tr data-bind="attr: { class: (is_dead ? 'danger' : '') }">
 								<td><span data-bind="text: henchman.name"></span> <!-- ko if: is_loyal --><span class="glyphicon glyphicon-heart"></span><!-- /ko --></td>
 								<td>
@@ -247,11 +252,12 @@ $config = require("../config/config.php");
 								</td>
 							</tr>
 						<!-- /ko -->
-					</tbody>
-				</table>
-			<!-- /ko -->
+					<!-- /ko -->
+				</tbody>
+			</table>
 
 			<!-- ko with: stager.ui.stage -->
+				<button class="btn btn-primary" data-bind="enable: ui.id > App.ME2.Stages.UI.StageIDs.Setup, click: function () { $root.stager.previousStage() }">Previous</button>
 				<button class="btn btn-primary" data-bind="enable: ui.is_evaluatable, click: function () { $root.stager.nextStage() }">Next</button>
 			<!-- /ko -->
 		</div>

@@ -67,7 +67,7 @@ module App {
             public is_long_walk_leader_candidate: boolean;
 
             constructor (
-                id: HenchmanIDs,
+                id: HenchmanIDs = undefined,
                 name: string = "",
                 is_essential: boolean = false,
                 htl_value: number = 0,

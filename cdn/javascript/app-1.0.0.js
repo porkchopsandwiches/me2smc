@@ -32,7 +32,7 @@ var App;
             });
         };
 
-        Application.prototype.formatTeammateRole = function (role) {
+        Application.formatTeammateRole = function (role) {
             switch (role) {
                 case 0 /* OcculusSquadmate */:
                     return "Occulus Squadmate";
@@ -59,27 +59,48 @@ var App;
             return App.ME2.TeammateRoles[role];
         };
 
-        Application.prototype.formatYesNo = function (value) {
+        Application.formatYesNo = function (value) {
             return value ? "Yes" : "No";
         };
 
-        Application.prototype.renderTeammateForSelect = function (teammate) {
-            if (teammate.henchman) {
-                return teammate.henchman.name;
+        Application.renderTeammateName = function (teammate, highlight) {
+            if (typeof highlight === "undefined") { highlight = false; }
+            if (teammate) {
+                return teammate.henchman.name + (highlight ? " ✸" : "");
             } else {
-                return "-- None --";
+                return "N/A";
             }
         };
 
-        Application.prototype.renderTeammateName = function (teammate) {
-            if (teammate && teammate.henchman) {
-                return teammate.henchman.name;
-            } else {
-                return "-- None -- ";
-            }
+        Application.renderTeammateNameVentVenter = function (teammate) {
+            return Application.renderTeammateName(teammate, teammate.willBeEffectiveVentVenter());
         };
 
-        Application.prototype.formatTeammateDeathCause = function (death_cause) {
+        Application.renderTeammateNameVentLeader = function (teammate) {
+            return Application.renderTeammateName(teammate, teammate.willBeEffectiveVentLeader());
+        };
+
+        Application.renderTeammateNameLongWalkBubbler = function (teammate) {
+            return Application.renderTeammateName(teammate, teammate.willBeEffectiveLongWalkBubbler());
+        };
+
+        Application.renderTeammateNameLongWalkLeader = function (teammate) {
+            return Application.renderTeammateName(teammate, teammate.willBeEffectiveLongWalkLeader());
+        };
+
+        Application.renderTeammateNameLongWalkEscort = function (teammate) {
+            return Application.renderTeammateName(teammate, teammate.willBeEffectiveLongWalkEscort());
+        };
+
+        Application.renderTeammateNameBossSquadmate = function (teammate) {
+            return Application.renderTeammateName(teammate, teammate.willSurviveBeingBossSquadmate());
+        };
+
+        Application.renderTeammateNameKeepBaseAdvocate = function (teammate) {
+            return Application.renderTeammateName(teammate) + (teammate.henchman.id === 6 /* Miranda */ ? " *" : "");
+        };
+
+        Application.formatTeammateDeathCause = function (death_cause) {
             switch (death_cause) {
                 case 0 /* ArmourFailure */:
                     return "Advanced Armour not acquired";
@@ -131,6 +152,7 @@ var App;
 
         var Henchman = (function () {
             function Henchman(id, name, is_essential, htl_value, htl_death_priority, armour_death_priority, shielding_death_priority, cannon_death_priority, long_walk_death_priority, cutscene_rescue_priority, defence_report_priority, keep_base_priority, destroy_base_priority, is_tech_expert, is_biotic_expert, is_leader, is_super_leader, is_escort_candidate, is_vent_candidate, is_bubble_candidate, is_vent_leader_candidate, is_long_walk_leader_candidate) {
+                if (typeof id === "undefined") { id = undefined; }
                 if (typeof name === "undefined") { name = ""; }
                 if (typeof is_essential === "undefined") { is_essential = false; }
                 if (typeof htl_value === "undefined") { htl_value = 0; }
@@ -186,13 +208,15 @@ var App;
 (function (App) {
     (function (ME2) {
         var Normandy = (function () {
-            function Normandy(has_armor, has_shielding, has_thanix_cannon) {
+            function Normandy(has_armor, has_shielding, has_thanix_cannon, delay) {
                 if (typeof has_armor === "undefined") { has_armor = false; }
                 if (typeof has_shielding === "undefined") { has_shielding = false; }
                 if (typeof has_thanix_cannon === "undefined") { has_thanix_cannon = false; }
+                if (typeof delay === "undefined") { delay = 0; }
                 this.has_armour = has_armor;
                 this.has_shielding = has_shielding;
                 this.has_thanix_cannon = has_thanix_cannon;
+                this.delay = delay;
             }
             return Normandy;
         })();
@@ -369,10 +393,10 @@ var App;
                 };
 
                 Stager.prototype.freezeStage = function (stage) {
+                    this.freezes[this.getIndexOfStage(stage)] = this.freeze(this.teammates.value());
+
                     this.stage.evaluate();
                     this.ui.teammates.evaluateImmediate();
-
-                    this.freezes[this.getIndexOfStage(stage)] = this.freeze(this.teammates.value());
                 };
 
                 Stager.prototype.freeze = function (teammates) {
@@ -411,8 +435,8 @@ var App;
                     var index;
                     if (this.stage) {
                         index = this.getIndexOfStage(this.stage) - 1;
-                        this.setStage(this.stages[index]);
                         this.teammates = new App.ME2.Teammates(this.defrost(this.freezes[index]));
+                        this.setStage(this.stages[index]);
                         this.ui.teammates.evaluateImmediate();
                     }
                 };
@@ -1067,7 +1091,7 @@ var App;
                             return !_.find(_this.teammate_fields, function (field) {
                                 observable = _this[field.name];
                                 teammate = observable();
-                                return teammate ? !teammate.henchman : true;
+                                return teammate ? (teammate.henchman.id === undefined) : true;
                             });
                         });
                     };
@@ -1082,7 +1106,7 @@ var App;
 
                     Stage.prototype.setup = function () {
                     };
-                    Stage.no_teammate = new App.ME2.Teammate();
+                    Stage.no_teammate = new App.ME2.Teammate(new App.ME2.Henchman(undefined, "— None —"));
                     return Stage;
                 })();
                 UI.Stage = Stage;
@@ -1526,11 +1550,13 @@ var App;
                     this.has_armour = ko.observable(undefined);
                     this.has_shielding = ko.observable(undefined);
                     this.has_thanix_cannon = ko.observable(undefined);
+                    this.delay = ko.observable(undefined);
                     this.normandy = normany;
 
                     this.link(this.normandy, "has_armour");
                     this.link(this.normandy, "has_shielding");
                     this.link(this.normandy, "has_thanix_cannon");
+                    this.link(this.normandy, "delay");
                 }
                 return Normandy;
             })(App.ME2.UI.Proxy);

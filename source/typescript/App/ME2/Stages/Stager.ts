@@ -68,10 +68,12 @@ module App {
 
                     // Evaluate the current stage
                     //teammates = this.stage.evaluate(this.teammates);
-                    this.stage.evaluate();
-                    this.ui.teammates.evaluateImmediate();
+
 
                     this.freezes[this.getIndexOfStage(stage)] = this.freeze(this.teammates.value());
+
+                    this.stage.evaluate();
+                    this.ui.teammates.evaluateImmediate();
                 }
 
                 private freeze (teammates: App.ME2.Teammate[]): string {
@@ -109,8 +111,8 @@ module App {
                     var index: number;
                     if (this.stage) {
                         index = this.getIndexOfStage(this.stage) - 1;
-                        this.setStage(this.stages[index]);
                         this.teammates = new App.ME2.Teammates(this.defrost(this.freezes[index]));
+                        this.setStage(this.stages[index]);
                         this.ui.teammates.evaluateImmediate();
                     }
                 }

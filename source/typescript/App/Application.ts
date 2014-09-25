@@ -41,13 +41,7 @@ module App {
             });
         }
 
-        /*
-        public formatTeammateDeathCause (death_cause: App.ME2.TeammateDeathCauses): string {
-            return App.ME2.TeammateDeathCauses[death_cause];
-        }
-        */
-
-        public formatTeammateRole (role: App.ME2.TeammateRoles): string {
+        static formatTeammateRole (role: App.ME2.TeammateRoles): string {
             switch (role) {
                 case App.ME2.TeammateRoles.OcculusSquadmate:
                     return "Occulus Squadmate";
@@ -74,27 +68,47 @@ module App {
             return App.ME2.TeammateRoles[role];
         }
 
-        public formatYesNo (value: boolean): string {
+        static formatYesNo (value: boolean): string {
             return value ? "Yes" : "No";
         }
 
-        public renderTeammateForSelect (teammate: App.ME2.Teammate): string {
-            if (teammate.henchman) {
-                return teammate.henchman.name;
+        static renderTeammateName (teammate: App.ME2.Teammate, highlight: boolean = false): string {
+            if (teammate) {
+                return teammate.henchman.name + (highlight ? " ✸" : "");
             } else {
-                return "-- None --";
+                return "N/A";
             }
         }
 
-        public renderTeammateName (teammate: any): string {
-            if (teammate && teammate.henchman) {
-                return teammate.henchman.name;
-            } else {
-                return "-- None -- ";
-            }
+        static renderTeammateNameVentVenter (teammate: App.ME2.Teammate): string {
+            return Application.renderTeammateName(teammate, teammate.willBeEffectiveVentVenter());
         }
 
-        public formatTeammateDeathCause (death_cause: App.ME2.TeammateDeathCauses): string {
+        static renderTeammateNameVentLeader (teammate: App.ME2.Teammate): string {
+            return Application.renderTeammateName(teammate, teammate.willBeEffectiveVentLeader());
+        }
+
+        static renderTeammateNameLongWalkBubbler (teammate: App.ME2.Teammate): string {
+            return Application.renderTeammateName(teammate, teammate.willBeEffectiveLongWalkBubbler());
+        }
+
+        static renderTeammateNameLongWalkLeader (teammate: App.ME2.Teammate): string {
+            return Application.renderTeammateName(teammate, teammate.willBeEffectiveLongWalkLeader());
+        }
+
+        static renderTeammateNameLongWalkEscort (teammate: App.ME2.Teammate): string {
+            return Application.renderTeammateName(teammate, teammate.willBeEffectiveLongWalkEscort());
+        }
+
+        static renderTeammateNameBossSquadmate (teammate: App.ME2.Teammate): string {
+            return Application.renderTeammateName(teammate, teammate.willSurviveBeingBossSquadmate());
+        }
+
+        static renderTeammateNameKeepBaseAdvocate (teammate: App.ME2.Teammate): string {
+            return Application.renderTeammateName(teammate) + (teammate.henchman.id === App.ME2.HenchmanIDs.Miranda ? " *" : "");
+        }
+
+        static formatTeammateDeathCause (death_cause: App.ME2.TeammateDeathCauses): string {
             switch (death_cause) {
                 case App.ME2.TeammateDeathCauses.ArmourFailure:
                     return "Advanced Armour not acquired";

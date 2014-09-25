@@ -45,7 +45,7 @@ module App {
                         return !teammate.is_dead;
                     }
 
-                    static no_teammate: App.ME2.Teammate = new App.ME2.Teammate();
+                    static no_teammate: App.ME2.Teammate = new App.ME2.Teammate(new App.ME2.Henchman(undefined, "— None —"));
 
                     constructor (stage: App.ME2.Stages.IStage) {
                         this.stage = stage;
@@ -115,7 +115,7 @@ module App {
                             return !_.find(this.teammate_fields, (field: ITeammateField): boolean => {
                                 observable = this[field.name];
                                 teammate = observable();
-                                return teammate ? !teammate.henchman : true;
+                                return teammate ? (teammate.henchman.id === undefined) : true;
                             });
                         });
                     }
