@@ -15,7 +15,7 @@ module App {
                     constructor (stager: App.ME2.Stages.Stager) {
                         this.stager = stager;
                         this.teammates = ko.forcibleComputed(() => {
-                            return this.stager.teammates;
+                            return this.stager.teammates.value();
                         });
                     }
                 }

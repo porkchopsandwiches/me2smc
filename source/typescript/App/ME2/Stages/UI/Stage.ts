@@ -59,17 +59,13 @@ module App {
 
                     public getTeammateCandidatesFor (field: ITeammateField): App.ME2.Teammate[] {
                         var candidates: App.ME2.Teammate[];
-                        //var found: boolean;
 
-                        // Apply the teammate field's own filter first
-                        candidates = _.filter(this.stage.stager.teammates, field.filter);
-
-                        // Filter out users who are already in use in other fields
-                        candidates = _.filter(candidates, (candidate: App.ME2.Teammate): boolean => {
+                        // Candidates are those who fulfill the field's filter, and are not in use elsewhere
+                        candidates = this.stage.stager.teammates.filter(field.filter).filter((candidate: App.ME2.Teammate): boolean => {
                             return !_.find(this.teammate_fields, (other_field: ITeammateField): boolean => {
                                 return other_field.name !== field.name && this.stage[other_field.name] === candidate;
                             });
-                        });
+                        }).value();
 
                         // Add a numpty candidate
                         candidates.unshift(Stage.no_teammate);

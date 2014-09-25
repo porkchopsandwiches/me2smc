@@ -17,7 +17,6 @@ module App {
                     this.ui = new App.ME2.Stages.UI.Boss(this);
                 }
 
-
                 public evaluate (): void {
 
                     this.boss_squadmate_1.addRole(App.ME2.TeammateRoles.BossSquadmate);
@@ -31,7 +30,7 @@ module App {
                         this.boss_squadmate_2.die(App.ME2.TeammateDeathCauses.Boss);
                     }
 
-                    (new App.ME2.Teammates(this.stager.teammates)).alive().withoutRole(App.ME2.TeammateRoles.BossSquadmate).addRole(App.ME2.TeammateRoles.HeldTheLine).whoDieHoldingTheLine().die(App.ME2.TeammateDeathCauses.HoldTheLine);
+                    this.stager.teammates.alive().withoutRole(App.ME2.TeammateRoles.BossSquadmate).withoutRole(App.ME2.TeammateRoles.LongWalkEscort).addRole(App.ME2.TeammateRoles.HeldTheLine).whoDieHoldingTheLine().die(App.ME2.TeammateDeathCauses.HoldTheLine);
                 }
 
                 public isEvaluatable (): boolean {

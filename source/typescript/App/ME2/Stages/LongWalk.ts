@@ -36,7 +36,7 @@ module App {
 
                     // If bubbler is not an expert, or is not loyal, one of the squadmates dies
                     if (!this.long_walk_bubbler.willBeEffectiveLongWalkBubbler()) {
-                        (new App.ME2.Teammates(this.stager.teammates)).withRole(App.ME2.TeammateRoles.LongWalkSquadmate).sortByLongWalkDeathPriority().last().die(App.ME2.TeammateDeathCauses.LongWalkBadBubbler);
+                        this.stager.teammates.withRole(App.ME2.TeammateRoles.LongWalkSquadmate).sortByLongWalkDeathPriority().last().die(App.ME2.TeammateDeathCauses.LongWalkBadBubbler);
                     }
 
                     // If leader is not loyal and not

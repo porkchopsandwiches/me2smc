@@ -30,49 +30,75 @@ module App {
                         this.destroy_base_advocate = ko.observable(undefined);
                     }
 
-                    private getLivingTeammates (): App.ME2.Teammate[] {
+                    private getLivingTeammates (): App.ME2.Teammates {
+                        /*
                         return _.filter(this.stage.stager.teammates, (teammate: App.ME2.Teammate): boolean => {
                             return !teammate.is_dead;
                         });
+                        */
+                        return this.stage.stager.teammates.alive();
                     }
 
                     private getShepardLives (): boolean {
-                        return this.getLivingTeammates().length > 1;
+                        return this.getLivingTeammates().length() > 1;
                     }
 
                     private getShepardCatcher (): App.ME2.Teammate {
-                        var living_teammates: App.ME2.Teammate[];
+                        //var living_teammates: App.ME2.Teammate[];
+                        var candidates: App.ME2.Teammates;
                         var score: number;
+
+                        candidates = this.getLivingTeammates().sort((teammate: App.ME2.Teammate): number => {
+                            score = teammate.henchman.cutscene_rescue_priority + (teammate.hasRole(App.ME2.TeammateRoles.BossSquadmate) ? 100 : 0);
+                            return score;
+                        });
+
+                        return candidates.length() > 1 ? candidates.last() : undefined;
+
+                        /*
                         living_teammates = _.sortBy(this.getLivingTeammates(), (teammate: App.ME2.Teammate): number => {
                             score = teammate.henchman.cutscene_rescue_priority + (teammate.hasRole(App.ME2.TeammateRoles.BossSquadmate) ? 100 : 0);
                             return score;
                         });
 
                         return living_teammates.length > 1 ? living_teammates.pop() : undefined;
+                        */
+
                     }
 
                     private getDefenceReporter (): App.ME2.Teammate {
+                        return this.stage.stager.teammates.withRole(App.ME2.TeammateRoles.HeldTheLine).sortByDefenceReportPriority().last();
+                        /*
+
                         return _.chain<App.ME2.Teammate>(this.stage.stager.teammates).filter((teammate: App.ME2.Teammate): boolean => {
                             return teammate.hasRole(App.ME2.TeammateRoles.HeldTheLine);
                         }).sortBy((teammate: App.ME2.Teammate): number => {
                             return teammate.henchman.defence_report_priority;
                         }).pop().value();
+                        */
                     }
 
                     private getKeepBaseAdvocate (): App.ME2.Teammate {
+                        return this.stage.stager.teammates.withRole(App.ME2.TeammateRoles.BossSquadmate).whoAdvocateKeepingTheBase().sortByKeepBasePriority().last();
+
+                        /*
                         return _.chain<App.ME2.Teammate>(this.stage.stager.teammates).filter((teammate: App.ME2.Teammate): boolean => {
                             return teammate.hasRole(App.ME2.TeammateRoles.BossSquadmate) && teammate.henchman.keep_base_priority > 0;
                         }).sortBy((teammate: App.ME2.Teammate): number => {
                             return teammate.henchman.keep_base_priority;
                         }).pop().value();
+                        */
                     }
 
                     private getDestroyBaseAdvocate (): App.ME2.Teammate {
+                        return this.stage.stager.teammates.withRole(App.ME2.TeammateRoles.BossSquadmate).whoAdvocateDestroyingTheBase().sortByDestroyBasePriority().last();
+                        /*
                         return _.chain<App.ME2.Teammate>(this.stage.stager.teammates).filter((teammate: App.ME2.Teammate): boolean => {
                             return teammate.hasRole(App.ME2.TeammateRoles.BossSquadmate) && teammate.henchman.destroy_base_priority > 0;
                         }).sortBy((teammate: App.ME2.Teammate): number => {
                             return teammate.henchman.destroy_base_priority;
                         }).pop().value();
+                        */
                     }
 
                     public setup (): void {

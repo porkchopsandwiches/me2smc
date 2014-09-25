@@ -19,10 +19,14 @@ module App {
             sortByArmourDeathPriority (ascending?: boolean): Teammates;
             sortByCannonDeathPriority (ascending?: boolean): Teammates;
             sortByLongWalkDeathPriority (ascending?: boolean): Teammates;
+            sortByDefenceReportPriority (ascending?: boolean): Teammates;
+            sortByKeepBasePriority (ascending?: boolean): Teammates;
+            sortByDestroyBasePriority (ascending?: boolean): Teammates;
             without (...teammates: App.ME2.Teammate[]): Teammates;
             filter (iterator: Utilities.IObjectArrayIterator<App.ME2.Teammate, boolean>): Teammates;
             find (iterator: Utilities.IObjectArrayIterator<App.ME2.Teammate, boolean>): App.ME2.Teammate;
             sort<TSort> (iterator: Utilities.IObjectArrayIterator<App.ME2.Teammate, TSort>): Teammates;
+            map<TResult> (iterator: Utilities.IObjectArrayIterator<App.ME2.Teammate, TResult>): TResult[];
             each (iterator: Utilities.IObjectArrayIterator<App.ME2.Teammate, void>): void;
         }
 
@@ -132,12 +136,44 @@ module App {
                 return this.sortByHenchmanProperty("long_walk_death_priority", ascending);
             }
 
+            public sortByDefenceReportPriority (ascending: boolean = true): Teammates {
+                return this.sortByHenchmanProperty("defence_report_priority", ascending);
+            }
+
+            public sortByKeepBasePriority (ascending: boolean = true): Teammates {
+                return this.sortByHenchmanProperty("keep_base_priority", ascending);
+            }
+
+            public sortByDestroyBasePriority (ascending: boolean = true): Teammates {
+                return this.sortByHenchmanProperty("destroy_base_priority", ascending);
+            }
+
+            public whoAdvocateKeepingTheBase (): Teammates {
+                return this.filter((teammate: App.ME2.Teammate): boolean => {
+                    return teammate.henchman.keep_base_priority > 0;
+                });
+            }
+
+            public whoAdvocateDestroyingTheBase (): Teammates {
+                return this.filter((teammate: App.ME2.Teammate): boolean => {
+                    return teammate.henchman.destroy_base_priority > 0;
+                });
+            }
+
+            //defence_report_priority
+            //keep_base_priority
+            //destroy_base_priority
+
             public without (...teammates: App.ME2.Teammate[]): Teammates {
                 return Teammates.fromObjectArray(this.oa.without.apply(this.oa, teammates));
             }
 
             public filter (iterator: Utilities.IObjectArrayIterator<App.ME2.Teammate, boolean>): Teammates {
                 return Teammates.fromObjectArray(this.oa.filter(iterator));
+            }
+
+            public map<TResult> (iterator: Utilities.IObjectArrayIterator<App.ME2.Teammate, TResult>): TResult[] {
+                return this.oa.map(iterator);
             }
 
             public find (iterator: Utilities.IObjectArrayIterator<App.ME2.Teammate, boolean>): App.ME2.Teammate {

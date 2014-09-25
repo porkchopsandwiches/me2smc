@@ -343,6 +343,8 @@ var App;
 
                     this.freezes = [];
 
+                    this.bootstrapTeammates();
+
                     this.stages = [
                         new App.ME2.Stages.Setup(this),
                         new App.ME2.Stages.Occulus(this),
@@ -353,15 +355,13 @@ var App;
                     ];
 
                     this.ui = new App.ME2.Stages.UI.Stager(this);
-
-                    this.bootstrapTeammates();
                 }
                 Stager.prototype.bootstrapTeammates = function () {
-                    this.teammates = _.chain(this.app.getHenchmen()).map(function (henchman) {
+                    this.teammates = new App.ME2.Teammates(_.chain(this.app.getHenchmen()).map(function (henchman) {
                         return new App.ME2.Teammate(henchman, henchman.is_essential, false, false);
                     }).sortBy(function (teammate) {
                         return teammate.henchman.name;
-                    }).value();
+                    }).value());
                 };
 
                 Stager.prototype.getIndexOfStage = function (stage) {
@@ -372,7 +372,7 @@ var App;
                     this.stage.evaluate();
                     this.ui.teammates.evaluateImmediate();
 
-                    this.freezes[this.getIndexOfStage(stage)] = this.freeze(this.teammates);
+                    this.freezes[this.getIndexOfStage(stage)] = this.freeze(this.teammates.value());
                 };
 
                 Stager.prototype.freeze = function (teammates) {
@@ -412,7 +412,7 @@ var App;
                     if (this.stage) {
                         index = this.getIndexOfStage(this.stage) - 1;
                         this.setStage(this.stages[index]);
-                        this.teammates = this.defrost(this.freezes[index]);
+                        this.teammates = new App.ME2.Teammates(this.defrost(this.freezes[index]));
                         this.ui.teammates.evaluateImmediate();
                     }
                 };
@@ -472,7 +472,7 @@ var App;
                     this.occulus_squadmate_1.addRole(0 /* OcculusSquadmate */);
                     this.occulus_squadmate_2.addRole(0 /* OcculusSquadmate */);
 
-                    dpt = (new App.ME2.Teammates(this.stager.teammates)).withoutRole(0 /* OcculusSquadmate */);
+                    dpt = this.stager.teammates.withoutRole(0 /* OcculusSquadmate */);
 
                     if (!this.stager.app.normandy.has_shielding) {
                         dpt.alive().sortByShieldingDeathPriority().last().die(1 /* ShieldingFailure */);
@@ -554,7 +554,7 @@ var App;
                     }
 
                     if (!this.long_walk_bubbler.willBeEffectiveLongWalkBubbler()) {
-                        (new App.ME2.Teammates(this.stager.teammates)).withRole(4 /* LongWalkSquadmate */).sortByLongWalkDeathPriority().last().die(5 /* LongWalkBadBubbler */);
+                        this.stager.teammates.withRole(4 /* LongWalkSquadmate */).sortByLongWalkDeathPriority().last().die(5 /* LongWalkBadBubbler */);
                     }
 
                     if (!this.long_walk_leader.willBeEffectiveLongWalkLeader()) {
@@ -584,7 +584,7 @@ var App;
                     this.ui = new App.ME2.Stages.UI.Setup(this);
                 }
                 Setup.prototype.evaluate = function () {
-                    this.stager.teammates = (new App.ME2.Teammates(this.stager.teammates)).recruited().value();
+                    this.stager.teammates = this.stager.teammates.recruited();
                 };
 
                 Setup.prototype.isEvaluatable = function () {
@@ -821,6 +821,33 @@ var App;
                 return this.sortByHenchmanProperty("long_walk_death_priority", ascending);
             };
 
+            Teammates.prototype.sortByDefenceReportPriority = function (ascending) {
+                if (typeof ascending === "undefined") { ascending = true; }
+                return this.sortByHenchmanProperty("defence_report_priority", ascending);
+            };
+
+            Teammates.prototype.sortByKeepBasePriority = function (ascending) {
+                if (typeof ascending === "undefined") { ascending = true; }
+                return this.sortByHenchmanProperty("keep_base_priority", ascending);
+            };
+
+            Teammates.prototype.sortByDestroyBasePriority = function (ascending) {
+                if (typeof ascending === "undefined") { ascending = true; }
+                return this.sortByHenchmanProperty("destroy_base_priority", ascending);
+            };
+
+            Teammates.prototype.whoAdvocateKeepingTheBase = function () {
+                return this.filter(function (teammate) {
+                    return teammate.henchman.keep_base_priority > 0;
+                });
+            };
+
+            Teammates.prototype.whoAdvocateDestroyingTheBase = function () {
+                return this.filter(function (teammate) {
+                    return teammate.henchman.destroy_base_priority > 0;
+                });
+            };
+
             Teammates.prototype.without = function () {
                 var teammates = [];
                 for (var _i = 0; _i < (arguments.length - 0); _i++) {
@@ -831,6 +858,10 @@ var App;
 
             Teammates.prototype.filter = function (iterator) {
                 return Teammates.fromObjectArray(this.oa.filter(iterator));
+            };
+
+            Teammates.prototype.map = function (iterator) {
+                return this.oa.map(iterator);
             };
 
             Teammates.prototype.find = function (iterator) {
@@ -938,7 +969,7 @@ var App;
                         this.stage = ko.observable(undefined);
                         this.stager = stager;
                         this.teammates = ko.forcibleComputed(function () {
-                            return _this.stager.teammates;
+                            return _this.stager.teammates.value();
                         });
                     }
                     return Stager;
@@ -985,13 +1016,11 @@ var App;
                         var _this = this;
                         var candidates;
 
-                        candidates = _.filter(this.stage.stager.teammates, field.filter);
-
-                        candidates = _.filter(candidates, function (candidate) {
+                        candidates = this.stage.stager.teammates.filter(field.filter).filter(function (candidate) {
                             return !_.find(_this.teammate_fields, function (other_field) {
                                 return other_field.name !== field.name && _this.stage[other_field.name] === candidate;
                             });
-                        });
+                        }).value();
 
                         candidates.unshift(Stage.no_teammate);
 
@@ -1204,8 +1233,8 @@ var App;
             (function (UI) {
                 var Setup = (function (_super) {
                     __extends(Setup, _super);
-                    function Setup(stage) {
-                        _super.call(this, stage);
+                    function Setup() {
+                        _super.apply(this, arguments);
                         this.id = UI.StageIDs[0 /* Setup */];
                         this.label = "Setup";
                     }
@@ -1270,11 +1299,8 @@ var App;
                     };
 
                     Setup.prototype.bootstrapTeammates = function () {
-                        this.teammates = _.map(this.stage.stager.teammates, function (teammate) {
-                            var ui_teammate;
-                            ui_teammate = new App.ME2.UI.Teammate(teammate);
-
-                            return ui_teammate;
+                        this.teammates = this.stage.stager.teammates.map(function (teammate) {
+                            return new App.ME2.UI.Teammate(teammate);
                         });
 
                         this.normandy = new App.ME2.UI.Normandy(this.stage.stager.app.normandy);
@@ -1356,48 +1382,35 @@ var App;
                         this.destroy_base_advocate = ko.observable(undefined);
                     }
                     Summary.prototype.getLivingTeammates = function () {
-                        return _.filter(this.stage.stager.teammates, function (teammate) {
-                            return !teammate.is_dead;
-                        });
+                        return this.stage.stager.teammates.alive();
                     };
 
                     Summary.prototype.getShepardLives = function () {
-                        return this.getLivingTeammates().length > 1;
+                        return this.getLivingTeammates().length() > 1;
                     };
 
                     Summary.prototype.getShepardCatcher = function () {
-                        var living_teammates;
+                        var candidates;
                         var score;
-                        living_teammates = _.sortBy(this.getLivingTeammates(), function (teammate) {
+
+                        candidates = this.getLivingTeammates().sort(function (teammate) {
                             score = teammate.henchman.cutscene_rescue_priority + (teammate.hasRole(8 /* BossSquadmate */) ? 100 : 0);
                             return score;
                         });
 
-                        return living_teammates.length > 1 ? living_teammates.pop() : undefined;
+                        return candidates.length() > 1 ? candidates.last() : undefined;
                     };
 
                     Summary.prototype.getDefenceReporter = function () {
-                        return _.chain(this.stage.stager.teammates).filter(function (teammate) {
-                            return teammate.hasRole(9 /* HeldTheLine */);
-                        }).sortBy(function (teammate) {
-                            return teammate.henchman.defence_report_priority;
-                        }).pop().value();
+                        return this.stage.stager.teammates.withRole(9 /* HeldTheLine */).sortByDefenceReportPriority().last();
                     };
 
                     Summary.prototype.getKeepBaseAdvocate = function () {
-                        return _.chain(this.stage.stager.teammates).filter(function (teammate) {
-                            return teammate.hasRole(8 /* BossSquadmate */) && teammate.henchman.keep_base_priority > 0;
-                        }).sortBy(function (teammate) {
-                            return teammate.henchman.keep_base_priority;
-                        }).pop().value();
+                        return this.stage.stager.teammates.withRole(8 /* BossSquadmate */).whoAdvocateKeepingTheBase().sortByKeepBasePriority().last();
                     };
 
                     Summary.prototype.getDestroyBaseAdvocate = function () {
-                        return _.chain(this.stage.stager.teammates).filter(function (teammate) {
-                            return teammate.hasRole(8 /* BossSquadmate */) && teammate.henchman.destroy_base_priority > 0;
-                        }).sortBy(function (teammate) {
-                            return teammate.henchman.destroy_base_priority;
-                        }).pop().value();
+                        return this.stage.stager.teammates.withRole(8 /* BossSquadmate */).whoAdvocateDestroyingTheBase().sortByDestroyBasePriority().last();
                     };
 
                     Summary.prototype.setup = function () {
@@ -1548,7 +1561,7 @@ var App;
                         this.boss_squadmate_2.die(8 /* Boss */);
                     }
 
-                    (new App.ME2.Teammates(this.stager.teammates)).alive().withoutRole(8 /* BossSquadmate */).addRole(9 /* HeldTheLine */).whoDieHoldingTheLine().die(9 /* HoldTheLine */);
+                    this.stager.teammates.alive().withoutRole(8 /* BossSquadmate */).withoutRole(5 /* LongWalkEscort */).addRole(9 /* HeldTheLine */).whoDieHoldingTheLine().die(9 /* HoldTheLine */);
                 };
 
                 Boss.prototype.isEvaluatable = function () {

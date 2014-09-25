@@ -17,7 +17,7 @@ module App {
                 public evaluate () {
 
                     // Limit teammates to those recruited
-                    this.stager.teammates = (new App.ME2.Teammates(this.stager.teammates)).recruited().value();
+                    this.stager.teammates = this.stager.teammates.recruited();
                 }
 
                 public isEvaluatable (): boolean {

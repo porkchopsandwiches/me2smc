@@ -15,13 +15,6 @@ module App {
                     public normandy: App.ME2.UI.Normandy;
                     public all_recruited: KnockoutComputed<boolean>;
                     public all_loyal: KnockoutComputed<boolean>;
-                    //public is_evaluatable: KnockoutComputed<boolean>;
-
-                    constructor (stage: App.ME2.Stages.IStage) {
-                        super(stage);
-
-
-                    }
 
                     public setup (): void {
                         this.bootstrapTeammates();
@@ -83,11 +76,8 @@ module App {
                     }
 
                     private bootstrapTeammates () {
-                        this.teammates = _.map(this.stage.stager.teammates, (teammate: App.ME2.Teammate): App.ME2.UI.Teammate => {
-                            var ui_teammate: App.ME2.UI.Teammate;
-                            ui_teammate = new App.ME2.UI.Teammate(teammate);
-
-                            return ui_teammate;
+                        this.teammates = this.stage.stager.teammates.map<App.ME2.UI.Teammate>((teammate: App.ME2.Teammate): App.ME2.UI.Teammate => {
+                            return new App.ME2.UI.Teammate(teammate);
                         });
 
                         this.normandy = new App.ME2.UI.Normandy(this.stage.stager.app.normandy);

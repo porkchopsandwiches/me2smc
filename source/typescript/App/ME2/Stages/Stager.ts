@@ -6,6 +6,9 @@ module App {
             export interface IStager {
                 app: App.Application;
                 stages: App.ME2.Stages.IStage[];
+                //stage: App.ME2.Stages.IStage;
+                //teammates: App.ME2.Teammate[];
+                teammates: App.ME2.Teammates;
                 ui: App.ME2.Stages.UI.Stager;
             }
 
@@ -23,13 +26,16 @@ module App {
                 public stages: App.ME2.Stages.IStage[];
                 private stage: App.ME2.Stages.IStage;
                 private freezes: string[];
-                public teammates: App.ME2.Teammate[];
+                //public teammates: App.ME2.Teammate[];
+                public teammates: App.ME2.Teammates;
                 public ui: App.ME2.Stages.UI.Stager;
 
                 constructor (app: App.Application) {
                     this.app = app;
 
                     this.freezes = [];
+
+                    this.bootstrapTeammates();
 
                     this.stages = [
                         new App.ME2.Stages.Setup(this),
@@ -43,15 +49,15 @@ module App {
                     this.ui = new App.ME2.Stages.UI.Stager(this);
 
                     //this.setTeammates([]);
-                    this.bootstrapTeammates();
+
                 }
 
                 private bootstrapTeammates (): void {
-                    this.teammates = _.chain<App.ME2.Henchman>(this.app.getHenchmen()).map<App.ME2.Teammate>((henchman: App.ME2.Henchman): App.ME2.Teammate => {
+                    this.teammates = new App.ME2.Teammates(_.chain<App.ME2.Henchman>(this.app.getHenchmen()).map<App.ME2.Teammate>((henchman: App.ME2.Henchman): App.ME2.Teammate => {
                         return new App.ME2.Teammate(henchman, henchman.is_essential, false, false);
                     }).sortBy((teammate: App.ME2.Teammate) => {
                         return teammate.henchman.name;
-                    }).value();
+                    }).value());
                 }
 
                 private getIndexOfStage (stage: App.ME2.Stages.IStage): number {
@@ -65,7 +71,7 @@ module App {
                     this.stage.evaluate();
                     this.ui.teammates.evaluateImmediate();
 
-                    this.freezes[this.getIndexOfStage(stage)] = this.freeze(this.teammates);
+                    this.freezes[this.getIndexOfStage(stage)] = this.freeze(this.teammates.value());
                 }
 
                 private freeze (teammates: App.ME2.Teammate[]): string {
@@ -104,7 +110,7 @@ module App {
                     if (this.stage) {
                         index = this.getIndexOfStage(this.stage) - 1;
                         this.setStage(this.stages[index]);
-                        this.teammates = this.defrost(this.freezes[index]);
+                        this.teammates = new App.ME2.Teammates(this.defrost(this.freezes[index]));
                         this.ui.teammates.evaluateImmediate();
                     }
                 }
