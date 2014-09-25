@@ -28,9 +28,9 @@ module App {
                     this.vent_venter.addRole(App.ME2.TeammateRoles.VentsVenter);
                     this.vent_leader.addRole(App.ME2.TeammateRoles.VentsLeader);
 
-                    if (!this.vent_venter.henchman.is_tech_expert || !this.vent_venter.is_loyal) {
+                    if (!this.vent_venter.willBeEffectiveVentVenter()) {
                         this.vent_venter.die(App.ME2.TeammateDeathCauses.VentsBadVenter);
-                    } else if (!this.vent_leader.henchman.is_leader || !this.vent_leader.is_loyal) {
+                    } else if (!this.vent_leader.willBeEffectiveVentLeader()) {
                         this.vent_venter.die(App.ME2.TeammateDeathCauses.VentsBadLeader);
                     }
 
@@ -38,7 +38,7 @@ module App {
                 }
 
                 public isEvaluatable (): boolean {
-                    return !!this.vent_leader && !!this.vent_venter && !!this.vent_squadmate_1 && !!this.vent_squadmate_2;
+                    return this.ui.is_evaluatable();
                 }
             }
         }

@@ -33,6 +33,16 @@ module App {
             is_recruited: boolean;
             is_dead: boolean;
             death_cause: TeammateDeathCauses;
+            hasRole (role: TeammateRoles): boolean;
+            addRole (role: TeammateRoles): ITeammate;
+            die (death_cause: TeammateDeathCauses): ITeammate;
+            willBeEffectiveLongWalkLeader (): boolean;
+            willBeEffectiveLongWalkEscort (): boolean;
+            willBeEffectiveLongWalkBubbler (): boolean;
+            willSurviveBeingBossSquadmate (): boolean;
+            willBeEffectiveVentVenter (): boolean;
+            willBeEffectiveVentLeader (): boolean;
+            getHoldTheLineScore (): number;
             roles: TeammateRoles[];
         }
 
@@ -56,11 +66,6 @@ module App {
                 this.is_dead = is_dead;
             }
 
-            public setHenchman (henchman: App.ME2.Henchman): Teammate {
-                this.henchman = henchman;
-                return this;
-            }
-
             public addRole (role: TeammateRoles): Teammate {
                 if (!this.hasRole(role)) {
                     this.roles.push(role);
@@ -74,6 +79,30 @@ module App {
 
             public getHoldTheLineScore (): number {
                 return this.henchman.htl_value + (this.is_loyal ? 1 : 0);
+            }
+
+            public willBeEffectiveLongWalkLeader (): boolean {
+                return this.henchman.is_leader && (this.is_loyal || this.henchman.is_super_leader);
+            }
+
+            public willBeEffectiveLongWalkEscort (): boolean {
+                return this.is_loyal;
+            }
+
+            public willBeEffectiveLongWalkBubbler (): boolean {
+                return this.is_loyal && this.henchman.is_biotic_expert;
+            }
+
+            public willSurviveBeingBossSquadmate (): boolean {
+                return this.is_loyal;
+            }
+
+            public willBeEffectiveVentVenter (): boolean {
+                return this.henchman.is_tech_expert && this.is_loyal;
+            }
+
+            public willBeEffectiveVentLeader (): boolean {
+                return this.henchman.is_leader && this.is_loyal;
             }
 
             public die (death_cause: TeammateDeathCauses): Teammate {

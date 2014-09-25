@@ -17,91 +17,21 @@ module App {
                     this.ui = new App.ME2.Stages.UI.Boss(this);
                 }
 
-                private getHTLDeathCount (total: number, pool_size: number): number {
-                    var score: number;
-                    score = total / pool_size;
-                    if (score < 2.0) {
-                        if (pool_size >= 5) {
-                            if (score >= 1.5) {
-                                return 1;
-                            } else if (score >= 0.5) {
-                                return 2;
-                            } else {
-                                return 3;
-                            }
-                        } else if (pool_size === 4) {
-                            if (score >= 1.0) {
-                                return 1;
-                            } else if (score >= 0.5) {
-                                return 2;
-                            } else if (score > 0) {
-                                return 3;
-                            } else {
-                                return 4;
-                            }
-                        } else if (pool_size === 3) {
-                            if (score >= 1) {
-                                return 1;
-                            } else if (score > 0) {
-                                return 2;
-                            } else {
-                                return 3;
-                            }
-                        } else if (pool_size === 2) {
-                            if (score > 0) {
-                                return 1;
-                            } else {
-                                return 2;
-                            }
-                        } else {
-                            return 1;
-                        }
-                    } else {
-                        return 0;
-                    }
-                }
-
                 public evaluate (): App.ME2.Teammate[] {
-                    var htl_pool: App.ME2.Teammate[];
-                    var htl_total: number;
 
                     this.boss_squadmate_1.addRole(App.ME2.TeammateRoles.BossSquadmate);
                     this.boss_squadmate_2.addRole(App.ME2.TeammateRoles.BossSquadmate);
 
                     // The two squadmates survive if loyal
-                    if (!this.boss_squadmate_1.is_loyal) {
+                    if (!this.boss_squadmate_1.willSurviveBeingBossSquadmate()) {
                         this.boss_squadmate_1.die(App.ME2.TeammateDeathCauses.Boss);
                     }
-                    if (!this.boss_squadmate_2.is_loyal) {
+                    if (!this.boss_squadmate_2.willSurviveBeingBossSquadmate()) {
                         this.boss_squadmate_2.die(App.ME2.TeammateDeathCauses.Boss);
                     }
 
-                    // For hold the line, include all remaining teammates except the escort and the two squadmates
-                    htl_pool = _.filter(this.teammates, (teammate: App.ME2.Teammate): boolean => {
-                        return !teammate.is_dead && teammate.henchman.id !== this.boss_squadmate_1.henchman.id && teammate.henchman.id !== this.boss_squadmate_2.henchman.id && !teammate.hasRole(App.ME2.TeammateRoles.LongWalkEscort);
-                    });
+                    (new App.ME2.Teammates(this.teammates)).alive().withoutRole(App.ME2.TeammateRoles.BossSquadmate).addRole(App.ME2.TeammateRoles.HeldTheLine).whoDieHoldingTheLine().die(App.ME2.TeammateDeathCauses.HoldTheLine);
 
-                    htl_pool.forEach((teammate) => {
-                        teammate.addRole(App.ME2.TeammateRoles.HeldTheLine);
-                    });
-
-                    // Determine total HTL score
-                    htl_total = _.chain(htl_pool).map((teammate: App.ME2.Teammate): number => {
-                        return teammate.getHoldTheLineScore();
-                    }).reduce<number>((sum: number, score: number): number => {
-                        return sum + score;
-                    }, 0)["value"]();
-
-                    // If this business got out of control, and some teammates weren't lucky enough to live through it
-                    if (htl_total / htl_pool.length < 2.0) {
-                        htl_pool = _.sortBy(htl_pool, (teammate: App.ME2.Teammate): number => {
-                            return teammate.henchman.htl_death_priority + (!teammate.is_loyal ? 100 : 0); // Unloyal team members are prioritised over loyal ones
-                        });
-
-                        htl_pool.slice(-1 * this.getHTLDeathCount(htl_total, htl_pool.length)).forEach((teammate: App.ME2.Teammate) => {
-                            teammate.die(App.ME2.TeammateDeathCauses.HoldTheLine);
-                        });
-                    }
 
                     return this.teammates;
                 }

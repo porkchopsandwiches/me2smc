@@ -1,6 +1,7 @@
 ///<reference path="../vendor/lodash/lodash.d.ts" />
 ///<reference path="../vendor/knockout/knockout.d.ts" />
 ///<reference path="./extensions.ts" />
+///<reference path="./Utilities/ObjectArray.ts" />
 ///<reference path="App/ME2/Stages/Stage.ts" />
 ///<reference path="App/ME2/Stages/Stager.ts" />
 ///<reference path="App/ME2/Stages/Occulus.ts" />
@@ -11,6 +12,7 @@
 ///<reference path="App/ME2/Stages/Summary.ts" />
 ///<reference path="App/ME2/Henchman.ts" />
 ///<reference path="App/ME2/Teammate.ts" />
+///<reference path="App/ME2/Teammates.ts" />
 ///<reference path="App/ME2/Normandy.ts" />
 ///<reference path="App/ME2/Stages/UI/Stager.ts" />
 ///<reference path="App/ME2/Stages/UI/Stage.ts" />
