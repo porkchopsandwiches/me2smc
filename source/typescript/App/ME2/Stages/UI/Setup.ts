@@ -8,7 +8,7 @@ module App {
                 }
 
                 export class Setup extends Stage implements ISetup {
-                    public id: string = StageIDs[StageIDs.Setup];
+                    public id: StageIDs = StageIDs.Setup;
                     public label: string = "Setup";
                     public teammates: App.ME2.UI.Teammate[];
                     public stage: App.ME2.Stages.Setup;

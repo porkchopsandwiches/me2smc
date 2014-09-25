@@ -15,7 +15,7 @@ module App {
                 }
 
                 export class Vents extends Stage implements IVents {
-                    public id: string = StageIDs[StageIDs.Vents];
+                    public id: StageIDs = StageIDs.Vents;
                     public label: string = "Vents";
                     public stage: App.ME2.Stages.Vents;
 

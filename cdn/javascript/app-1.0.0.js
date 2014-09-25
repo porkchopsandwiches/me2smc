@@ -1102,7 +1102,7 @@ var App;
                     __extends(Boss, _super);
                     function Boss(stage) {
                         _super.call(this, stage);
-                        this.id = UI.StageIDs[4 /* Boss */];
+                        this.id = 4 /* Boss */;
                         this.label = "Boss";
                         this.teammate_fields = [
                             {
@@ -1143,7 +1143,7 @@ var App;
                     __extends(LongWalk, _super);
                     function LongWalk(stage) {
                         _super.call(this, stage);
-                        this.id = UI.StageIDs[3 /* LongWalk */];
+                        this.id = 3 /* LongWalk */;
                         this.label = "Long Walk";
                         this.teammate_fields = [
                             {
@@ -1198,7 +1198,7 @@ var App;
                     __extends(Occulus, _super);
                     function Occulus(stage) {
                         _super.call(this, stage);
-                        this.id = UI.StageIDs[1 /* Occulus */];
+                        this.id = 1 /* Occulus */;
                         this.label = "Occulus";
                         this.teammate_fields = [
                             {
@@ -1235,7 +1235,7 @@ var App;
                     __extends(Setup, _super);
                     function Setup() {
                         _super.apply(this, arguments);
-                        this.id = UI.StageIDs[0 /* Setup */];
+                        this.id = 0 /* Setup */;
                         this.label = "Setup";
                     }
                     Setup.prototype.setup = function () {
@@ -1324,7 +1324,7 @@ var App;
                     __extends(Vents, _super);
                     function Vents(stage) {
                         _super.call(this, stage);
-                        this.id = UI.StageIDs[2 /* Vents */];
+                        this.id = 2 /* Vents */;
                         this.label = "Vents";
                         this.teammate_fields = [
                             {
@@ -1373,7 +1373,7 @@ var App;
                     __extends(Summary, _super);
                     function Summary(stage) {
                         _super.call(this, stage);
-                        this.id = UI.StageIDs[5 /* Summary */];
+                        this.id = 5 /* Summary */;
                         this.label = "Summary";
                         this.shepard_lives = ko.observable(undefined);
                         this.shepard_pulled_up_by = ko.observable(undefined);

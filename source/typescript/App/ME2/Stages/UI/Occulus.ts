@@ -11,7 +11,7 @@ module App {
                 }
 
                 export class Occulus extends Stage implements IOcculus {
-                    public id: string = StageIDs[StageIDs.Occulus];
+                    public id: StageIDs = StageIDs.Occulus;
                     public label: string = "Occulus";
                     public stage: App.ME2.Stages.Occulus;
                     public occulus_squadmate_1: KnockoutObservable<App.ME2.Teammate>;

@@ -22,7 +22,7 @@ module App {
                 }
 
                 export interface IStage {
-                    id: string;
+                    id: StageIDs;
                     label: string;
                     stage: App.ME2.Stages.IStage;
                     setup: () => void;
@@ -34,7 +34,7 @@ module App {
                 }
 
                 export class Stage implements IStage {
-                    public id: string;
+                    public id: StageIDs;
                     public label: string;
                     public stage: App.ME2.Stages.IStage;
                     public teammate_fields: ITeammateField[] = [];

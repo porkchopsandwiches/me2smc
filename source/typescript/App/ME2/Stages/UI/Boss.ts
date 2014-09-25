@@ -11,7 +11,7 @@ module App {
                 }
 
                 export class Boss extends Stage implements IBoss {
-                    public id: string = StageIDs[StageIDs.Boss];
+                    public id: StageIDs = StageIDs.Boss;
                     public label: string = "Boss";
 
                     public boss_squadmate_1: KnockoutObservable<App.ME2.Teammate>;

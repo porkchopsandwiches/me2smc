@@ -16,7 +16,7 @@ $config = require("../config/config.php");
 		<div id="app" class="container">
 			<!-- ko with: stager.ui.stage -->
 				<h2 data-bind="text: ui.label"></h2>
-				<!-- ko if: ui.id == "Setup" -->
+				<!-- ko if: ui.id === App.ME2.Stages.UI.StageIDs.Setup -->
 					<h3>Teammates</h3>
 					<table class="table table-striped setup-table">
 						<thead>
@@ -64,10 +64,8 @@ $config = require("../config/config.php");
 							</div>
 						</div>
 					</form>
-
 				<!-- /ko -->
-
-				<!-- ko if: ui.id == "Occulus" -->
+				<!-- ko if: ui.id === App.ME2.Stages.UI.StageIDs.Occulus -->
 					<form role="form">
 						<div class="row">
 							<div class="col-md-6">
@@ -85,8 +83,7 @@ $config = require("../config/config.php");
 						</div>
 					</form>
 				<!-- /ko -->
-
-				<!-- ko if: ui.id == "Vents" -->
+				<!-- ko if: ui.id === App.ME2.Stages.UI.StageIDs.Vents -->
 					<form role="form">
 						<div class="row">
 							<div class="col-md-6">
@@ -110,12 +107,9 @@ $config = require("../config/config.php");
 								</div>
 							</div>
 						</div>
-
-
 					</form>
 				<!-- /ko -->
-
-				<!-- ko if: ui.id == "LongWalk" -->
+				<!-- ko if: ui.id === App.ME2.Stages.UI.StageIDs.Vents -->
 					<form role="form">
 						<div class="row">
 							<div class="col-md-6">
@@ -145,8 +139,7 @@ $config = require("../config/config.php");
 						</div>
 					</form>
 				<!-- /ko -->
-
-				<!-- ko if: ui.id == "Boss" -->
+				<!-- ko if: ui.id == App.ME2.Stages.UI.StageIDs.Boss -->
 					<form role="form">
 						<div class="row">
 							<div class="col-md-6">
@@ -164,8 +157,7 @@ $config = require("../config/config.php");
 						</div>
 					</form>
 				<!-- /ko -->
-
-				<!-- ko if: ui.id == "Summary" -->
+				<!-- ko if: ui.id === App.ME2.Stages.UI.StageIDs.Summary -->
 					<form role="form">
 						<div class="row">
 							<div class="col-md-6">
@@ -197,69 +189,66 @@ $config = require("../config/config.php");
 				<!-- /ko -->
 			<!-- /ko -->
 
-			<!-- ko with: stager.ui.teammates -->
-				<!-- ko if: $data.length > 0 -->
-					<table class="table table-striped summary-table">
-						<thead>
-							<tr>
-								<th>Teammates</th>
-								<th>Death</th>
-								<th>Occulus</th>
-								<th>Vents</th>
-								<th>Long Walk</th>
-								<th>Boss</th>
+			<!-- ko if: stager.ui.stage().ui.id !== App.ME2.Stages.UI.StageIDs.Setup -->
+				<table class="table table-striped summary-table">
+					<thead>
+						<tr>
+							<th>Teammates</th>
+							<th>Death</th>
+							<th>Occulus</th>
+							<th>Vents</th>
+							<th>Long Walk</th>
+							<th>Boss</th>
+						</tr>
+					</thead>
+					<tbody>
+						<!-- ko foreach: stager.ui.teammates -->
+							<tr data-bind="attr: { class: (is_dead ? 'danger' : '') }">
+								<td><span data-bind="text: henchman.name"></span> <!-- ko if: is_loyal --><span class="glyphicon glyphicon-heart"></span><!-- /ko --></td>
+								<td>
+									<!-- ko if: is_dead -->
+										<span data-bind="text: $root.formatTeammateDeathCause(death_cause)"></span>
+									<!-- /ko -->
+								</td>
+								<td>
+									<!-- ko if: hasRole(App.ME2.TeammateRoles.OcculusSquadmate) -->
+										<span class="glyphicon glyphicon-user"></span>
+									<!-- /ko -->
+								</td>
+								<td>
+									<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsSquadmate) -->
+										<span class="glyphicon glyphicon-user"></span>
+									<!-- /ko -->
+									<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsVenter) -->
+										<span class="glyphicon glyphicon-star"></span>
+									<!-- /ko -->
+									<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsLeader) -->
+										<span class="glyphicon glyphicon-fire"></span>
+									<!-- /ko -->
+								</td>
+								<td>
+									<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkSquadmate) -->
+										<span class="glyphicon glyphicon-user"></span>
+									<!-- /ko -->
+									<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkBubbler) -->
+										<span class="glyphicon glyphicon-star"></span>
+									<!-- /ko -->
+									<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkLeader) -->
+										<span class="glyphicon glyphicon-fire"></span>
+									<!-- /ko -->
+									<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkEscort) -->
+										<span class="glyphicon glyphicon-heart-empty"></span>
+									<!-- /ko -->
+								</td>
+								<td>
+									<!-- ko if: hasRole(App.ME2.TeammateRoles.BossSquadmate) -->
+										<span class="glyphicon glyphicon-user"></span>
+									<!-- /ko -->
+								</td>
 							</tr>
-						</thead>
-						<tbody>
-							<!-- ko foreach: $data -->
-								<tr data-bind="attr: { class: (is_dead ? 'danger' : '') }">
-									<td><span data-bind="text: henchman.name"></span> <!-- ko if: is_loyal --><span class="glyphicon glyphicon-heart"></span><!-- /ko --></td>
-									<td>
-										<!-- ko if: is_dead -->
-											<span data-bind="text: $root.formatTeammateDeathCause(death_cause)"></span>
-										<!-- /ko -->
-									</td>
-
-									<td>
-										<!-- ko if: hasRole(App.ME2.TeammateRoles.OcculusSquadmate) -->
-											<span class="glyphicon glyphicon-user"></span>
-										<!-- /ko -->
-									</td>
-									<td>
-										<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsSquadmate) -->
-											<span class="glyphicon glyphicon-user"></span>
-										<!-- /ko -->
-										<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsVenter) -->
-											<span class="glyphicon glyphicon-star"></span>
-										<!-- /ko -->
-										<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsLeader) -->
-											<span class="glyphicon glyphicon-fire"></span>
-										<!-- /ko -->
-									</td>
-									<td>
-										<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkSquadmate) -->
-											<span class="glyphicon glyphicon-user"></span>
-										<!-- /ko -->
-										<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkBubbler) -->
-											<span class="glyphicon glyphicon-star"></span>
-										<!-- /ko -->
-										<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkLeader) -->
-											<span class="glyphicon glyphicon-fire"></span>
-										<!-- /ko -->
-										<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkEscort) -->
-											<span class="glyphicon glyphicon-heart-empty"></span>
-										<!-- /ko -->
-									</td>
-									<td>
-										<!-- ko if: hasRole(App.ME2.TeammateRoles.BossSquadmate) -->
-											<span class="glyphicon glyphicon-user"></span>
-										<!-- /ko -->
-									</td>
-								</tr>
-							<!-- /ko -->
-						</tbody>
-					</table>
-				<!-- /ko -->
+						<!-- /ko -->
+					</tbody>
+				</table>
 			<!-- /ko -->
 
 			<!-- ko with: stager.ui.stage -->
