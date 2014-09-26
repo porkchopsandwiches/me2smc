@@ -41,7 +41,7 @@ module App {
                         {
                             name: "long_walk_leader",
                             filter: (teammate: App.ME2.Teammate): boolean => {
-                                return !teammate.is_dead && teammate.henchman.is_long_walk_leader_candidate;
+                                return !teammate.is_dead && teammate.henchman.is_leader_candidate;
                             }
                         },
                         {

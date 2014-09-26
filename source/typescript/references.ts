@@ -1,5 +1,7 @@
 ///<reference path="../vendor/lodash/lodash.d.ts" />
 ///<reference path="../vendor/knockout/knockout.d.ts" />
+///<reference path="../vendor/jquery/jquery.d.ts" />
+///<reference path="../vendor/bootstrap/bootstrap.d.ts" />
 ///<reference path="./extensions.ts" />
 ///<reference path="./Utilities/ObjectArray.ts" />
 ///<reference path="App/ME2/Stages/Stage.ts" />
@@ -26,3 +28,4 @@
 ///<reference path="App/ME2/UI/Teammate.ts" />
 ///<reference path="App/ME2/UI/Normandy.ts" />
 ///<reference path="App/Application.ts" />
+///<reference path="./Knockout/Bindings/Modal.ts" />

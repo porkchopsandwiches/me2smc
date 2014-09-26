@@ -45,7 +45,7 @@ module App {
                         return !teammate.is_dead;
                     }
 
-                    static no_teammate: App.ME2.Teammate = new App.ME2.Teammate(new App.ME2.Henchman(undefined, "— None —"));
+                    static no_teammate: App.ME2.Teammate = new App.ME2.Teammate(new App.ME2.Henchman(undefined, undefined, "— None —"));
 
                     constructor (stage: App.ME2.Stages.IStage) {
                         this.stage = stage;

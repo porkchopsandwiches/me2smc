@@ -29,7 +29,9 @@ $config = require("../config/config.php");
 						<tbody>
 							<!-- ko foreach: ui.teammates -->
 								<tr>
-									<td data-bind="text: teammate.henchman.name"></td>
+									<td>
+										<a href="#view-profile" data-bind="click: function () { $root.henchman(teammate.henchman) }, text: teammate.henchman.name"></a>
+									</td>
 									<td>
 										<label>
 											<input type="checkbox" data-bind="attr: recruited_attributes, checked: is_recruited" />
@@ -64,7 +66,7 @@ $config = require("../config/config.php");
 							<div class="col-md-6">
 								<div class="form-group">
 									<label>Mission Delay</label>
-									<input class="form-control" type="number" data-bind="value: ui.normandy.delay" />
+									<input class="form-control" type="number" min="0" max="20" data-bind="value: ui.normandy.delay" />
 								</div>
 							</div>
 						</div>
@@ -260,22 +262,182 @@ $config = require("../config/config.php");
 				<button class="btn btn-primary" data-bind="enable: ui.id > App.ME2.Stages.UI.StageIDs.Setup, click: function () { $root.stager.previousStage() }">Previous</button>
 				<button class="btn btn-primary" data-bind="enable: ui.is_evaluatable, click: function () { $root.stager.nextStage() }">Next</button>
 			<!-- /ko -->
+
+			<div class="modal fade" tabindex="-1" role="dialog" data-bind="modal: $root.henchman()">
+				<!-- ko with: $root.henchman() -->
+					<div class="modal-dialog">
+						<div class="modal-content">
+							<div class="modal-header">
+								<button type="button" class="close" data-dismiss="modal">&times;</button>
+								<h4 class="modal-title" data-bind="text: name"></h4>
+							</div>
+							<div class="modal-body">
+								<form class="form-horizontal" role="form">
+									<div class="form-group">
+										<label class="col-sm-6 control-label">Recruitment can be skipped</label>
+										<div class="col-sm-6">
+											<p class="form-control-static" data-bind="text: App.Application.formatYesNo(!is_essential)"></p>
+										</div>
+									</div>
+
+
+									<fieldset>
+										<legend>Attributes</legend>
+										<div class="row">
+											<div class="col-md-6">
+												<div class="form-group">
+													<label class="col-sm-8 control-label">Tech Expert</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="text: App.Application.formatYesNo(is_tech_expert)"></p>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-8 control-label">Biotic Expert</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="text: App.Application.formatYesNo(is_biotic_expert)"></p>
+													</div>
+												</div>
+											</div>
+											<div class="col-md-6">
+												<div class="form-group">
+													<label class="col-sm-8 control-label">Fireteam Leader</label>
+													<div class="col-sm-4">
+														<p class="form-control-static"><span data-bind="text: App.Application.formatYesNo(is_leader)"></span><span data-bind="visible: is_super_leader"> ✸</span></p>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-8 control-label"><abbr title="Hold the line">HTL</abbr> score</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="text: htl_value"></p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</fieldset>
+									<fieldset>
+										<legend>Eligibility for Roles</legend>
+										<div class="row">
+											<div class="col-md-6">
+												<div class="form-group">
+													<label class="col-sm-8 control-label">Vents</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="text: App.Application.formatYesNo(is_vent_candidate)"></p>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-8 control-label">Biotic Bubble</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="text: App.Application.formatYesNo(is_bubble_candidate)"></p>
+													</div>
+												</div>
+											</div>
+											<div class="col-md-6">
+												<div class="form-group">
+													<label class="col-sm-8 control-label">Leader</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="text: App.Application.formatYesNo(is_leader_candidate)"></p>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-8 control-label">Crew Escort</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="text: App.Application.formatYesNo(is_escort_candidate)"></p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</fieldset>
+									<fieldset>
+										<legend>Priority</legend>
+										<div class="row">
+											<div class="col-md-6">
+												<div class="form-group">
+													<label class="col-sm-8 control-label">Armour Death</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="text: App.Application.formatRank(getArmourDeathPriorityRank())"><span></span></p>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-8 control-label">Shielding Death</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="text: App.Application.formatRank(getShieldingDeathPriorityRank())"><span></span></p>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-8 control-label">Cannon Death</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="text: App.Application.formatRank(getCannonDeathPriorityRank())"><span></span></p>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-8 control-label">Long Walk Death</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="text: App.Application.formatRank(getLongWalkDeathPriorityRank())"><span></span></p>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-8 control-label">HTL Death</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="text: App.Application.formatRank(getHTLDeathPriorityRank())"><span></span></p>
+													</div>
+												</div>
+											</div>
+											<div class="col-md-6">
+												<div class="form-group">
+													<label class="col-sm-8 control-label">Defence Report</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="text: App.Application.formatRank(getDefenceReportPriorityRank())"><span></span></p>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-8 control-label">Keep Base Advocate</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="html: App.Application.formatRank(getKeepBasePriorityRank())"><span></span></p>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-8 control-label">Destroy Base Advocate</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="html: App.Application.formatRank(getDestroyBasePriorityRank())"><span></span></p>
+													</div>
+												</div>
+												<div class="form-group">
+													<label class="col-sm-8 control-label">Catch Shepard</label>
+													<div class="col-sm-4">
+														<p class="form-control-static" data-bind="text: App.Application.formatRank(getCutsceneRescuePriorityRank())"><span></span></p>
+													</div>
+												</div>
+											</div>
+										</div>
+									</fieldset>
+								</form>
+							</div>
+							<div class="modal-footer">
+								<button type="button" class="btn btn-primary" data-bind="click: function () { $root.henchman(undefined); }">Close</button>
+							</div>
+						</div>
+					</div>
+				<!-- /ko -->
+			</div>
 		</div>
 
 		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
 		<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.compat.js"></script>
+		<script src="../cdn/vendor/bootstrap/bootstrap.js"></script>
 		<script src="../cdn/javascript/app-1.0.0.js"></script>
 		<script>
 			$(function () {
 
 				var app = new App.Application();
 
+				// Debugging
+				window.app = app;
+
 				// Initialise Knockout
 				ko.applyBindings(app);
 
-				// Debugging
-				window.app = app;
+
 			});
 		</script>
 	</body>

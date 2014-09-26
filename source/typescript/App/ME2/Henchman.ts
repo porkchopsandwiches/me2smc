@@ -18,6 +18,7 @@ module App {
         }
 
         export interface IHenchman {
+            //app: App.Application;
             id: HenchmanIDs;
             name: string;
             is_essential: boolean;
@@ -38,11 +39,20 @@ module App {
             is_escort_candidate: boolean;
             is_vent_candidate: boolean;
             is_bubble_candidate: boolean;
-            is_vent_leader_candidate: boolean;
-            is_long_walk_leader_candidate: boolean;
+            is_leader_candidate: boolean;
+            getHTLDeathPriorityRank (): number;
+            getArmourDeathPriorityRank (): number;
+            getShieldingDeathPriorityRank (): number;
+            getCannonDeathPriorityRank (): number;
+            getLongWalkDeathPriorityRank (): number;
+            getCutsceneRescuePriorityRank (): number;
+            getDefenceReportPriorityRank (): number;
+            getKeepBasePriorityRank (): number;
+            getDestroyBasePriorityRank (): number;
         }
 
         export class Henchman implements IHenchman {
+            private app: App.Application;
             public id: HenchmanIDs;
             public name: string = "";
             public is_essential: boolean;
@@ -63,10 +73,10 @@ module App {
             public is_escort_candidate: boolean;
             public is_vent_candidate: boolean;
             public is_bubble_candidate: boolean;
-            public is_vent_leader_candidate: boolean;
-            public is_long_walk_leader_candidate: boolean;
+            public is_leader_candidate: boolean;
 
             constructor (
+                app: App.Application,
                 id: HenchmanIDs = undefined,
                 name: string = "",
                 is_essential: boolean = false,
@@ -87,9 +97,9 @@ module App {
                 is_escort_candidate: boolean = false,
                 is_vent_candidate: boolean = false,
                 is_bubble_candidate: boolean = false,
-                is_vent_leader_candidate: boolean = false,
-                is_long_walk_leader_candidate: boolean = false
+                is_leader_candidate: boolean = false
             ) {
+                this.app = app;
                 this.id = id;
                 this.name = name;
                 this.is_essential = is_essential;
@@ -110,8 +120,49 @@ module App {
                 this.is_escort_candidate = is_escort_candidate;
                 this.is_vent_candidate = is_vent_candidate;
                 this.is_bubble_candidate = is_bubble_candidate;
-                this.is_vent_leader_candidate = is_vent_leader_candidate;
-                this.is_long_walk_leader_candidate = is_long_walk_leader_candidate;
+                this.is_leader_candidate = is_leader_candidate;
+            }
+
+            private getHenchmenSortedBy (field: string): App.ME2.Henchman[] {
+                return _.sortBy<App.ME2.Henchman, number>(this.app.getHenchmen(), (henchman: App.ME2.Henchman): number => {
+                    return henchman[field];
+                }).reverse();
+            }
+
+            public getHTLDeathPriorityRank (): number {
+                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("htl_death_priority"), this);
+            }
+
+            public getArmourDeathPriorityRank (): number {
+                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("armour_death_priority"), this);
+            }
+
+            public getShieldingDeathPriorityRank (): number {
+                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("shielding_death_priority"), this);
+            }
+
+            public getCannonDeathPriorityRank (): number {
+                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("cannon_death_priority"), this);
+            }
+
+            public getLongWalkDeathPriorityRank (): number {
+                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("long_walk_death_priority"), this);
+            }
+
+            public getCutsceneRescuePriorityRank (): number {
+                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("cutscene_rescue_priority"), this);
+            }
+
+            public getDefenceReportPriorityRank (): number {
+                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("defence_report_priority"), this);
+            }
+
+            public getKeepBasePriorityRank (): number {
+                return this.keep_base_priority > 0 ? _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("keep_base_priority"), this) : undefined;
+            }
+
+            public getDestroyBasePriorityRank (): number {
+                return this.destroy_base_priority > 0 ? _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("destroy_base_priority"), this) : undefined;
             }
         }
     }

@@ -1,229 +1,3 @@
-var App;
-(function (App) {
-    var Application = (function () {
-        function Application() {
-            this.normandy = new App.ME2.Normandy(true, true, true);
-
-            this.henchmen = [
-                new App.ME2.Henchman(0 /* Garrus */, "Garrus Vakarian", true, 3, 5, 0, 8, 11, 10, 2, 11, 8, 0, false, false, true, false, true, true, false, true, true),
-                new App.ME2.Henchman(1 /* Grunt */, "Grunt", false, 3, 0, 0, 6, 9, 8, 4, 9, 12, 0, false, false, false, false, true, false, false, true, true),
-                new App.ME2.Henchman(2 /* Jack */, "Jack", true, 0, 8, 12, 5, 8, 11, 1, 12, 0, 8, false, true, false, false, true, false, true, true, true),
-                new App.ME2.Henchman(3 /* Jacob */, "Jacob Taylor", true, 1, 6, 0, 0, 0, 6, 7, 8, 0, 10, false, false, true, false, true, true, true, true, true),
-                new App.ME2.Henchman(4 /* Kasumi */, "Kasumi Goto", false, 0, 9, 0, 12, 0, 3, 9, 4, 0, 9, true, false, false, false, true, true, false, true, true),
-                new App.ME2.Henchman(5 /* Legion */, "Legion", false, 1, 3, 0, 11, 0, 9, 3, 10, 9, 0, true, false, false, false, true, true, false, true, true),
-                new App.ME2.Henchman(6 /* Miranda */, "Miranda Lawson", true, 1, 7, 0, 0, 0, -1, 11, 2, 13, 0, false, false, true, true, false, false, true, true, true),
-                new App.ME2.Henchman(7 /* Mordin */, "Mordin Solus", true, 0, 11, 0, 0, 0, 5, 6, 6, 10, 0, false, false, false, false, true, true, false, true, true),
-                new App.ME2.Henchman(9 /* Samara */, "Samara", false, 1, 4, 0, 4, 7, 7, 5, 7, 0, 12, false, true, false, false, true, false, true, true, true),
-                new App.ME2.Henchman(10 /* Tali */, "Tali'zorah", false, 0, 10, 0, 10, 0, 4, 8, 5, 0, 11, true, false, false, false, true, true, false, true, true),
-                new App.ME2.Henchman(11 /* Thane */, "Thane", false, 1, 2, 0, 9, 12, 12, 0, 13, 0, 13, false, false, false, false, true, true, true, true, true),
-                new App.ME2.Henchman(12 /* Zaeed */, "Zaeed Masani", false, 3, 1, 0, 7, 10, 2, 10, 3, 11, 0, false, false, false, false, true, false, false, true, true)
-            ];
-
-            this.stager = new App.ME2.Stages.Stager(this);
-            this.stager.nextStage();
-        }
-        Application.prototype.getHenchmen = function () {
-            return this.henchmen;
-        };
-
-        Application.prototype.getHenchman = function (id) {
-            return _.find(this.henchmen, function (henchman) {
-                return henchman.id === id;
-            });
-        };
-
-        Application.formatTeammateRole = function (role) {
-            switch (role) {
-                case 0 /* OcculusSquadmate */:
-                    return "Occulus Squadmate";
-                case 3 /* VentsLeader */:
-                    return "Vents Leader";
-                case 2 /* VentsVenter */:
-                    return "Vents Tech Expert";
-                case 1 /* VentsSquadmate */:
-                    return "Vents Squadmate";
-                case 6 /* LongWalkBubbler */:
-                    return "Long Walk Biotic Expert";
-                case 5 /* LongWalkEscort */:
-                    return "Escort";
-                case 7 /* LongWalkLeader */:
-                    return "Long Walk Leader";
-                case 4 /* LongWalkSquadmate */:
-                    return "Long Walk Squadmate";
-                case 8 /* BossSquadmate */:
-                    return "Boss Squadmate";
-                case 9 /* HeldTheLine */:
-                    return "Held the line";
-            }
-
-            return App.ME2.TeammateRoles[role];
-        };
-
-        Application.formatYesNo = function (value) {
-            return value ? "Yes" : "No";
-        };
-
-        Application.renderTeammateName = function (teammate, highlight) {
-            if (typeof highlight === "undefined") { highlight = false; }
-            if (teammate) {
-                return teammate.henchman.name + (highlight ? " ✸" : "");
-            } else {
-                return "N/A";
-            }
-        };
-
-        Application.renderTeammateNameVentVenter = function (teammate) {
-            return Application.renderTeammateName(teammate, teammate.willBeEffectiveVentVenter());
-        };
-
-        Application.renderTeammateNameVentLeader = function (teammate) {
-            return Application.renderTeammateName(teammate, teammate.willBeEffectiveVentLeader());
-        };
-
-        Application.renderTeammateNameLongWalkBubbler = function (teammate) {
-            return Application.renderTeammateName(teammate, teammate.willBeEffectiveLongWalkBubbler());
-        };
-
-        Application.renderTeammateNameLongWalkLeader = function (teammate) {
-            return Application.renderTeammateName(teammate, teammate.willBeEffectiveLongWalkLeader());
-        };
-
-        Application.renderTeammateNameLongWalkEscort = function (teammate) {
-            return Application.renderTeammateName(teammate, teammate.willBeEffectiveLongWalkEscort());
-        };
-
-        Application.renderTeammateNameBossSquadmate = function (teammate) {
-            return Application.renderTeammateName(teammate, teammate.willSurviveBeingBossSquadmate());
-        };
-
-        Application.renderTeammateNameKeepBaseAdvocate = function (teammate) {
-            return Application.renderTeammateName(teammate) + (teammate.henchman.id === 6 /* Miranda */ ? " *" : "");
-        };
-
-        Application.formatTeammateDeathCause = function (death_cause) {
-            switch (death_cause) {
-                case 0 /* ArmourFailure */:
-                    return "Advanced Armour not acquired";
-                case 1 /* ShieldingFailure */:
-                    return "Advanced Shielding not acquired";
-                case 2 /* CannonFailure */:
-                    return "Thanix Cannon not acquired";
-                case 4 /* VentsBadLeader */:
-                    return "Bad vents leader";
-                case 3 /* VentsBadVenter */:
-                    return "Bad vents choice";
-                case 7 /* Escort */:
-                    return "Disloyal escort";
-                case 5 /* LongWalkBadBubbler */:
-                    return "Bad long walk bubbler";
-                case 6 /* LongWalkBadLeader */:
-                    return "Bad long walk leader";
-                case 8 /* Boss */:
-                    return "Disloyal Boss squadmate";
-                case 9 /* HoldTheLine */:
-                    return "Failed to hold the line";
-                default:
-                    return App.ME2.TeammateDeathCauses[death_cause];
-            }
-        };
-        return Application;
-    })();
-    App.Application = Application;
-})(App || (App = {}));
-var App;
-(function (App) {
-    (function (ME2) {
-        (function (HenchmanIDs) {
-            HenchmanIDs[HenchmanIDs["Garrus"] = 0] = "Garrus";
-            HenchmanIDs[HenchmanIDs["Grunt"] = 1] = "Grunt";
-            HenchmanIDs[HenchmanIDs["Jack"] = 2] = "Jack";
-            HenchmanIDs[HenchmanIDs["Jacob"] = 3] = "Jacob";
-            HenchmanIDs[HenchmanIDs["Kasumi"] = 4] = "Kasumi";
-            HenchmanIDs[HenchmanIDs["Legion"] = 5] = "Legion";
-            HenchmanIDs[HenchmanIDs["Miranda"] = 6] = "Miranda";
-            HenchmanIDs[HenchmanIDs["Mordin"] = 7] = "Mordin";
-            HenchmanIDs[HenchmanIDs["Morinth"] = 8] = "Morinth";
-            HenchmanIDs[HenchmanIDs["Samara"] = 9] = "Samara";
-            HenchmanIDs[HenchmanIDs["Tali"] = 10] = "Tali";
-            HenchmanIDs[HenchmanIDs["Thane"] = 11] = "Thane";
-            HenchmanIDs[HenchmanIDs["Zaeed"] = 12] = "Zaeed";
-        })(ME2.HenchmanIDs || (ME2.HenchmanIDs = {}));
-        var HenchmanIDs = ME2.HenchmanIDs;
-
-        var Henchman = (function () {
-            function Henchman(id, name, is_essential, htl_value, htl_death_priority, armour_death_priority, shielding_death_priority, cannon_death_priority, long_walk_death_priority, cutscene_rescue_priority, defence_report_priority, keep_base_priority, destroy_base_priority, is_tech_expert, is_biotic_expert, is_leader, is_super_leader, is_escort_candidate, is_vent_candidate, is_bubble_candidate, is_vent_leader_candidate, is_long_walk_leader_candidate) {
-                if (typeof id === "undefined") { id = undefined; }
-                if (typeof name === "undefined") { name = ""; }
-                if (typeof is_essential === "undefined") { is_essential = false; }
-                if (typeof htl_value === "undefined") { htl_value = 0; }
-                if (typeof htl_death_priority === "undefined") { htl_death_priority = 0; }
-                if (typeof armour_death_priority === "undefined") { armour_death_priority = 0; }
-                if (typeof shielding_death_priority === "undefined") { shielding_death_priority = 0; }
-                if (typeof cannon_death_priority === "undefined") { cannon_death_priority = 0; }
-                if (typeof long_walk_death_priority === "undefined") { long_walk_death_priority = 0; }
-                if (typeof cutscene_rescue_priority === "undefined") { cutscene_rescue_priority = 0; }
-                if (typeof defence_report_priority === "undefined") { defence_report_priority = 0; }
-                if (typeof keep_base_priority === "undefined") { keep_base_priority = 0; }
-                if (typeof destroy_base_priority === "undefined") { destroy_base_priority = 0; }
-                if (typeof is_tech_expert === "undefined") { is_tech_expert = false; }
-                if (typeof is_biotic_expert === "undefined") { is_biotic_expert = false; }
-                if (typeof is_leader === "undefined") { is_leader = false; }
-                if (typeof is_super_leader === "undefined") { is_super_leader = false; }
-                if (typeof is_escort_candidate === "undefined") { is_escort_candidate = false; }
-                if (typeof is_vent_candidate === "undefined") { is_vent_candidate = false; }
-                if (typeof is_bubble_candidate === "undefined") { is_bubble_candidate = false; }
-                if (typeof is_vent_leader_candidate === "undefined") { is_vent_leader_candidate = false; }
-                if (typeof is_long_walk_leader_candidate === "undefined") { is_long_walk_leader_candidate = false; }
-                this.name = "";
-                this.id = id;
-                this.name = name;
-                this.is_essential = is_essential;
-                this.htl_value = htl_value;
-                this.htl_death_priority = htl_death_priority;
-                this.armour_death_priority = armour_death_priority;
-                this.shielding_death_priority = shielding_death_priority;
-                this.cannon_death_priority = cannon_death_priority;
-                this.long_walk_death_priority = long_walk_death_priority;
-                this.cutscene_rescue_priority = cutscene_rescue_priority;
-                this.defence_report_priority = defence_report_priority;
-                this.keep_base_priority = keep_base_priority;
-                this.destroy_base_priority = destroy_base_priority;
-                this.is_tech_expert = is_tech_expert;
-                this.is_biotic_expert = is_biotic_expert;
-                this.is_leader = is_leader;
-                this.is_super_leader = is_super_leader;
-                this.is_escort_candidate = is_escort_candidate;
-                this.is_vent_candidate = is_vent_candidate;
-                this.is_bubble_candidate = is_bubble_candidate;
-                this.is_vent_leader_candidate = is_vent_leader_candidate;
-                this.is_long_walk_leader_candidate = is_long_walk_leader_candidate;
-            }
-            return Henchman;
-        })();
-        ME2.Henchman = Henchman;
-    })(App.ME2 || (App.ME2 = {}));
-    var ME2 = App.ME2;
-})(App || (App = {}));
-var App;
-(function (App) {
-    (function (ME2) {
-        var Normandy = (function () {
-            function Normandy(has_armor, has_shielding, has_thanix_cannon, delay) {
-                if (typeof has_armor === "undefined") { has_armor = false; }
-                if (typeof has_shielding === "undefined") { has_shielding = false; }
-                if (typeof has_thanix_cannon === "undefined") { has_thanix_cannon = false; }
-                if (typeof delay === "undefined") { delay = 0; }
-                this.has_armour = has_armor;
-                this.has_shielding = has_shielding;
-                this.has_thanix_cannon = has_thanix_cannon;
-                this.delay = delay;
-            }
-            return Normandy;
-        })();
-        ME2.Normandy = Normandy;
-    })(App.ME2 || (App.ME2 = {}));
-    var ME2 = App.ME2;
-})(App || (App = {}));
 
 
 ko["forcibleComputed"] = function ko_forcibleComputed(func, context, options) {
@@ -601,6 +375,41 @@ var App;
 (function (App) {
     (function (ME2) {
         (function (Stages) {
+            var Boss = (function (_super) {
+                __extends(Boss, _super);
+                function Boss(stager) {
+                    _super.call(this, stager);
+                    this.ui = new App.ME2.Stages.UI.Boss(this);
+                }
+                Boss.prototype.evaluate = function () {
+                    this.boss_squadmate_1.addRole(8 /* BossSquadmate */);
+                    this.boss_squadmate_2.addRole(8 /* BossSquadmate */);
+
+                    if (!this.boss_squadmate_1.willSurviveBeingBossSquadmate()) {
+                        this.boss_squadmate_1.die(8 /* Boss */);
+                    }
+                    if (!this.boss_squadmate_2.willSurviveBeingBossSquadmate()) {
+                        this.boss_squadmate_2.die(8 /* Boss */);
+                    }
+
+                    this.stager.teammates.alive().withoutRole(8 /* BossSquadmate */).withoutRole(5 /* LongWalkEscort */).addRole(9 /* HeldTheLine */).whoDieHoldingTheLine().die(9 /* HoldTheLine */);
+                };
+
+                Boss.prototype.isEvaluatable = function () {
+                    return !!this.boss_squadmate_1 && !!this.boss_squadmate_2;
+                };
+                return Boss;
+            })(Stages.Stage);
+            Stages.Boss = Boss;
+        })(ME2.Stages || (ME2.Stages = {}));
+        var Stages = ME2.Stages;
+    })(App.ME2 || (App.ME2 = {}));
+    var ME2 = App.ME2;
+})(App || (App = {}));
+var App;
+(function (App) {
+    (function (ME2) {
+        (function (Stages) {
             var Setup = (function (_super) {
                 __extends(Setup, _super);
                 function Setup(stager) {
@@ -637,6 +446,120 @@ var App;
             Stages.Summary = Summary;
         })(ME2.Stages || (ME2.Stages = {}));
         var Stages = ME2.Stages;
+    })(App.ME2 || (App.ME2 = {}));
+    var ME2 = App.ME2;
+})(App || (App = {}));
+var App;
+(function (App) {
+    (function (ME2) {
+        (function (HenchmanIDs) {
+            HenchmanIDs[HenchmanIDs["Garrus"] = 0] = "Garrus";
+            HenchmanIDs[HenchmanIDs["Grunt"] = 1] = "Grunt";
+            HenchmanIDs[HenchmanIDs["Jack"] = 2] = "Jack";
+            HenchmanIDs[HenchmanIDs["Jacob"] = 3] = "Jacob";
+            HenchmanIDs[HenchmanIDs["Kasumi"] = 4] = "Kasumi";
+            HenchmanIDs[HenchmanIDs["Legion"] = 5] = "Legion";
+            HenchmanIDs[HenchmanIDs["Miranda"] = 6] = "Miranda";
+            HenchmanIDs[HenchmanIDs["Mordin"] = 7] = "Mordin";
+            HenchmanIDs[HenchmanIDs["Morinth"] = 8] = "Morinth";
+            HenchmanIDs[HenchmanIDs["Samara"] = 9] = "Samara";
+            HenchmanIDs[HenchmanIDs["Tali"] = 10] = "Tali";
+            HenchmanIDs[HenchmanIDs["Thane"] = 11] = "Thane";
+            HenchmanIDs[HenchmanIDs["Zaeed"] = 12] = "Zaeed";
+        })(ME2.HenchmanIDs || (ME2.HenchmanIDs = {}));
+        var HenchmanIDs = ME2.HenchmanIDs;
+
+        var Henchman = (function () {
+            function Henchman(app, id, name, is_essential, htl_value, htl_death_priority, armour_death_priority, shielding_death_priority, cannon_death_priority, long_walk_death_priority, cutscene_rescue_priority, defence_report_priority, keep_base_priority, destroy_base_priority, is_tech_expert, is_biotic_expert, is_leader, is_super_leader, is_escort_candidate, is_vent_candidate, is_bubble_candidate, is_leader_candidate) {
+                if (typeof id === "undefined") { id = undefined; }
+                if (typeof name === "undefined") { name = ""; }
+                if (typeof is_essential === "undefined") { is_essential = false; }
+                if (typeof htl_value === "undefined") { htl_value = 0; }
+                if (typeof htl_death_priority === "undefined") { htl_death_priority = 0; }
+                if (typeof armour_death_priority === "undefined") { armour_death_priority = 0; }
+                if (typeof shielding_death_priority === "undefined") { shielding_death_priority = 0; }
+                if (typeof cannon_death_priority === "undefined") { cannon_death_priority = 0; }
+                if (typeof long_walk_death_priority === "undefined") { long_walk_death_priority = 0; }
+                if (typeof cutscene_rescue_priority === "undefined") { cutscene_rescue_priority = 0; }
+                if (typeof defence_report_priority === "undefined") { defence_report_priority = 0; }
+                if (typeof keep_base_priority === "undefined") { keep_base_priority = 0; }
+                if (typeof destroy_base_priority === "undefined") { destroy_base_priority = 0; }
+                if (typeof is_tech_expert === "undefined") { is_tech_expert = false; }
+                if (typeof is_biotic_expert === "undefined") { is_biotic_expert = false; }
+                if (typeof is_leader === "undefined") { is_leader = false; }
+                if (typeof is_super_leader === "undefined") { is_super_leader = false; }
+                if (typeof is_escort_candidate === "undefined") { is_escort_candidate = false; }
+                if (typeof is_vent_candidate === "undefined") { is_vent_candidate = false; }
+                if (typeof is_bubble_candidate === "undefined") { is_bubble_candidate = false; }
+                if (typeof is_leader_candidate === "undefined") { is_leader_candidate = false; }
+                this.name = "";
+                this.app = app;
+                this.id = id;
+                this.name = name;
+                this.is_essential = is_essential;
+                this.htl_value = htl_value;
+                this.htl_death_priority = htl_death_priority;
+                this.armour_death_priority = armour_death_priority;
+                this.shielding_death_priority = shielding_death_priority;
+                this.cannon_death_priority = cannon_death_priority;
+                this.long_walk_death_priority = long_walk_death_priority;
+                this.cutscene_rescue_priority = cutscene_rescue_priority;
+                this.defence_report_priority = defence_report_priority;
+                this.keep_base_priority = keep_base_priority;
+                this.destroy_base_priority = destroy_base_priority;
+                this.is_tech_expert = is_tech_expert;
+                this.is_biotic_expert = is_biotic_expert;
+                this.is_leader = is_leader;
+                this.is_super_leader = is_super_leader;
+                this.is_escort_candidate = is_escort_candidate;
+                this.is_vent_candidate = is_vent_candidate;
+                this.is_bubble_candidate = is_bubble_candidate;
+                this.is_leader_candidate = is_leader_candidate;
+            }
+            Henchman.prototype.getHenchmenSortedBy = function (field) {
+                return _.sortBy(this.app.getHenchmen(), function (henchman) {
+                    return henchman[field];
+                }).reverse();
+            };
+
+            Henchman.prototype.getHTLDeathPriorityRank = function () {
+                return _.indexOf(this.getHenchmenSortedBy("htl_death_priority"), this);
+            };
+
+            Henchman.prototype.getArmourDeathPriorityRank = function () {
+                return _.indexOf(this.getHenchmenSortedBy("armour_death_priority"), this);
+            };
+
+            Henchman.prototype.getShieldingDeathPriorityRank = function () {
+                return _.indexOf(this.getHenchmenSortedBy("shielding_death_priority"), this);
+            };
+
+            Henchman.prototype.getCannonDeathPriorityRank = function () {
+                return _.indexOf(this.getHenchmenSortedBy("cannon_death_priority"), this);
+            };
+
+            Henchman.prototype.getLongWalkDeathPriorityRank = function () {
+                return _.indexOf(this.getHenchmenSortedBy("long_walk_death_priority"), this);
+            };
+
+            Henchman.prototype.getCutsceneRescuePriorityRank = function () {
+                return _.indexOf(this.getHenchmenSortedBy("cutscene_rescue_priority"), this);
+            };
+
+            Henchman.prototype.getDefenceReportPriorityRank = function () {
+                return _.indexOf(this.getHenchmenSortedBy("defence_report_priority"), this);
+            };
+
+            Henchman.prototype.getKeepBasePriorityRank = function () {
+                return this.keep_base_priority > 0 ? _.indexOf(this.getHenchmenSortedBy("keep_base_priority"), this) : undefined;
+            };
+
+            Henchman.prototype.getDestroyBasePriorityRank = function () {
+                return this.destroy_base_priority > 0 ? _.indexOf(this.getHenchmenSortedBy("destroy_base_priority"), this) : undefined;
+            };
+            return Henchman;
+        })();
+        ME2.Henchman = Henchman;
     })(App.ME2 || (App.ME2 = {}));
     var ME2 = App.ME2;
 })(App || (App = {}));
@@ -985,6 +908,26 @@ var App;
 var App;
 (function (App) {
     (function (ME2) {
+        var Normandy = (function () {
+            function Normandy(has_armor, has_shielding, has_thanix_cannon, delay) {
+                if (typeof has_armor === "undefined") { has_armor = false; }
+                if (typeof has_shielding === "undefined") { has_shielding = false; }
+                if (typeof has_thanix_cannon === "undefined") { has_thanix_cannon = false; }
+                if (typeof delay === "undefined") { delay = 0; }
+                this.has_armour = has_armor;
+                this.has_shielding = has_shielding;
+                this.has_thanix_cannon = has_thanix_cannon;
+                this.delay = delay;
+            }
+            return Normandy;
+        })();
+        ME2.Normandy = Normandy;
+    })(App.ME2 || (App.ME2 = {}));
+    var ME2 = App.ME2;
+})(App || (App = {}));
+var App;
+(function (App) {
+    (function (ME2) {
         (function (Stages) {
             (function (UI) {
                 var Stager = (function () {
@@ -1106,7 +1049,7 @@ var App;
 
                     Stage.prototype.setup = function () {
                     };
-                    Stage.no_teammate = new App.ME2.Teammate(new App.ME2.Henchman(undefined, "— None —"));
+                    Stage.no_teammate = new App.ME2.Teammate(new App.ME2.Henchman(undefined, undefined, "— None —"));
                     return Stage;
                 })();
                 UI.Stage = Stage;
@@ -1179,7 +1122,7 @@ var App;
                             {
                                 name: "long_walk_leader",
                                 filter: function (teammate) {
-                                    return !teammate.is_dead && teammate.henchman.is_long_walk_leader_candidate;
+                                    return !teammate.is_dead && teammate.henchman.is_leader_candidate;
                                 }
                             },
                             {
@@ -1368,7 +1311,7 @@ var App;
                             {
                                 name: "vent_leader",
                                 filter: function (teammate) {
-                                    return !teammate.is_dead && teammate.henchman.is_vent_leader_candidate;
+                                    return !teammate.is_dead && teammate.henchman.is_leader_candidate;
                                 }
                             }
                         ];
@@ -1566,39 +1509,188 @@ var App;
     })(App.ME2 || (App.ME2 = {}));
     var ME2 = App.ME2;
 })(App || (App = {}));
+var Knockout;
+(function (Knockout) {
+    (function (Bindings) {
+        var Modal = (function () {
+            function Modal() {
+                function init(element, value_accessor) {
+                    var $element;
+                    $element = $(element);
+
+                    $element.modal({
+                        show: false
+                    });
+
+                    ko.utils.domNodeDisposal.addDisposeCallback(element, function () {
+                        $element.modal("destroy");
+                    });
+                }
+
+                function update(element, value_accessor) {
+                    var value;
+                    var $element;
+                    value = value_accessor();
+                    $element = $(element);
+
+                    if (value) {
+                        $element.modal("show");
+                    } else {
+                        $element.modal("hide");
+                    }
+                }
+
+                this.init = init;
+                this.update = update;
+            }
+            return Modal;
+        })();
+        Bindings.Modal = Modal;
+    })(Knockout.Bindings || (Knockout.Bindings = {}));
+    var Bindings = Knockout.Bindings;
+})(Knockout || (Knockout = {}));
+
+ko.bindingHandlers["modal"] = new Knockout.Bindings.Modal();
 var App;
 (function (App) {
-    (function (ME2) {
-        (function (Stages) {
-            var Boss = (function (_super) {
-                __extends(Boss, _super);
-                function Boss(stager) {
-                    _super.call(this, stager);
-                    this.ui = new App.ME2.Stages.UI.Boss(this);
-                }
-                Boss.prototype.evaluate = function () {
-                    this.boss_squadmate_1.addRole(8 /* BossSquadmate */);
-                    this.boss_squadmate_2.addRole(8 /* BossSquadmate */);
+    var Application = (function () {
+        function Application() {
+            this.normandy = new App.ME2.Normandy(true, true, true);
 
-                    if (!this.boss_squadmate_1.willSurviveBeingBossSquadmate()) {
-                        this.boss_squadmate_1.die(8 /* Boss */);
-                    }
-                    if (!this.boss_squadmate_2.willSurviveBeingBossSquadmate()) {
-                        this.boss_squadmate_2.die(8 /* Boss */);
-                    }
+            this.henchmen = [
+                new App.ME2.Henchman(this, 0 /* Garrus */, "Garrus Vakarian", true, 3, 5, 0, 8, 11, 10, 2, 11, 8, 0, false, false, true, false, true, true, false, true),
+                new App.ME2.Henchman(this, 1 /* Grunt */, "Grunt", false, 3, 0, 0, 6, 9, 8, 4, 9, 12, 0, false, false, false, false, true, false, false, true),
+                new App.ME2.Henchman(this, 2 /* Jack */, "Jack", true, 0, 8, 12, 5, 8, 11, 1, 12, 0, 8, false, true, false, false, true, false, true, true),
+                new App.ME2.Henchman(this, 3 /* Jacob */, "Jacob Taylor", true, 1, 6, 0, 0, 0, 6, 7, 8, 0, 10, false, false, true, false, true, true, true, true),
+                new App.ME2.Henchman(this, 4 /* Kasumi */, "Kasumi Goto", false, 0, 9, 0, 12, 0, 3, 9, 4, 0, 9, true, false, false, false, true, true, false, true),
+                new App.ME2.Henchman(this, 5 /* Legion */, "Legion", false, 1, 3, 0, 11, 0, 9, 3, 10, 9, 0, true, false, false, false, true, true, false, true),
+                new App.ME2.Henchman(this, 6 /* Miranda */, "Miranda Lawson", true, 1, 7, 0, 0, 0, -1, 11, 2, 13, 0, false, false, true, true, false, false, true, true),
+                new App.ME2.Henchman(this, 7 /* Mordin */, "Mordin Solus", true, 0, 11, 0, 0, 0, 5, 6, 6, 10, 0, false, false, false, false, true, true, false, true),
+                new App.ME2.Henchman(this, 9 /* Samara */, "Samara", false, 1, 4, 0, 4, 7, 7, 5, 7, 0, 12, false, true, false, false, true, false, true, true),
+                new App.ME2.Henchman(this, 10 /* Tali */, "Tali'zorah", false, 0, 10, 0, 10, 0, 4, 8, 5, 0, 11, true, false, false, false, true, true, false, true),
+                new App.ME2.Henchman(this, 11 /* Thane */, "Thane", false, 1, 2, 0, 9, 12, 12, 0, 13, 0, 13, false, false, false, false, true, true, true, true),
+                new App.ME2.Henchman(this, 12 /* Zaeed */, "Zaeed Masani", false, 3, 1, 0, 7, 10, 2, 10, 3, 11, 0, false, false, false, false, true, false, false, true)
+            ];
 
-                    this.stager.teammates.alive().withoutRole(8 /* BossSquadmate */).withoutRole(5 /* LongWalkEscort */).addRole(9 /* HeldTheLine */).whoDieHoldingTheLine().die(9 /* HoldTheLine */);
-                };
+            this.henchman = ko.observable(undefined);
 
-                Boss.prototype.isEvaluatable = function () {
-                    return !!this.boss_squadmate_1 && !!this.boss_squadmate_2;
-                };
-                return Boss;
-            })(Stages.Stage);
-            Stages.Boss = Boss;
-        })(ME2.Stages || (ME2.Stages = {}));
-        var Stages = ME2.Stages;
-    })(App.ME2 || (App.ME2 = {}));
-    var ME2 = App.ME2;
+            this.stager = new App.ME2.Stages.Stager(this);
+            this.stager.nextStage();
+        }
+        Application.prototype.getHenchmen = function () {
+            return this.henchmen;
+        };
+
+        Application.prototype.getHenchman = function (id) {
+            return _.find(this.henchmen, function (henchman) {
+                return henchman.id === id;
+            });
+        };
+
+        Application.formatTeammateRole = function (role) {
+            switch (role) {
+                case 0 /* OcculusSquadmate */:
+                    return "Occulus Squadmate";
+                case 3 /* VentsLeader */:
+                    return "Vents Leader";
+                case 2 /* VentsVenter */:
+                    return "Vents Tech Expert";
+                case 1 /* VentsSquadmate */:
+                    return "Vents Squadmate";
+                case 6 /* LongWalkBubbler */:
+                    return "Long Walk Biotic Expert";
+                case 5 /* LongWalkEscort */:
+                    return "Escort";
+                case 7 /* LongWalkLeader */:
+                    return "Long Walk Leader";
+                case 4 /* LongWalkSquadmate */:
+                    return "Long Walk Squadmate";
+                case 8 /* BossSquadmate */:
+                    return "Boss Squadmate";
+                case 9 /* HeldTheLine */:
+                    return "Held the line";
+            }
+
+            return App.ME2.TeammateRoles[role];
+        };
+
+        Application.formatYesNo = function (value) {
+            return value ? "Yes" : "No";
+        };
+
+        Application.formatRank = function (value) {
+            if (value !== undefined) {
+                return "#" + (value + 1);
+            } else {
+                return "<span class=\"text-muted\">N/A</span>";
+            }
+        };
+
+        Application.renderTeammateName = function (teammate, highlight) {
+            if (typeof highlight === "undefined") { highlight = false; }
+            if (teammate) {
+                return teammate.henchman.name + (highlight ? " ✸" : "");
+            } else {
+                return "N/A";
+            }
+        };
+
+        Application.renderTeammateNameVentVenter = function (teammate) {
+            return Application.renderTeammateName(teammate, teammate.willBeEffectiveVentVenter());
+        };
+
+        Application.renderTeammateNameVentLeader = function (teammate) {
+            return Application.renderTeammateName(teammate, teammate.willBeEffectiveVentLeader());
+        };
+
+        Application.renderTeammateNameLongWalkBubbler = function (teammate) {
+            return Application.renderTeammateName(teammate, teammate.willBeEffectiveLongWalkBubbler());
+        };
+
+        Application.renderTeammateNameLongWalkLeader = function (teammate) {
+            return Application.renderTeammateName(teammate, teammate.willBeEffectiveLongWalkLeader());
+        };
+
+        Application.renderTeammateNameLongWalkEscort = function (teammate) {
+            return Application.renderTeammateName(teammate, teammate.willBeEffectiveLongWalkEscort());
+        };
+
+        Application.renderTeammateNameBossSquadmate = function (teammate) {
+            return Application.renderTeammateName(teammate, teammate.willSurviveBeingBossSquadmate());
+        };
+
+        Application.renderTeammateNameKeepBaseAdvocate = function (teammate) {
+            return Application.renderTeammateName(teammate) + (teammate.henchman.id === 6 /* Miranda */ ? " *" : "");
+        };
+
+        Application.formatTeammateDeathCause = function (death_cause) {
+            switch (death_cause) {
+                case 0 /* ArmourFailure */:
+                    return "Advanced Armour not acquired";
+                case 1 /* ShieldingFailure */:
+                    return "Advanced Shielding not acquired";
+                case 2 /* CannonFailure */:
+                    return "Thanix Cannon not acquired";
+                case 4 /* VentsBadLeader */:
+                    return "Bad vents leader";
+                case 3 /* VentsBadVenter */:
+                    return "Bad vents choice";
+                case 7 /* Escort */:
+                    return "Disloyal escort";
+                case 5 /* LongWalkBadBubbler */:
+                    return "Bad long walk bubbler";
+                case 6 /* LongWalkBadLeader */:
+                    return "Bad long walk leader";
+                case 8 /* Boss */:
+                    return "Disloyal Boss squadmate";
+                case 9 /* HoldTheLine */:
+                    return "Failed to hold the line";
+                default:
+                    return App.ME2.TeammateDeathCauses[death_cause];
+            }
+        };
+        return Application;
+    })();
+    App.Application = Application;
 })(App || (App = {}));
 //# sourceMappingURL=app-1.0.0.js.map
