@@ -179,11 +179,15 @@
 							<div class="col-md-6">
 								<div class="form-group">
 									<label>Shepard lives</label>
-									<p class="form-control-static" data-bind="text: App.Application.formatYesNo(ui.shepard_lives)"></p>
+									<p class="form-control-static" data-bind="text: App.Application.renderYesNo(ui.shepard_lives)"></p>
 								</div>
 								<div class="form-group">
 									<label>Shepard caught by</label>
 									<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(ui.shepard_pulled_up_by())"></p>
+								</div>
+								<div class="form-group">
+									<label>Crew</label>
+									<p class="form-control-static" data-bind="text: App.Application.renderCrewSurvival(ui.crew_survival())"></p>
 								</div>
 							</div>
 						</div>
@@ -209,7 +213,7 @@
 								<td><a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }, text: henchman.name"></a> <!-- ko if: is_loyal --><span class="glyphicon glyphicon-heart"></span><!-- /ko --></td>
 								<td>
 									<!-- ko if: is_dead -->
-										<span data-bind="text: $root.formatTeammateDeathCause(death_cause)"></span>
+										<span data-bind="text: $root.renderTeammateDeathCause(death_cause)"></span>
 									<!-- /ko -->
 								</td>
 								<td>
@@ -271,7 +275,7 @@
 									<div class="form-group">
 										<label class="col-sm-6 control-label">Recruitment can be skipped</label>
 										<div class="col-sm-6">
-											<p class="form-control-static" data-bind="text: App.Application.formatYesNo(!is_essential)"></p>
+											<p class="form-control-static" data-bind="text: App.Application.renderYesNo(!is_essential)"></p>
 										</div>
 									</div>
 
@@ -283,13 +287,13 @@
 												<div class="form-group">
 													<label class="col-sm-8 control-label">Tech Expert</label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatYesNo(is_tech_expert)"></p>
+														<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_tech_expert)"></p>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-8 control-label">Biotic Expert</label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatYesNo(is_biotic_expert)"></p>
+														<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_biotic_expert)"></p>
 													</div>
 												</div>
 											</div>
@@ -297,7 +301,7 @@
 												<div class="form-group">
 													<label class="col-sm-8 control-label">Fireteam Leader</label>
 													<div class="col-sm-4">
-														<p class="form-control-static"><span data-bind="text: App.Application.formatYesNo(is_leader)"></span><span data-bind="visible: is_super_leader"> ✸</span></p>
+														<p class="form-control-static"><span data-bind="text: App.Application.renderYesNo(is_leader)"></span><span data-bind="visible: is_super_leader"> ✸</span></p>
 													</div>
 												</div>
 												<div class="form-group">
@@ -316,13 +320,13 @@
 												<div class="form-group">
 													<label class="col-sm-8 control-label">Vents</label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatYesNo(is_vent_candidate)"></p>
+														<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_vent_candidate)"></p>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-8 control-label">Biotic Bubble</label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatYesNo(is_bubble_candidate)"></p>
+														<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_bubble_candidate)"></p>
 													</div>
 												</div>
 											</div>
@@ -330,13 +334,13 @@
 												<div class="form-group">
 													<label class="col-sm-8 control-label">Leader</label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatYesNo(is_leader_candidate)"></p>
+														<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_leader_candidate)"></p>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-8 control-label">Crew Escort</label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatYesNo(is_escort_candidate)"></p>
+														<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_escort_candidate)"></p>
 													</div>
 												</div>
 											</div>
@@ -349,31 +353,31 @@
 												<div class="form-group">
 													<label class="col-sm-8 control-label"><a tabindex="0" data-bind="click: App.Application.showArmourDeathRankPopover">Armour Death</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatRank(getArmourDeathPriorityRank())"></p>
+														<p class="form-control-static" data-bind="text: App.Application.renderRank(getArmourDeathPriorityRank())"></p>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-8 control-label"><a tabindex="1" data-bind="click: App.Application.showShieldingDeathRankPopover">Shielding Death</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatRank(getShieldingDeathPriorityRank())"></p>
+														<p class="form-control-static" data-bind="text: App.Application.renderRank(getShieldingDeathPriorityRank())"></p>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-8 control-label"><a tabindex="2" data-bind="click: App.Application.showCannonDeathRankPopover">Cannon Death</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatRank(getCannonDeathPriorityRank())"></p>
+														<p class="form-control-static" data-bind="text: App.Application.renderRank(getCannonDeathPriorityRank())"></p>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-8 control-label"><a tabindex="3" data-bind="click: App.Application.showLongWalkDeathRankPopover">Long Walk Death</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatRank(getLongWalkDeathPriorityRank())"></p>
+														<p class="form-control-static" data-bind="text: App.Application.renderRank(getLongWalkDeathPriorityRank())"></p>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-8 control-label"><a tabindex="4" data-bind="click: App.Application.showHTMLDeathRankPopover">HTL Death</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatRank(getHTLDeathPriorityRank())"></p>
+														<p class="form-control-static" data-bind="text: App.Application.renderRank(getHTLDeathPriorityRank())"></p>
 													</div>
 												</div>
 											</div>
@@ -381,25 +385,25 @@
 												<div class="form-group">
 													<label class="col-sm-8 control-label"><a tabindex="5" data-bind="click: App.Application.showDefenceReportRankPopover">Defence Report</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatRank(getDefenceReportPriorityRank())"></p>
+														<p class="form-control-static" data-bind="text: App.Application.renderRank(getDefenceReportPriorityRank())"></p>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-8 control-label"><a tabindex="6" data-bind="click: App.Application.showKeepBaseAdvocateRankPopover">Keep Base Advocate</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="html: App.Application.formatRank(getKeepBasePriorityRank())"></p>
+														<p class="form-control-static" data-bind="html: App.Application.renderRank(getKeepBasePriorityRank())"></p>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-8 control-label"><a tabindex="7" data-bind="click: App.Application.showDestroyBaseAdvocateRankPopover">Destroy Base Advocate</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="html: App.Application.formatRank(getDestroyBasePriorityRank())"></p>
+														<p class="form-control-static" data-bind="html: App.Application.renderRank(getDestroyBasePriorityRank())"></p>
 													</div>
 												</div>
 												<div class="form-group">
 													<label class="col-sm-8 control-label"><a tabindex="8" data-bind="click: App.Application.showCutsceneRescueRankPopover">Catch Shepard</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatRank(getCutsceneRescuePriorityRank())"></p>
+														<p class="form-control-static" data-bind="text: App.Application.renderRank(getCutsceneRescuePriorityRank())"></p>
 													</div>
 												</div>
 											</div>

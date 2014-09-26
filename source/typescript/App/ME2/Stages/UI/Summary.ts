@@ -11,6 +11,12 @@ module App {
                     destroy_base_advocate: KnockoutObservable<App.ME2.Teammate>;
                 }
 
+                export enum SummaryCrewSurvivalOptions {
+                    AllSurvived,
+                    HalfSurvived,
+                    AllDied
+                }
+
                 export class Summary extends Stage implements ISummary {
                     public id: StageIDs = StageIDs.Summary;
                     public label: string = "Summary";
@@ -20,6 +26,7 @@ module App {
                     public defence_reporter: KnockoutObservable<App.ME2.Teammate>;
                     public keep_base_advocate: KnockoutObservable<App.ME2.Teammate>;
                     public destroy_base_advocate: KnockoutObservable<App.ME2.Teammate>;
+                    public crew_survival: KnockoutObservable<SummaryCrewSurvivalOptions>;
 
                     constructor (stage: App.ME2.Stages.IStage) {
                         super(stage);
@@ -28,6 +35,7 @@ module App {
                         this.defence_reporter = ko.observable(undefined);
                         this.keep_base_advocate = ko.observable(undefined);
                         this.destroy_base_advocate = ko.observable(undefined);
+                        this.crew_survival = ko.observable(undefined);
                     }
 
                     private getLivingTeammates (): App.ME2.Teammates {
@@ -62,12 +70,24 @@ module App {
                         return this.stage.stager.teammates.withRole(App.ME2.TeammateRoles.BossSquadmate).whoAdvocateDestroyingTheBase().sortByDestroyBasePriority().last();
                     }
 
+                    private getCrewSurvival (): SummaryCrewSurvivalOptions {
+                        switch (this.stage.stager.app.normandy.delay) {
+                            case 0:
+                                return SummaryCrewSurvivalOptions.AllSurvived;
+                            case 1:
+                                return SummaryCrewSurvivalOptions.HalfSurvived;
+                            default:
+                                return SummaryCrewSurvivalOptions.AllDied;
+                        }
+                    }
+
                     public setup (): void {
                         this.defence_reporter(this.getDefenceReporter());
                         this.shepard_lives(this.getShepardLives());
                         this.shepard_pulled_up_by(this.getShepardCatcher());
                         this.keep_base_advocate(this.getKeepBaseAdvocate());
                         this.destroy_base_advocate(this.getDestroyBaseAdvocate());
+                        this.crew_survival(this.getCrewSurvival());
                     }
                 }
             }

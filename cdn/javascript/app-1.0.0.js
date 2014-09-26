@@ -1376,6 +1376,13 @@ var App;
     (function (ME2) {
         (function (Stages) {
             (function (UI) {
+                (function (SummaryCrewSurvivalOptions) {
+                    SummaryCrewSurvivalOptions[SummaryCrewSurvivalOptions["AllSurvived"] = 0] = "AllSurvived";
+                    SummaryCrewSurvivalOptions[SummaryCrewSurvivalOptions["HalfSurvived"] = 1] = "HalfSurvived";
+                    SummaryCrewSurvivalOptions[SummaryCrewSurvivalOptions["AllDied"] = 2] = "AllDied";
+                })(UI.SummaryCrewSurvivalOptions || (UI.SummaryCrewSurvivalOptions = {}));
+                var SummaryCrewSurvivalOptions = UI.SummaryCrewSurvivalOptions;
+
                 var Summary = (function (_super) {
                     __extends(Summary, _super);
                     function Summary(stage) {
@@ -1387,6 +1394,7 @@ var App;
                         this.defence_reporter = ko.observable(undefined);
                         this.keep_base_advocate = ko.observable(undefined);
                         this.destroy_base_advocate = ko.observable(undefined);
+                        this.crew_survival = ko.observable(undefined);
                     }
                     Summary.prototype.getLivingTeammates = function () {
                         return this.stage.stager.teammates.alive();
@@ -1420,12 +1428,24 @@ var App;
                         return this.stage.stager.teammates.withRole(8 /* BossSquadmate */).whoAdvocateDestroyingTheBase().sortByDestroyBasePriority().last();
                     };
 
+                    Summary.prototype.getCrewSurvival = function () {
+                        switch (this.stage.stager.app.normandy.delay) {
+                            case 0:
+                                return 0 /* AllSurvived */;
+                            case 1:
+                                return 1 /* HalfSurvived */;
+                            default:
+                                return 2 /* AllDied */;
+                        }
+                    };
+
                     Summary.prototype.setup = function () {
                         this.defence_reporter(this.getDefenceReporter());
                         this.shepard_lives(this.getShepardLives());
                         this.shepard_pulled_up_by(this.getShepardCatcher());
                         this.keep_base_advocate(this.getKeepBaseAdvocate());
                         this.destroy_base_advocate(this.getDestroyBaseAdvocate());
+                        this.crew_survival(this.getCrewSurvival());
                     };
                     return Summary;
                 })(UI.Stage);
@@ -1529,17 +1549,30 @@ var App;
             var Normandy = (function (_super) {
                 __extends(Normandy, _super);
                 function Normandy(normany) {
+                    var _this = this;
                     _super.call(this);
                     this.has_armour = ko.observable(undefined);
                     this.has_shielding = ko.observable(undefined);
                     this.has_thanix_cannon = ko.observable(undefined);
-                    this.delay = ko.observable(undefined);
                     this.normandy = normany;
 
                     this.link(this.normandy, "has_armour");
                     this.link(this.normandy, "has_shielding");
                     this.link(this.normandy, "has_thanix_cannon");
-                    this.link(this.normandy, "delay");
+
+                    this.delay = ko.pureComputed({
+                        read: function () {
+                            return "" + _this.normandy.delay;
+                        },
+                        write: function (value) {
+                            var delay;
+                            delay = parseInt(value, 10);
+
+                            if (!_.isNaN(delay)) {
+                                _this.normandy.delay = parseInt(value, 10);
+                            }
+                        }
+                    });
                 }
                 return Normandy;
             })(App.ME2.UI.Proxy);
@@ -1654,11 +1687,11 @@ var App;
             return App.ME2.TeammateRoles[role];
         };
 
-        Application.formatYesNo = function (value) {
+        Application.renderYesNo = function (value) {
             return value ? "Yes" : "No";
         };
 
-        Application.formatRank = function (value) {
+        Application.renderRank = function (value) {
             if (value !== undefined) {
                 return "#" + (value + 1);
             } else {
@@ -1700,10 +1733,10 @@ var App;
         };
 
         Application.renderTeammateNameKeepBaseAdvocate = function (teammate) {
-            return Application.renderTeammateName(teammate) + (teammate.henchman.id === 6 /* Miranda */ ? " *" : "");
+            return Application.renderTeammateName(teammate, teammate && teammate.henchman.id === 6 /* Miranda */);
         };
 
-        Application.formatTeammateDeathCause = function (death_cause) {
+        Application.renderTeammateDeathCause = function (death_cause) {
             switch (death_cause) {
                 case 0 /* ArmourFailure */:
                     return "Advanced Armour not acquired";
@@ -1727,6 +1760,19 @@ var App;
                     return "Failed to hold the line";
                 default:
                     return App.ME2.TeammateDeathCauses[death_cause];
+            }
+        };
+
+        Application.renderCrewSurvival = function (crew_survival) {
+            switch (crew_survival) {
+                case 2 /* AllDied */:
+                    return "All Died";
+                case 1 /* HalfSurvived */:
+                    return "Half Survived";
+                case 0 /* AllSurvived */:
+                    return "All Survived";
+                default:
+                    return App.ME2.Stages.UI.SummaryCrewSurvivalOptions[crew_survival];
             }
         };
 

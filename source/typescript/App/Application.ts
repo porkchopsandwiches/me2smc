@@ -72,11 +72,11 @@ module App {
             return App.ME2.TeammateRoles[role];
         }
 
-        static formatYesNo (value: boolean): string {
+        static renderYesNo (value: boolean): string {
             return value ? "Yes" : "No";
         }
 
-        static formatRank (value: number): string {
+        static renderRank (value: number): string {
             if (value !== undefined) {
                 return "#" + (value + 1);
             } else {
@@ -117,10 +117,10 @@ module App {
         }
 
         static renderTeammateNameKeepBaseAdvocate (teammate: App.ME2.Teammate): string {
-            return Application.renderTeammateName(teammate) + (teammate.henchman.id === App.ME2.HenchmanIDs.Miranda ? " *" : "");
+            return Application.renderTeammateName(teammate, teammate && teammate.henchman.id === App.ME2.HenchmanIDs.Miranda);
         }
 
-        static formatTeammateDeathCause (death_cause: App.ME2.TeammateDeathCauses): string {
+        static renderTeammateDeathCause (death_cause: App.ME2.TeammateDeathCauses): string {
             switch (death_cause) {
                 case App.ME2.TeammateDeathCauses.ArmourFailure:
                     return "Advanced Armour not acquired";
@@ -144,6 +144,19 @@ module App {
                     return "Failed to hold the line";
                 default:
                     return App.ME2.TeammateDeathCauses[death_cause];
+            }
+        }
+
+        static renderCrewSurvival (crew_survival: App.ME2.Stages.UI.SummaryCrewSurvivalOptions): string {
+            switch (crew_survival) {
+                case App.ME2.Stages.UI.SummaryCrewSurvivalOptions.AllDied:
+                    return "All Died";
+                case App.ME2.Stages.UI.SummaryCrewSurvivalOptions.HalfSurvived:
+                    return "Half Survived";
+                case App.ME2.Stages.UI.SummaryCrewSurvivalOptions.AllSurvived:
+                    return "All Survived";
+                default:
+                    return App.ME2.Stages.UI.SummaryCrewSurvivalOptions[crew_survival];
             }
         }
 
