@@ -129,40 +129,81 @@ module App {
                 }).reverse();
             }
 
+            public getHenchmenSortedByArmourDeathPriority (): App.ME2.Henchman[] {
+                return this.getHenchmenSortedBy("armour_death_priority");
+            }
+
+            public getHenchmenSortedByShieldingDeathPriority (): App.ME2.Henchman[] {
+                return this.getHenchmenSortedBy("shielding_death_priority");
+            }
+
+            public getHenchmenSortedByCannonDeathPriority (): App.ME2.Henchman[] {
+                return this.getHenchmenSortedBy("cannon_death_priority");
+            }
+
+            public getHenchmenSortedByHTLDeathPriority (): App.ME2.Henchman[] {
+                return this.getHenchmenSortedBy("htl_death_priority");
+            }
+
+            public getHenchmenSortedByLongWalkDeathPriority (): App.ME2.Henchman[] {
+                return this.getHenchmenSortedBy("long_walk_death_priority");
+            }
+
+            public getHenchmenSortedByCutsceneRescuePriority (): App.ME2.Henchman[] {
+                return this.getHenchmenSortedBy("cutscene_rescue_priority");
+            }
+
+            public getHenchmenSortedByDefenceReportPriority (): App.ME2.Henchman[] {
+                return this.getHenchmenSortedBy("defence_report_priority");
+            }
+
+            public getHenchmenSortedByKeepBasePriority (): App.ME2.Henchman[] {
+                return _.filter(this.getHenchmenSortedBy("keep_base_priority"), (henchman: App.ME2.Henchman) => {
+                    return henchman.keep_base_priority > 0;
+                });
+            }
+
+            public getHenchmenSortedByDestroyBasePriority (): App.ME2.Henchman[] {
+                return _.filter(this.getHenchmenSortedBy("destroy_base_priority"), (henchman: App.ME2.Henchman) => {
+                    return henchman.destroy_base_priority > 0;
+                });
+            }
+
+
             public getHTLDeathPriorityRank (): number {
-                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("htl_death_priority"), this);
+                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedByHTLDeathPriority(), this);
             }
 
             public getArmourDeathPriorityRank (): number {
-                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("armour_death_priority"), this);
+                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedByArmourDeathPriority(), this);
             }
 
             public getShieldingDeathPriorityRank (): number {
-                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("shielding_death_priority"), this);
+                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedByShieldingDeathPriority(), this);
             }
 
             public getCannonDeathPriorityRank (): number {
-                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("cannon_death_priority"), this);
+                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedByCannonDeathPriority(), this);
             }
 
             public getLongWalkDeathPriorityRank (): number {
-                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("long_walk_death_priority"), this);
+                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedByLongWalkDeathPriority(), this);
             }
 
             public getCutsceneRescuePriorityRank (): number {
-                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("cutscene_rescue_priority"), this);
+                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedByCutsceneRescuePriority(), this);
             }
 
             public getDefenceReportPriorityRank (): number {
-                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("defence_report_priority"), this);
+                return _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedByDefenceReportPriority(), this);
             }
 
             public getKeepBasePriorityRank (): number {
-                return this.keep_base_priority > 0 ? _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("keep_base_priority"), this) : undefined;
+                return this.keep_base_priority > 0 ? _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedByKeepBasePriority(), this) : undefined;
             }
 
             public getDestroyBasePriorityRank (): number {
-                return this.destroy_base_priority > 0 ? _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedBy("destroy_base_priority"), this) : undefined;
+                return this.destroy_base_priority > 0 ? _.indexOf<App.ME2.Henchman>(this.getHenchmenSortedByDestroyBasePriority(), this) : undefined;
             }
         }
     }

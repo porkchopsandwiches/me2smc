@@ -522,40 +522,80 @@ var App;
                 }).reverse();
             };
 
+            Henchman.prototype.getHenchmenSortedByArmourDeathPriority = function () {
+                return this.getHenchmenSortedBy("armour_death_priority");
+            };
+
+            Henchman.prototype.getHenchmenSortedByShieldingDeathPriority = function () {
+                return this.getHenchmenSortedBy("shielding_death_priority");
+            };
+
+            Henchman.prototype.getHenchmenSortedByCannonDeathPriority = function () {
+                return this.getHenchmenSortedBy("cannon_death_priority");
+            };
+
+            Henchman.prototype.getHenchmenSortedByHTLDeathPriority = function () {
+                return this.getHenchmenSortedBy("htl_death_priority");
+            };
+
+            Henchman.prototype.getHenchmenSortedByLongWalkDeathPriority = function () {
+                return this.getHenchmenSortedBy("long_walk_death_priority");
+            };
+
+            Henchman.prototype.getHenchmenSortedByCutsceneRescuePriority = function () {
+                return this.getHenchmenSortedBy("cutscene_rescue_priority");
+            };
+
+            Henchman.prototype.getHenchmenSortedByDefenceReportPriority = function () {
+                return this.getHenchmenSortedBy("defence_report_priority");
+            };
+
+            Henchman.prototype.getHenchmenSortedByKeepBasePriority = function () {
+                return _.filter(this.getHenchmenSortedBy("keep_base_priority"), function (henchman) {
+                    return henchman.keep_base_priority > 0;
+                });
+            };
+
+            Henchman.prototype.getHenchmenSortedByDestroyBasePriority = function () {
+                return _.filter(this.getHenchmenSortedBy("destroy_base_priority"), function (henchman) {
+                    return henchman.destroy_base_priority > 0;
+                });
+            };
+
             Henchman.prototype.getHTLDeathPriorityRank = function () {
-                return _.indexOf(this.getHenchmenSortedBy("htl_death_priority"), this);
+                return _.indexOf(this.getHenchmenSortedByHTLDeathPriority(), this);
             };
 
             Henchman.prototype.getArmourDeathPriorityRank = function () {
-                return _.indexOf(this.getHenchmenSortedBy("armour_death_priority"), this);
+                return _.indexOf(this.getHenchmenSortedByArmourDeathPriority(), this);
             };
 
             Henchman.prototype.getShieldingDeathPriorityRank = function () {
-                return _.indexOf(this.getHenchmenSortedBy("shielding_death_priority"), this);
+                return _.indexOf(this.getHenchmenSortedByShieldingDeathPriority(), this);
             };
 
             Henchman.prototype.getCannonDeathPriorityRank = function () {
-                return _.indexOf(this.getHenchmenSortedBy("cannon_death_priority"), this);
+                return _.indexOf(this.getHenchmenSortedByCannonDeathPriority(), this);
             };
 
             Henchman.prototype.getLongWalkDeathPriorityRank = function () {
-                return _.indexOf(this.getHenchmenSortedBy("long_walk_death_priority"), this);
+                return _.indexOf(this.getHenchmenSortedByLongWalkDeathPriority(), this);
             };
 
             Henchman.prototype.getCutsceneRescuePriorityRank = function () {
-                return _.indexOf(this.getHenchmenSortedBy("cutscene_rescue_priority"), this);
+                return _.indexOf(this.getHenchmenSortedByCutsceneRescuePriority(), this);
             };
 
             Henchman.prototype.getDefenceReportPriorityRank = function () {
-                return _.indexOf(this.getHenchmenSortedBy("defence_report_priority"), this);
+                return _.indexOf(this.getHenchmenSortedByDefenceReportPriority(), this);
             };
 
             Henchman.prototype.getKeepBasePriorityRank = function () {
-                return this.keep_base_priority > 0 ? _.indexOf(this.getHenchmenSortedBy("keep_base_priority"), this) : undefined;
+                return this.keep_base_priority > 0 ? _.indexOf(this.getHenchmenSortedByKeepBasePriority(), this) : undefined;
             };
 
             Henchman.prototype.getDestroyBasePriorityRank = function () {
-                return this.destroy_base_priority > 0 ? _.indexOf(this.getHenchmenSortedBy("destroy_base_priority"), this) : undefined;
+                return this.destroy_base_priority > 0 ? _.indexOf(this.getHenchmenSortedByDestroyBasePriority(), this) : undefined;
             };
             return Henchman;
         })();
@@ -1688,6 +1728,59 @@ var App;
                 default:
                     return App.ME2.TeammateDeathCauses[death_cause];
             }
+        };
+
+        Application.showArmourDeathRankPopover = function (henchman, event) {
+            return Application.showRankPopover($(event.target), "Armour Deaths", henchman, henchman.getHenchmenSortedByArmourDeathPriority());
+        };
+
+        Application.showShieldingDeathRankPopover = function (henchman, event) {
+            return Application.showRankPopover($(event.target), "Shielding Deaths", henchman, henchman.getHenchmenSortedByShieldingDeathPriority());
+        };
+
+        Application.showCannonDeathRankPopover = function (henchman, event) {
+            return Application.showRankPopover($(event.target), "Cannon Deaths", henchman, henchman.getHenchmenSortedByCannonDeathPriority());
+        };
+
+        Application.showLongWalkDeathRankPopover = function (henchman, event) {
+            return Application.showRankPopover($(event.target), "Long Walk Deaths", henchman, henchman.getHenchmenSortedByLongWalkDeathPriority());
+        };
+
+        Application.showHTMLDeathRankPopover = function (henchman, event) {
+            return Application.showRankPopover($(event.target), "Hold the line Deaths", henchman, henchman.getHenchmenSortedByHTLDeathPriority());
+        };
+
+        Application.showDefenceReportRankPopover = function (henchman, event) {
+            return Application.showRankPopover($(event.target), "Defence Reports", henchman, henchman.getHenchmenSortedByDefenceReportPriority());
+        };
+
+        Application.showKeepBaseAdvocateRankPopover = function (henchman, event) {
+            return Application.showRankPopover($(event.target), "Keep Base Advocates", henchman, henchman.getHenchmenSortedByKeepBasePriority());
+        };
+
+        Application.showDestroyBaseAdvocateRankPopover = function (henchman, event) {
+            return Application.showRankPopover($(event.target), "Destroy Base Advocates", henchman, henchman.getHenchmenSortedByDestroyBasePriority());
+        };
+
+        Application.showCutsceneRescueRankPopover = function (henchman, event) {
+            return Application.showRankPopover($(event.target), "Catchs Shepard", henchman, henchman.getHenchmenSortedByCutsceneRescuePriority());
+        };
+
+        Application.showRankPopover = function ($target, title, henchman, list) {
+            var $content;
+            $content = $("<ol />").addClass("rank-popover-list");
+            _.each(list, function (list_henchman) {
+                $content.append($("<li />").append(list_henchman.name));
+            });
+
+            $target.popover({
+                trigger: "focus",
+                title: title,
+                html: true,
+                content: $content
+            }).on("hidden.bs.popover", function () {
+                $target.popover("destroy");
+            }).popover("show");
         };
         return Application;
     })();

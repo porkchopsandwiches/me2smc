@@ -146,5 +146,63 @@ module App {
                     return App.ME2.TeammateDeathCauses[death_cause];
             }
         }
+
+        static showArmourDeathRankPopover (henchman: App.ME2.Henchman, event?: Event): void {
+            return Application.showRankPopover($(event.target), "Armour Deaths", henchman, henchman.getHenchmenSortedByArmourDeathPriority())
+        }
+
+        static showShieldingDeathRankPopover (henchman: App.ME2.Henchman, event?: Event): void {
+            return Application.showRankPopover($(event.target), "Shielding Deaths", henchman, henchman.getHenchmenSortedByShieldingDeathPriority())
+        }
+
+        static showCannonDeathRankPopover (henchman: App.ME2.Henchman, event?: Event): void {
+            return Application.showRankPopover($(event.target), "Cannon Deaths", henchman, henchman.getHenchmenSortedByCannonDeathPriority())
+        }
+
+        static showLongWalkDeathRankPopover (henchman: App.ME2.Henchman, event?: Event): void {
+            return Application.showRankPopover($(event.target), "Long Walk Deaths", henchman, henchman.getHenchmenSortedByLongWalkDeathPriority())
+        }
+
+        static showHTMLDeathRankPopover (henchman: App.ME2.Henchman, event?: Event): void {
+            return Application.showRankPopover($(event.target), "Hold the line Deaths", henchman, henchman.getHenchmenSortedByHTLDeathPriority())
+        }
+
+        static showDefenceReportRankPopover (henchman: App.ME2.Henchman, event?: Event): void {
+            return Application.showRankPopover($(event.target), "Defence Reports", henchman, henchman.getHenchmenSortedByDefenceReportPriority())
+        }
+
+        static showKeepBaseAdvocateRankPopover (henchman: App.ME2.Henchman, event?: Event): void {
+            return Application.showRankPopover($(event.target), "Keep Base Advocates", henchman, henchman.getHenchmenSortedByKeepBasePriority())
+        }
+
+        static showDestroyBaseAdvocateRankPopover (henchman: App.ME2.Henchman, event?: Event): void {
+            return Application.showRankPopover($(event.target), "Destroy Base Advocates", henchman, henchman.getHenchmenSortedByDestroyBasePriority())
+        }
+
+        static showCutsceneRescueRankPopover (henchman: App.ME2.Henchman, event?: Event): void {
+            return Application.showRankPopover($(event.target), "Catchs Shepard", henchman, henchman.getHenchmenSortedByCutsceneRescuePriority())
+        }
+
+        static showRankPopover ($target: JQuery, title: string, henchman: App.ME2.Henchman, list: App.ME2.Henchman[]): void {
+            var $content: JQuery;
+            $content = $("<ol />").addClass("rank-popover-list");
+            _.each(list, (list_henchman: App.ME2.Henchman) => {
+                $content.append(
+                    $("<li />")
+                    .append(list_henchman.name)
+                );
+            });
+
+            $target.popover({
+                trigger: "focus",
+                title: title,
+                html: true,
+                content: $content
+            })
+            .on("hidden.bs.popover", () => {
+                $target.popover("destroy");
+            })
+            .popover("show");
+        }
     }
 }

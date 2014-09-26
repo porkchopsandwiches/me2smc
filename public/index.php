@@ -1,9 +1,4 @@
-<?php
-
-$config = require("../config/config.php");
-
-
-?><!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 	<head>
 		<meta charset="utf-8" />
@@ -211,7 +206,7 @@ $config = require("../config/config.php");
 					<!-- ko with: stager.ui.teammates -->
 						<!-- ko foreach: $data -->
 							<tr data-bind="attr: { class: (is_dead ? 'danger' : '') }">
-								<td><span data-bind="text: henchman.name"></span> <!-- ko if: is_loyal --><span class="glyphicon glyphicon-heart"></span><!-- /ko --></td>
+								<td><a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }, text: henchman.name"></a> <!-- ko if: is_loyal --><span class="glyphicon glyphicon-heart"></span><!-- /ko --></td>
 								<td>
 									<!-- ko if: is_dead -->
 										<span data-bind="text: $root.formatTeammateDeathCause(death_cause)"></span>
@@ -352,59 +347,59 @@ $config = require("../config/config.php");
 										<div class="row">
 											<div class="col-md-6">
 												<div class="form-group">
-													<label class="col-sm-8 control-label">Armour Death</label>
+													<label class="col-sm-8 control-label"><a tabindex="0" data-bind="click: App.Application.showArmourDeathRankPopover">Armour Death</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatRank(getArmourDeathPriorityRank())"><span></span></p>
+														<p class="form-control-static" data-bind="text: App.Application.formatRank(getArmourDeathPriorityRank())"></p>
 													</div>
 												</div>
 												<div class="form-group">
-													<label class="col-sm-8 control-label">Shielding Death</label>
+													<label class="col-sm-8 control-label"><a tabindex="1" data-bind="click: App.Application.showShieldingDeathRankPopover">Shielding Death</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatRank(getShieldingDeathPriorityRank())"><span></span></p>
+														<p class="form-control-static" data-bind="text: App.Application.formatRank(getShieldingDeathPriorityRank())"></p>
 													</div>
 												</div>
 												<div class="form-group">
-													<label class="col-sm-8 control-label">Cannon Death</label>
+													<label class="col-sm-8 control-label"><a tabindex="2" data-bind="click: App.Application.showCannonDeathRankPopover">Cannon Death</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatRank(getCannonDeathPriorityRank())"><span></span></p>
+														<p class="form-control-static" data-bind="text: App.Application.formatRank(getCannonDeathPriorityRank())"></p>
 													</div>
 												</div>
 												<div class="form-group">
-													<label class="col-sm-8 control-label">Long Walk Death</label>
+													<label class="col-sm-8 control-label"><a tabindex="3" data-bind="click: App.Application.showLongWalkDeathRankPopover">Long Walk Death</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatRank(getLongWalkDeathPriorityRank())"><span></span></p>
+														<p class="form-control-static" data-bind="text: App.Application.formatRank(getLongWalkDeathPriorityRank())"></p>
 													</div>
 												</div>
 												<div class="form-group">
-													<label class="col-sm-8 control-label">HTL Death</label>
+													<label class="col-sm-8 control-label"><a tabindex="4" data-bind="click: App.Application.showHTMLDeathRankPopover">HTL Death</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatRank(getHTLDeathPriorityRank())"><span></span></p>
+														<p class="form-control-static" data-bind="text: App.Application.formatRank(getHTLDeathPriorityRank())"></p>
 													</div>
 												</div>
 											</div>
 											<div class="col-md-6">
 												<div class="form-group">
-													<label class="col-sm-8 control-label">Defence Report</label>
+													<label class="col-sm-8 control-label"><a tabindex="5" data-bind="click: App.Application.showDefenceReportRankPopover">Defence Report</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatRank(getDefenceReportPriorityRank())"><span></span></p>
+														<p class="form-control-static" data-bind="text: App.Application.formatRank(getDefenceReportPriorityRank())"></p>
 													</div>
 												</div>
 												<div class="form-group">
-													<label class="col-sm-8 control-label">Keep Base Advocate</label>
+													<label class="col-sm-8 control-label"><a tabindex="6" data-bind="click: App.Application.showKeepBaseAdvocateRankPopover">Keep Base Advocate</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="html: App.Application.formatRank(getKeepBasePriorityRank())"><span></span></p>
+														<p class="form-control-static" data-bind="html: App.Application.formatRank(getKeepBasePriorityRank())"></p>
 													</div>
 												</div>
 												<div class="form-group">
-													<label class="col-sm-8 control-label">Destroy Base Advocate</label>
+													<label class="col-sm-8 control-label"><a tabindex="7" data-bind="click: App.Application.showDestroyBaseAdvocateRankPopover">Destroy Base Advocate</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="html: App.Application.formatRank(getDestroyBasePriorityRank())"><span></span></p>
+														<p class="form-control-static" data-bind="html: App.Application.formatRank(getDestroyBasePriorityRank())"></p>
 													</div>
 												</div>
 												<div class="form-group">
-													<label class="col-sm-8 control-label">Catch Shepard</label>
+													<label class="col-sm-8 control-label"><a tabindex="8" data-bind="click: App.Application.showCutsceneRescueRankPopover">Catch Shepard</a></label>
 													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.formatRank(getCutsceneRescuePriorityRank())"><span></span></p>
+														<p class="form-control-static" data-bind="text: App.Application.formatRank(getCutsceneRescuePriorityRank())"></p>
 													</div>
 												</div>
 											</div>
@@ -436,8 +431,6 @@ $config = require("../config/config.php");
 
 				// Initialise Knockout
 				ko.applyBindings(app);
-
-
 			});
 		</script>
 	</body>

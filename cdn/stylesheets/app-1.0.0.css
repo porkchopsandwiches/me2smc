@@ -1,4 +1,4 @@
-/**//*! me2smc 2014-09-25 09:30 */
+/**//*! me2smc 2014-09-26 13:46 */
 
 /*! normalize.css v3.0.1 | MIT License | git.io/normalize */
 html {
@@ -5290,16 +5290,6 @@ button.close {
 @media print {
   .hidden-print {
     display: none !important; } }
-/*
-*{
-	box-sizing: border-box;
-}
-
-
-html,body{
-	margin: 0;
-}
-*/
 .setup-table label {
   width: 100%; }
 
@@ -5314,13 +5304,5 @@ html,body{
 .summary-table .glyphicon-heart {
   color: #c00; }
 
-/*
-#app{
-	background-color :white;
-}
-
-
-body, html{
-	background-color: #888;
-}
-*/
+.rank-popover-list {
+  width: 15em; }
