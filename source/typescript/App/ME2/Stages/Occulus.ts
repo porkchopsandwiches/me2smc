@@ -37,6 +37,8 @@ module App {
                     }
 
                     if (!this.stager.app.normandy.has_thanix_cannon) {
+                        console.log("no thanix channon");
+                        console.log("killing", dpt.alive().sortByCannonDeathPriority().last());
                         dpt.alive().sortByCannonDeathPriority().last().die(App.ME2.TeammateDeathCauses.CannonFailure);
                     }
                 }

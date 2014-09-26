@@ -71,13 +71,12 @@ module App {
                     }
 
                     private getCrewSurvival (): SummaryCrewSurvivalOptions {
-                        switch (this.stage.stager.app.normandy.delay) {
-                            case 0:
-                                return SummaryCrewSurvivalOptions.AllSurvived;
-                            case 1:
-                                return SummaryCrewSurvivalOptions.HalfSurvived;
-                            default:
-                                return SummaryCrewSurvivalOptions.AllDied;
+                        if (this.stage.stager.app.normandy.delay === 0) {
+                            return SummaryCrewSurvivalOptions.AllSurvived;
+                        } else if (this.stage.stager.app.normandy.delay <= 3) {
+                            return SummaryCrewSurvivalOptions.HalfSurvived;
+                        } else {
+                            return SummaryCrewSurvivalOptions.AllDied;
                         }
                     }
 

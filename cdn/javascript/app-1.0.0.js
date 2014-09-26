@@ -281,6 +281,8 @@ var App;
                     }
 
                     if (!this.stager.app.normandy.has_thanix_cannon) {
+                        console.log("no thanix channon");
+                        console.log("killing", dpt.alive().sortByCannonDeathPriority().last());
                         dpt.alive().sortByCannonDeathPriority().last().die(2 /* CannonFailure */);
                     }
                 };
@@ -1429,13 +1431,12 @@ var App;
                     };
 
                     Summary.prototype.getCrewSurvival = function () {
-                        switch (this.stage.stager.app.normandy.delay) {
-                            case 0:
-                                return 0 /* AllSurvived */;
-                            case 1:
-                                return 1 /* HalfSurvived */;
-                            default:
-                                return 2 /* AllDied */;
+                        if (this.stage.stager.app.normandy.delay === 0) {
+                            return 0 /* AllSurvived */;
+                        } else if (this.stage.stager.app.normandy.delay <= 3) {
+                            return 1 /* HalfSurvived */;
+                        } else {
+                            return 2 /* AllDied */;
                         }
                     };
 
