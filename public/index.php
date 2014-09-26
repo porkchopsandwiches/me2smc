@@ -213,7 +213,7 @@
 								<td><a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }, text: henchman.name"></a> <!-- ko if: is_loyal --><span class="glyphicon glyphicon-heart"></span><!-- /ko --></td>
 								<td>
 									<!-- ko if: is_dead -->
-										<span data-bind="text: $root.renderTeammateDeathCause(death_cause)"></span>
+										<span data-bind="text: App.Application.renderTeammateDeathCause(death_cause)"></span>
 									<!-- /ko -->
 								</td>
 								<td>
