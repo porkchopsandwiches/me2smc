@@ -1,4 +1,4 @@
-/**//*! me2smc 2014-09-28 10:06 */
+/**//*! me2smc 2014-09-28 11:49 */
 
 /*! normalize.css v3.0.1 | MIT License | git.io/normalize */
 html {
@@ -5307,6 +5307,9 @@ button.close {
     margin: 0; }
 .summary-table .glyphicon-heart {
   color: #c00; }
+.summary-table td:nth-child(n + 2),
+.summary-table th:nth-child(n + 2) {
+  text-align: center; }
 
 .rank-popover-list {
   width: 15em; }

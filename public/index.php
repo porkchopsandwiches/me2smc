@@ -209,19 +209,23 @@
 				<tbody>
 					<!-- ko with: stager.ui.teammates -->
 						<!-- ko foreach: $data -->
-							<tr data-bind="attr: { class: (is_dead ? 'danger' : '') }">
-								<td><a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }, text: henchman.name"></a> <!-- ko if: is_loyal --><span class="glyphicon glyphicon-heart"></span><!-- /ko --></td>
-								<td>
+							<tr>
+								<td data-bind="attr: { class: (is_dead ? 'danger' : '') }">
+                                    <a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }">
+                                        <span data-bind="text: henchman.name"></span>
+								    </a> <!-- ko if: is_loyal --><span class="glyphicon glyphicon-heart"></span><!-- /ko -->
+                                </td>
+								<td data-bind="attr: { class: (is_dead ? 'danger' : '') }">
 									<!-- ko if: is_dead -->
 										<span data-bind="text: App.Application.renderTeammateDeathCause(death_cause)"></span>
 									<!-- /ko -->
 								</td>
-								<td>
+								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.UI.StageIDs.Occulus ? 'danger' : '') }">
 									<!-- ko if: hasRole(App.ME2.TeammateRoles.OcculusSquadmate) -->
 										<span class="glyphicon glyphicon-user"></span>
 									<!-- /ko -->
 								</td>
-								<td>
+								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.UI.StageIDs.Vents ? 'danger' : '') }">
 									<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsSquadmate) -->
 										<span class="glyphicon glyphicon-user"></span>
 									<!-- /ko -->
@@ -232,7 +236,7 @@
 										<span class="glyphicon glyphicon-fire"></span>
 									<!-- /ko -->
 								</td>
-								<td>
+								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.UI.StageIDs.LongWalk ? 'danger' : '') }">
 									<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkSquadmate) -->
 										<span class="glyphicon glyphicon-user"></span>
 									<!-- /ko -->
@@ -246,7 +250,7 @@
 										<span class="glyphicon glyphicon-heart-empty"></span>
 									<!-- /ko -->
 								</td>
-								<td>
+								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.UI.StageIDs.Boss ? 'danger' : '') }">
 									<!-- ko if: hasRole(App.ME2.TeammateRoles.BossSquadmate) -->
 										<span class="glyphicon glyphicon-user"></span>
 									<!-- /ko -->

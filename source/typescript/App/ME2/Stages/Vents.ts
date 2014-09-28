@@ -29,9 +29,9 @@ module App {
                     this.vent_leader.addRole(App.ME2.TeammateRoles.VentsLeader);
 
                     if (!this.vent_venter.willBeEffectiveVentVenter()) {
-                        this.vent_venter.die(App.ME2.TeammateDeathCauses.VentsBadVenter);
+                        this.vent_venter.die(this.ui.id, App.ME2.TeammateDeathCauses.VentsBadVenter);
                     } else if (!this.vent_leader.willBeEffectiveVentLeader()) {
-                        this.vent_venter.die(App.ME2.TeammateDeathCauses.VentsBadLeader);
+                        this.vent_venter.die(this.ui.id, App.ME2.TeammateDeathCauses.VentsBadLeader);
                     }
                 }
 

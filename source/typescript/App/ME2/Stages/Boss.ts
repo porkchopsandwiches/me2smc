@@ -24,13 +24,13 @@ module App {
 
                     // The two squadmates survive if loyal
                     if (!this.boss_squadmate_1.willSurviveBeingBossSquadmate()) {
-                        this.boss_squadmate_1.die(App.ME2.TeammateDeathCauses.Boss);
+                        this.boss_squadmate_1.die(this.ui.id, App.ME2.TeammateDeathCauses.Boss);
                     }
                     if (!this.boss_squadmate_2.willSurviveBeingBossSquadmate()) {
-                        this.boss_squadmate_2.die(App.ME2.TeammateDeathCauses.Boss);
+                        this.boss_squadmate_2.die(this.ui.id, App.ME2.TeammateDeathCauses.Boss);
                     }
 
-                    this.stager.teammates.alive().withoutRole(App.ME2.TeammateRoles.BossSquadmate).withoutRole(App.ME2.TeammateRoles.LongWalkEscort).addRole(App.ME2.TeammateRoles.HeldTheLine).whoDieHoldingTheLine().die(App.ME2.TeammateDeathCauses.HoldTheLine);
+                    this.stager.teammates.alive().withoutRole(App.ME2.TeammateRoles.BossSquadmate).withoutRole(App.ME2.TeammateRoles.LongWalkEscort).addRole(App.ME2.TeammateRoles.HeldTheLine).whoDieHoldingTheLine().die(this.ui.id, App.ME2.TeammateDeathCauses.HoldTheLine);
                 }
 
                 public isEvaluatable (): boolean {

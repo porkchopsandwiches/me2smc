@@ -22,6 +22,11 @@
 	.glyphicon-heart{
 		color: #c00;
 	}
+
+	td:nth-child(n + 2),
+	th:nth-child(n + 2) {
+		text-align: center;
+	}
 }
 
 .rank-popover-list{

@@ -31,17 +31,17 @@ module App {
 
                     // If escort is not loyal, they will die
                     if (this.long_walk_escort.henchman.id !== undefined && !this.long_walk_escort.willBeEffectiveLongWalkEscort()) {
-                        this.long_walk_escort.die(App.ME2.TeammateDeathCauses.Escort);
+                        this.long_walk_escort.die(this.ui.id, App.ME2.TeammateDeathCauses.Escort);
                     }
 
                     // If bubbler is not an expert, or is not loyal, one of the squadmates dies
                     if (!this.long_walk_bubbler.willBeEffectiveLongWalkBubbler()) {
-                        this.stager.teammates.withRole(App.ME2.TeammateRoles.LongWalkSquadmate).sortByLongWalkDeathPriority().last().die(App.ME2.TeammateDeathCauses.LongWalkBadBubbler);
+                        this.stager.teammates.withRole(App.ME2.TeammateRoles.LongWalkSquadmate).sortByLongWalkDeathPriority().last().die(this.ui.id, App.ME2.TeammateDeathCauses.LongWalkBadBubbler);
                     }
 
                     // If leader is not loyal and not
                     if (!this.long_walk_leader.willBeEffectiveLongWalkLeader()) {
-                        this.long_walk_leader.die(App.ME2.TeammateDeathCauses.LongWalkBadLeader);
+                        this.long_walk_leader.die(this.ui.id, App.ME2.TeammateDeathCauses.LongWalkBadLeader);
                     }
                 }
 

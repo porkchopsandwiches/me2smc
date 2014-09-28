@@ -29,17 +29,17 @@ module App {
 
                     // Apply deaths
                     if (!this.stager.app.normandy.has_shielding) {
-                        dpt.alive().sortByShieldingDeathPriority().last().die(App.ME2.TeammateDeathCauses.ShieldingFailure);
+                        dpt.alive().sortByShieldingDeathPriority().last().die(this.ui.id, App.ME2.TeammateDeathCauses.ShieldingFailure);
                     }
 
                     if (!this.stager.app.normandy.has_armour) {
-                        dpt.alive().sortByArmourDeathPriority().last().die(App.ME2.TeammateDeathCauses.ArmourFailure);
+                        dpt.alive().sortByArmourDeathPriority().last().die(this.ui.id, App.ME2.TeammateDeathCauses.ArmourFailure);
                     }
 
                     if (!this.stager.app.normandy.has_thanix_cannon) {
                         console.log("no thanix channon");
                         console.log("killing", dpt.alive().sortByCannonDeathPriority().last());
-                        dpt.alive().sortByCannonDeathPriority().last().die(App.ME2.TeammateDeathCauses.CannonFailure);
+                        dpt.alive().sortByCannonDeathPriority().last().die(this.ui.id, App.ME2.TeammateDeathCauses.CannonFailure);
                     }
                 }
 

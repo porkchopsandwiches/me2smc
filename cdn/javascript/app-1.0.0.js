@@ -273,17 +273,17 @@ var App;
                     dpt = this.stager.teammates.withoutRole(0 /* OcculusSquadmate */);
 
                     if (!this.stager.app.normandy.has_shielding) {
-                        dpt.alive().sortByShieldingDeathPriority().last().die(1 /* ShieldingFailure */);
+                        dpt.alive().sortByShieldingDeathPriority().last().die(this.ui.id, 1 /* ShieldingFailure */);
                     }
 
                     if (!this.stager.app.normandy.has_armour) {
-                        dpt.alive().sortByArmourDeathPriority().last().die(0 /* ArmourFailure */);
+                        dpt.alive().sortByArmourDeathPriority().last().die(this.ui.id, 0 /* ArmourFailure */);
                     }
 
                     if (!this.stager.app.normandy.has_thanix_cannon) {
                         console.log("no thanix channon");
                         console.log("killing", dpt.alive().sortByCannonDeathPriority().last());
-                        dpt.alive().sortByCannonDeathPriority().last().die(2 /* CannonFailure */);
+                        dpt.alive().sortByCannonDeathPriority().last().die(this.ui.id, 2 /* CannonFailure */);
                     }
                 };
 
@@ -315,9 +315,9 @@ var App;
                     this.vent_leader.addRole(3 /* VentsLeader */);
 
                     if (!this.vent_venter.willBeEffectiveVentVenter()) {
-                        this.vent_venter.die(3 /* VentsBadVenter */);
+                        this.vent_venter.die(this.ui.id, 3 /* VentsBadVenter */);
                     } else if (!this.vent_leader.willBeEffectiveVentLeader()) {
-                        this.vent_venter.die(4 /* VentsBadLeader */);
+                        this.vent_venter.die(this.ui.id, 4 /* VentsBadLeader */);
                     }
                 };
 
@@ -350,15 +350,15 @@ var App;
                     this.long_walk_bubbler.addRole(6 /* LongWalkBubbler */);
 
                     if (this.long_walk_escort.henchman.id !== undefined && !this.long_walk_escort.willBeEffectiveLongWalkEscort()) {
-                        this.long_walk_escort.die(7 /* Escort */);
+                        this.long_walk_escort.die(this.ui.id, 7 /* Escort */);
                     }
 
                     if (!this.long_walk_bubbler.willBeEffectiveLongWalkBubbler()) {
-                        this.stager.teammates.withRole(4 /* LongWalkSquadmate */).sortByLongWalkDeathPriority().last().die(5 /* LongWalkBadBubbler */);
+                        this.stager.teammates.withRole(4 /* LongWalkSquadmate */).sortByLongWalkDeathPriority().last().die(this.ui.id, 5 /* LongWalkBadBubbler */);
                     }
 
                     if (!this.long_walk_leader.willBeEffectiveLongWalkLeader()) {
-                        this.long_walk_leader.die(6 /* LongWalkBadLeader */);
+                        this.long_walk_leader.die(this.ui.id, 6 /* LongWalkBadLeader */);
                     }
                 };
 
@@ -388,13 +388,13 @@ var App;
                     this.boss_squadmate_2.addRole(8 /* BossSquadmate */);
 
                     if (!this.boss_squadmate_1.willSurviveBeingBossSquadmate()) {
-                        this.boss_squadmate_1.die(8 /* Boss */);
+                        this.boss_squadmate_1.die(this.ui.id, 8 /* Boss */);
                     }
                     if (!this.boss_squadmate_2.willSurviveBeingBossSquadmate()) {
-                        this.boss_squadmate_2.die(8 /* Boss */);
+                        this.boss_squadmate_2.die(this.ui.id, 8 /* Boss */);
                     }
 
-                    this.stager.teammates.alive().withoutRole(8 /* BossSquadmate */).withoutRole(5 /* LongWalkEscort */).addRole(9 /* HeldTheLine */).whoDieHoldingTheLine().die(9 /* HoldTheLine */);
+                    this.stager.teammates.alive().withoutRole(8 /* BossSquadmate */).withoutRole(5 /* LongWalkEscort */).addRole(9 /* HeldTheLine */).whoDieHoldingTheLine().die(this.ui.id, 9 /* HoldTheLine */);
                 };
 
                 Boss.prototype.isEvaluatable = function () {
@@ -689,7 +689,8 @@ var App;
                 return this.henchman.is_leader && this.is_loyal;
             };
 
-            Teammate.prototype.die = function (death_cause) {
+            Teammate.prototype.die = function (stage_id, death_cause) {
+                this.death_stage_id = stage_id;
                 this.is_dead = true;
                 this.death_cause = death_cause;
                 return this;
@@ -751,9 +752,9 @@ var App;
                 });
             };
 
-            Teammates.prototype.die = function (death_cause) {
+            Teammates.prototype.die = function (stage_id, death_cause) {
                 this.each(function (teammate) {
-                    teammate.die(death_cause);
+                    teammate.die(stage_id, death_cause);
                 });
                 return this;
             };

@@ -82,9 +82,9 @@ module App {
                 });
             }
 
-            public die (death_cause: App.ME2.TeammateDeathCauses): Teammates {
+            public die (stage_id: App.ME2.Stages.UI.StageIDs, death_cause: App.ME2.TeammateDeathCauses): Teammates {
                 this.each((teammate: App.ME2.Teammate): void => {
-                    teammate.die(death_cause);
+                    teammate.die(stage_id, death_cause);
                 });
                 return this;
             }
@@ -159,10 +159,6 @@ module App {
                     return teammate.henchman.destroy_base_priority > 0;
                 });
             }
-
-            //defence_report_priority
-            //keep_base_priority
-            //destroy_base_priority
 
             public without (...teammates: App.ME2.Teammate[]): Teammates {
                 return Teammates.fromObjectArray(this.oa.without.apply(this.oa, teammates));
