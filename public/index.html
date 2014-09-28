@@ -13,6 +13,7 @@
 				<h2 data-bind="text: ui.label"></h2>
 				<!-- ko if: ui.id === App.ME2.Stages.UI.StageIDs.Setup -->
 					<h3>Teammates</h3>
+                    <p>The game requires at least <strong>8</strong> teammates to be recruited.</p>
 					<table class="table table-striped setup-table">
 						<thead>
 							<tr>
@@ -42,11 +43,13 @@
 						</tbody>
 					</table>
 					<h3>Normandy</h3>
+                    <p>The <strong>Armour</strong> upgrade is provided by Jacob, the <strong>Cannon</strong> upgrade by Garrus, and the <strong>Shielding</strong> upgrade by Tali.</p>
+                    <p><em>Mission Delay</em> indicates how many missions were undertaken between the crew being abducted and the Omega 4 relay being accessed.</p>
 					<form role="form">
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
-									<label>Upgrades</label>
+									<label>Normandy Upgrades</label>
 									<div class="checkbox">
 										<label><input type="checkbox" data-bind="checked: ui.normandy.has_armour" /> Has Armour upgrade?</label>
 									</div>
