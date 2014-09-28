@@ -349,7 +349,7 @@ var App;
                     this.long_walk_leader.addRole(7 /* LongWalkLeader */);
                     this.long_walk_bubbler.addRole(6 /* LongWalkBubbler */);
 
-                    if (!this.long_walk_escort.willBeEffectiveLongWalkEscort()) {
+                    if (this.long_walk_escort.henchman.id !== undefined && !this.long_walk_escort.willBeEffectiveLongWalkEscort()) {
                         this.long_walk_escort.die(7 /* Escort */);
                     }
 
@@ -363,7 +363,7 @@ var App;
                 };
 
                 LongWalk.prototype.isEvaluatable = function () {
-                    return !!this.long_walk_bubbler && !!this.long_walk_escort && !!this.long_walk_leader && !!this.long_walk_squadmate_1 && !!this.long_walk_squadmate_2;
+                    return this.ui.is_evaluatable();
                 };
                 return LongWalk;
             })(Stages.Stage);
@@ -1025,7 +1025,9 @@ var App;
                         var _this = this;
                         var candidates;
 
-                        candidates = this.stage.stager.teammates.filter(field.filter).filter(function (candidate) {
+                        candidates = this.stage.stager.teammates.filter(function (teammate) {
+                            return field.filter(teammate, _this.stage.stager.teammates);
+                        }).filter(function (candidate) {
                             return !_.find(_this.teammate_fields, function (other_field) {
                                 return other_field.name !== field.name && _this.stage[other_field.name] === candidate;
                             });
@@ -1074,6 +1076,10 @@ var App;
                             var teammate;
 
                             return !_.find(_this.teammate_fields, function (field) {
+                                if (field.optional) {
+                                    return false;
+                                }
+
                                 observable = _this[field.name];
                                 teammate = observable();
                                 return teammate ? (teammate.henchman.id === undefined) : true;
@@ -1169,9 +1175,14 @@ var App;
                             },
                             {
                                 name: "long_walk_escort",
-                                filter: function (teammate) {
+                                filter: function (teammate, teammates) {
+                                    if (teammates.alive().length() <= 4) {
+                                        return false;
+                                    }
+
                                     return !teammate.is_dead && teammate.henchman.is_escort_candidate;
-                                }
+                                },
+                                optional: true
                             },
                             {
                                 name: "long_walk_squadmate_1",
@@ -1431,6 +1442,10 @@ var App;
                     };
 
                     Summary.prototype.getCrewSurvival = function () {
+                        if (this.stage.stager.teammates.withRole(5 /* LongWalkEscort */).length() === 0) {
+                            return 2 /* AllDied */;
+                        }
+
                         if (this.stage.stager.app.normandy.delay === 0) {
                             return 0 /* AllSurvived */;
                         } else if (this.stage.stager.app.normandy.delay <= 3) {

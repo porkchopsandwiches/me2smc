@@ -30,7 +30,7 @@ module App {
                     this.long_walk_bubbler.addRole(App.ME2.TeammateRoles.LongWalkBubbler);
 
                     // If escort is not loyal, they will die
-                    if (!this.long_walk_escort.willBeEffectiveLongWalkEscort()) {
+                    if (this.long_walk_escort.henchman.id !== undefined && !this.long_walk_escort.willBeEffectiveLongWalkEscort()) {
                         this.long_walk_escort.die(App.ME2.TeammateDeathCauses.Escort);
                     }
 
@@ -46,7 +46,7 @@ module App {
                 }
 
                 public isEvaluatable (): boolean {
-                    return !!this.long_walk_bubbler && !!this.long_walk_escort && !!this.long_walk_leader && !!this.long_walk_squadmate_1 && !!this.long_walk_squadmate_2;
+                    return this.ui.is_evaluatable();
                 }
             }
         }

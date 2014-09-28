@@ -1,0 +1,23 @@
+{
+  "name": "porkchopsandwiches-me2smc",
+  "version": "1.0.0",
+  "homepage": "https://github.com/porkchopsandwiches/me2smc",
+  "authors": [
+    "Cameron Morrow"
+  ],
+  "description": "ME2 Suicide Mission Calculator",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap-sass-official": "~3.2",
+    "jquery": "~1.11",
+    "knockoutjs": "~3.2",
+    "lodash": "~2.4"
+  }
+}

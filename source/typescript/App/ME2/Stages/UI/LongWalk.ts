@@ -46,9 +46,16 @@ module App {
                         },
                         {
                             name: "long_walk_escort",
-                            filter: (teammate: App.ME2.Teammate): boolean => {
+                            filter: (teammate: App.ME2.Teammate, teammates: App.ME2.Teammates): boolean => {
+
+                                // If there are only 4 living teammates, no one can be escort
+                                if (teammates.alive().length() <= 4) {
+                                    return false;
+                                }
+
                                 return !teammate.is_dead && teammate.henchman.is_escort_candidate;
-                            }
+                            },
+                            optional: true
                         },
                         {
                             name: "long_walk_squadmate_1",

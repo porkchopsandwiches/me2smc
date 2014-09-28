@@ -71,6 +71,12 @@ module App {
                     }
 
                     private getCrewSurvival (): SummaryCrewSurvivalOptions {
+
+                        // If no escort, they die regardless
+                        if (this.stage.stager.teammates.withRole(App.ME2.TeammateRoles.LongWalkEscort).length() === 0) {
+                            return SummaryCrewSurvivalOptions.AllDied;
+                        }
+
                         if (this.stage.stager.app.normandy.delay === 0) {
                             return SummaryCrewSurvivalOptions.AllSurvived;
                         } else if (this.stage.stager.app.normandy.delay <= 3) {

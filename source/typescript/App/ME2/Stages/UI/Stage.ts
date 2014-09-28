@@ -13,12 +13,13 @@ module App {
                 }
 
                 export interface ITeammateFieldFilter {
-                    (teammate: App.ME2.Teammate): boolean;
+                    (teammate: App.ME2.Teammate, teammates: App.ME2.Teammates): boolean;
                 }
 
                 export interface ITeammateField {
                     name: string;
                     filter: ITeammateFieldFilter;
+                    optional?: boolean;
                 }
 
                 export interface IStage {
@@ -61,7 +62,9 @@ module App {
                         var candidates: App.ME2.Teammate[];
 
                         // Candidates are those who fulfill the field's filter, and are not in use elsewhere
-                        candidates = this.stage.stager.teammates.filter(field.filter).filter((candidate: App.ME2.Teammate): boolean => {
+                        candidates = this.stage.stager.teammates.filter((teammate: App.ME2.Teammate) => {
+                            return field.filter(teammate, this.stage.stager.teammates);
+                        }).filter((candidate: App.ME2.Teammate): boolean => {
                             return !_.find(this.teammate_fields, (other_field: ITeammateField): boolean => {
                                 return other_field.name !== field.name && this.stage[other_field.name] === candidate;
                             });
@@ -113,6 +116,10 @@ module App {
 
                             // Return false if there are any teammate fields with 'no teammate' values
                             return !_.find(this.teammate_fields, (field: ITeammateField): boolean => {
+                                if (field.optional) {
+                                    return false;
+                                }
+
                                 observable = this[field.name];
                                 teammate = observable();
                                 return teammate ? (teammate.henchman.id === undefined) : true;

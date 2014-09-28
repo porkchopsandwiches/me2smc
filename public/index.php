@@ -179,7 +179,7 @@
 							<div class="col-md-6">
 								<div class="form-group">
 									<label>Shepard lives</label>
-									<p class="form-control-static" data-bind="text: App.Application.renderYesNo(ui.shepard_lives)"></p>
+									<p class="form-control-static" data-bind="text: App.Application.renderYesNo(ui.shepard_lives())"></p>
 								</div>
 								<div class="form-group">
 									<label>Shepard caught by</label>
@@ -420,9 +420,9 @@
 			</div>
 		</div>
 
-		<script src="//code.jquery.com/jquery-1.11.1.min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/knockout/3.2.0/knockout-min.js"></script>
-		<script src="//cdnjs.cloudflare.com/ajax/libs/lodash.js/2.4.1/lodash.compat.js"></script>
+		<script src="../bower_components/jquery/dist/jquery.js"></script>
+		<script src="../bower_components/knockoutjs/dist/knockout.js"></script>
+		<script src="../bower_components/lodash/dist/lodash.compat.js"></script>
 		<script src="../cdn/vendor/bootstrap/bootstrap.js"></script>
 		<script src="../cdn/javascript/app-1.0.0.js"></script>
 		<script>
