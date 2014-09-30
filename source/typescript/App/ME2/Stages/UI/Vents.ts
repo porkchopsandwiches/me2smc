@@ -38,13 +38,13 @@ module App {
                         {
                             name: "vent_venter",
                             filter: (teammate: App.ME2.Teammate): boolean => {
-                                return !teammate.is_dead && teammate.henchman.is_vent_candidate;
+                                return !teammate.is_dead() && teammate.henchman.is_vent_candidate;
                             }
                         },
                         {
                             name: "vent_leader",
                             filter: (teammate: App.ME2.Teammate): boolean => {
-                                return !teammate.is_dead && teammate.henchman.is_leader_candidate;
+                                return !teammate.is_dead() && teammate.henchman.is_leader_candidate;
                             }
                         }
                     ];

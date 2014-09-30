@@ -11,7 +11,7 @@ module App {
             }
 
             export class Vents extends Stage implements IVents {
-                public id: StageIDs = App.ME2.Stages.StageIDs.Boss;
+                public id: StageIDs = App.ME2.Stages.StageIDs.Vents;
                 public vent_squadmate_1: App.ME2.Teammate;
                 public vent_squadmate_2: App.ME2.Teammate;
                 public vent_venter: App.ME2.Teammate;

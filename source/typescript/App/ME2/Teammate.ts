@@ -29,9 +29,9 @@ module App {
 
         export interface ITeammate {
             henchman: App.ME2.Henchman;
-            is_loyal: boolean;
-            is_recruited: boolean;
-            is_dead: boolean;
+            is_loyal: KnockoutObservable<boolean>;
+            is_recruited: KnockoutObservable<boolean>;
+            is_dead: KnockoutObservable<boolean>;
             death_cause: TeammateDeathCauses;
             death_stage_id: App.ME2.Stages.StageIDs;
             hasRole (role: TeammateRoles): boolean;
@@ -51,10 +51,10 @@ module App {
             public death_cause: TeammateDeathCauses;
             public death_stage_id: App.ME2.Stages.StageIDs;
             public henchman: App.ME2.Henchman;
-            public is_recruited: boolean = false;
-            public is_loyal: boolean = false;
-            public is_dead: boolean = false;
-            public roles: TeammateRoles[] = [];
+            public is_recruited: KnockoutObservable<boolean>;
+            public is_loyal: KnockoutObservable<boolean>;
+            public is_dead: KnockoutObservable<boolean>;
+            public roles: TeammateRoles[];
 
             constructor (
                 henchman: App.ME2.Henchman,
@@ -62,10 +62,20 @@ module App {
                 is_loyal: boolean = false,
                 is_dead: boolean = false
             ) {
+                //this.death_cause = null;
                 this.henchman = henchman;
-                this.is_recruited = is_recruited;
-                this.is_loyal = is_loyal;
-                this.is_dead = is_dead;
+                this.is_recruited = ko.observable<boolean>(is_recruited);
+                this.is_loyal = ko.observable<boolean>(is_loyal);
+                this.is_dead = ko.observable<boolean>(is_dead);
+                this.roles = [];
+
+                // If not recruited, can't be loyal either
+                this.is_recruited.subscribe((is_recruited: boolean) => {
+                    if (!is_recruited && this.is_loyal()) {
+                        this.is_loyal(false);
+                    }
+                });
+
             }
 
             public addRole (role: TeammateRoles): Teammate {
@@ -80,37 +90,37 @@ module App {
             }
 
             public getHoldTheLineScore (): number {
-                return this.henchman.htl_value + (this.is_loyal ? 1 : 0);
+                return this.henchman.htl_value + (this.is_loyal() ? 1 : 0);
             }
 
             public willBeEffectiveLongWalkLeader (): boolean {
-                return this.henchman.is_leader && (this.is_loyal || this.henchman.is_super_leader);
+                return this.henchman.is_leader && (this.is_loyal() || this.henchman.is_super_leader);
             }
 
             public willBeEffectiveLongWalkEscort (): boolean {
-                return this.is_loyal;
+                return this.is_loyal();
             }
 
             public willBeEffectiveLongWalkBubbler (): boolean {
-                return this.is_loyal && this.henchman.is_biotic_expert;
+                return this.is_loyal() && this.henchman.is_biotic_expert;
             }
 
             public willSurviveBeingBossSquadmate (): boolean {
-                return this.is_loyal;
+                return this.is_loyal();
             }
 
             public willBeEffectiveVentVenter (): boolean {
-                return this.henchman.is_tech_expert && this.is_loyal;
+                return this.henchman.is_tech_expert && this.is_loyal();
             }
 
             public willBeEffectiveVentLeader (): boolean {
-                return this.henchman.is_leader && this.is_loyal;
+                return this.henchman.is_leader && this.is_loyal();
             }
 
             public die (stage_id: App.ME2.Stages.StageIDs, death_cause: TeammateDeathCauses): Teammate {
                 this.death_stage_id = stage_id;
-                this.is_dead = true;
                 this.death_cause = death_cause;
+                this.is_dead(true);
                 return this;
             }
         }

@@ -26,16 +26,16 @@
 							<!-- ko foreach: ui.teammates -->
 								<tr>
 									<td>
-										<a href="#view-profile" data-bind="click: function () { $root.henchman(teammate.henchman) }, text: teammate.henchman.name"></a>
+										<a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }, text: henchman.name"></a>
 									</td>
 									<td>
 										<label>
-											<input type="checkbox" data-bind="attr: recruited_attributes, checked: is_recruited" />
+											<input type="checkbox" data-bind="attr: { 'disabled': (henchman.is_essential ? 'disabled' : undefined) }, checked: is_recruited" />
 										</label>
 									</td>
 									<td>
 										<label>
-											<input type="checkbox" data-bind="attr: loyal_attributes, checked: is_loyal" />
+											<input type="checkbox" data-bind="attr: { 'disabled': (is_recruited() ? undefined : 'disabled') }, checked: is_loyal" />
 										</label>
 									</td>
 								</tr>
@@ -212,22 +212,22 @@
 					<!-- ko with: stager.teammates -->
 						<!-- ko foreach: $data -->
 							<tr>
-								<td data-bind="attr: { class: (is_dead ? 'danger' : '') }">
+								<td data-bind="attr: { class: (is_dead() ? 'danger' : '') }">
                                     <a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }">
                                         <span data-bind="text: henchman.name"></span>
-								    </a> <!-- ko if: is_loyal --><span class="glyphicon glyphicon-heart"></span><!-- /ko -->
+								    </a> <!-- ko if: is_loyal() --><span class="glyphicon glyphicon-heart"></span><!-- /ko -->
                                 </td>
-								<td data-bind="attr: { class: (is_dead ? 'danger' : '') }">
-									<!-- ko if: is_dead -->
+								<td data-bind="attr: { class: (is_dead() ? 'danger' : '') }">
+									<!-- ko if: is_dead() -->
 										<span data-bind="text: App.Application.renderTeammateDeathCause(death_cause)"></span>
 									<!-- /ko -->
 								</td>
-								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.StageIDs.Occulus ? 'danger' : '') }">
+								<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.Occulus ? 'danger' : '') }">
 									<!-- ko if: hasRole(App.ME2.TeammateRoles.OcculusSquadmate) -->
 										<span class="glyphicon glyphicon-user"></span>
 									<!-- /ko -->
 								</td>
-								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.StageIDs.Vents ? 'danger' : '') }">
+								<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.Vents ? 'danger' : '') }">
 									<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsSquadmate) -->
 										<span class="glyphicon glyphicon-user"></span>
 									<!-- /ko -->
@@ -238,7 +238,7 @@
 										<span class="glyphicon glyphicon-fire"></span>
 									<!-- /ko -->
 								</td>
-								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.StageIDs.LongWalk ? 'danger' : '') }">
+								<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.LongWalk ? 'danger' : '') }">
 									<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkSquadmate) -->
 										<span class="glyphicon glyphicon-user"></span>
 									<!-- /ko -->
@@ -252,7 +252,7 @@
 										<span class="glyphicon glyphicon-heart-empty"></span>
 									<!-- /ko -->
 								</td>
-								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.StageIDs.Boss ? 'danger' : '') }">
+								<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.Boss ? 'danger' : '') }">
 									<!-- ko if: hasRole(App.ME2.TeammateRoles.BossSquadmate) -->
 										<span class="glyphicon glyphicon-user"></span>
 									<!-- /ko -->

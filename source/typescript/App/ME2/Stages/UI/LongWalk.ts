@@ -34,13 +34,13 @@ module App {
                         {
                             name: "long_walk_bubbler",
                             filter: (teammate: App.ME2.Teammate): boolean => {
-                                return !teammate.is_dead && teammate.henchman.is_bubble_candidate;
+                                return !teammate.is_dead() && teammate.henchman.is_bubble_candidate;
                             }
                         },
                         {
                             name: "long_walk_leader",
                             filter: (teammate: App.ME2.Teammate): boolean => {
-                                return !teammate.is_dead && teammate.henchman.is_leader_candidate;
+                                return !teammate.is_dead() && teammate.henchman.is_leader_candidate;
                             }
                         },
                         {
@@ -52,7 +52,7 @@ module App {
                                     return false;
                                 }
 
-                                return !teammate.is_dead && teammate.henchman.is_escort_candidate;
+                                return !teammate.is_dead() && teammate.henchman.is_escort_candidate;
                             },
                             optional: true
                         },

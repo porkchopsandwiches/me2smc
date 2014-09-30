@@ -23,9 +23,6 @@
 ///<reference path="App/ME2/Stages/UI/Setup.ts" />
 ///<reference path="App/ME2/Stages/UI/Vents.ts" />
 ///<reference path="App/ME2/Stages/UI/Summary.ts" />
-///<reference path="App/ME2/UI/Proxy.ts" />
-///<reference path="App/ME2/UI/Teammate.ts" />
-///<reference path="App/ME2/UI/Normandy.ts" />
 ///<reference path="App/Application.ts" />
 ///<reference path="App/ME2/State.ts" />
 ///<reference path="App/ME2/Serialisation.ts" />

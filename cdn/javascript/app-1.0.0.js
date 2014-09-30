@@ -193,6 +193,8 @@ var App;
                             this.stage().evaluate();
                             this.teammates.evaluateImmediate();
 
+                            console.log(current_stage.id, this.stages[current_stage.id + 1]);
+
                             if (current_stage.id < this.stages.length - 1) {
                                 this.setStage(this.stages[current_stage.id + 1]);
                             }
@@ -276,7 +278,7 @@ var App;
                 __extends(Vents, _super);
                 function Vents(stager) {
                     _super.call(this, stager);
-                    this.id = 4 /* Boss */;
+                    this.id = 2 /* Vents */;
                     this.ui = new App.ME2.Stages.UI.Vents(this);
                 }
                 Vents.prototype.evaluate = function () {
@@ -616,14 +618,18 @@ var App;
                 if (typeof is_recruited === "undefined") { is_recruited = false; }
                 if (typeof is_loyal === "undefined") { is_loyal = false; }
                 if (typeof is_dead === "undefined") { is_dead = false; }
-                this.is_recruited = false;
-                this.is_loyal = false;
-                this.is_dead = false;
-                this.roles = [];
+                var _this = this;
                 this.henchman = henchman;
-                this.is_recruited = is_recruited;
-                this.is_loyal = is_loyal;
-                this.is_dead = is_dead;
+                this.is_recruited = ko.observable(is_recruited);
+                this.is_loyal = ko.observable(is_loyal);
+                this.is_dead = ko.observable(is_dead);
+                this.roles = [];
+
+                this.is_recruited.subscribe(function (is_recruited) {
+                    if (!is_recruited && _this.is_loyal()) {
+                        _this.is_loyal(false);
+                    }
+                });
             }
             Teammate.prototype.addRole = function (role) {
                 if (!this.hasRole(role)) {
@@ -637,37 +643,37 @@ var App;
             };
 
             Teammate.prototype.getHoldTheLineScore = function () {
-                return this.henchman.htl_value + (this.is_loyal ? 1 : 0);
+                return this.henchman.htl_value + (this.is_loyal() ? 1 : 0);
             };
 
             Teammate.prototype.willBeEffectiveLongWalkLeader = function () {
-                return this.henchman.is_leader && (this.is_loyal || this.henchman.is_super_leader);
+                return this.henchman.is_leader && (this.is_loyal() || this.henchman.is_super_leader);
             };
 
             Teammate.prototype.willBeEffectiveLongWalkEscort = function () {
-                return this.is_loyal;
+                return this.is_loyal();
             };
 
             Teammate.prototype.willBeEffectiveLongWalkBubbler = function () {
-                return this.is_loyal && this.henchman.is_biotic_expert;
+                return this.is_loyal() && this.henchman.is_biotic_expert;
             };
 
             Teammate.prototype.willSurviveBeingBossSquadmate = function () {
-                return this.is_loyal;
+                return this.is_loyal();
             };
 
             Teammate.prototype.willBeEffectiveVentVenter = function () {
-                return this.henchman.is_tech_expert && this.is_loyal;
+                return this.henchman.is_tech_expert && this.is_loyal();
             };
 
             Teammate.prototype.willBeEffectiveVentLeader = function () {
-                return this.henchman.is_leader && this.is_loyal;
+                return this.henchman.is_leader && this.is_loyal();
             };
 
             Teammate.prototype.die = function (stage_id, death_cause) {
                 this.death_stage_id = stage_id;
-                this.is_dead = true;
                 this.death_cause = death_cause;
+                this.is_dead(true);
                 return this;
             };
             return Teammate;
@@ -705,25 +711,25 @@ var App;
 
             Teammates.prototype.alive = function () {
                 return this.filter(function (teammate) {
-                    return !teammate.is_dead;
+                    return !teammate.is_dead();
                 });
             };
 
             Teammates.prototype.dead = function () {
                 return this.filter(function (teammate) {
-                    return teammate.is_dead;
+                    return teammate.is_dead();
                 });
             };
 
             Teammates.prototype.loyal = function () {
                 return this.filter(function (teammate) {
-                    return teammate.is_loyal;
+                    return teammate.is_loyal();
                 });
             };
 
             Teammates.prototype.disloyal = function () {
                 return this.filter(function (teammate) {
-                    return !teammate.is_loyal;
+                    return !teammate.is_loyal();
                 });
             };
 
@@ -736,7 +742,7 @@ var App;
 
             Teammates.prototype.recruited = function () {
                 return this.filter(function (teammate) {
-                    return teammate.is_recruited;
+                    return teammate.is_recruited();
                 });
             };
 
@@ -907,7 +913,7 @@ var App;
 
                 if (death_count > 0) {
                     return this.sort(function (teammate) {
-                        return teammate.henchman.htl_death_priority + (!teammate.is_loyal ? 100 : 0);
+                        return teammate.henchman.htl_death_priority + (!teammate.is_loyal() ? 100 : 0);
                     }).slice(-death_count);
                 } else {
                     return new Teammates([]);
@@ -940,7 +946,6 @@ var App;
 
                 this.delay = ko.pureComputed({
                     read: function () {
-                        console.log("reading delay", _this._delay);
                         return _this._delay;
                     },
                     write: function (value) {
@@ -948,7 +953,6 @@ var App;
                         delay = parseInt("" + value, 10);
 
                         if (!_.isNaN(delay)) {
-                            console.log("writing delay", delay, "old value", _this._delay);
                             _this._delay = delay;
                         }
                     }
@@ -971,7 +975,7 @@ var App;
                         this.stage = stage;
                     }
                     Stage.genericTeammateFieldFilter = function (teammate) {
-                        return !teammate.is_dead;
+                        return !teammate.is_dead();
                     };
 
                     Stage.prototype.getTeammateFieldByName = function (name) {
@@ -1081,13 +1085,13 @@ var App;
                             {
                                 name: "boss_squadmate_1",
                                 filter: function (teammate) {
-                                    return !teammate.is_dead && !teammate.hasRole(5 /* LongWalkEscort */);
+                                    return !teammate.is_dead() && !teammate.hasRole(5 /* LongWalkEscort */);
                                 }
                             },
                             {
                                 name: "boss_squadmate_2",
                                 filter: function (teammate) {
-                                    return !teammate.is_dead && !teammate.hasRole(5 /* LongWalkEscort */);
+                                    return !teammate.is_dead() && !teammate.hasRole(5 /* LongWalkEscort */);
                                 }
                             }
                         ];
@@ -1121,13 +1125,13 @@ var App;
                             {
                                 name: "long_walk_bubbler",
                                 filter: function (teammate) {
-                                    return !teammate.is_dead && teammate.henchman.is_bubble_candidate;
+                                    return !teammate.is_dead() && teammate.henchman.is_bubble_candidate;
                                 }
                             },
                             {
                                 name: "long_walk_leader",
                                 filter: function (teammate) {
-                                    return !teammate.is_dead && teammate.henchman.is_leader_candidate;
+                                    return !teammate.is_dead() && teammate.henchman.is_leader_candidate;
                                 }
                             },
                             {
@@ -1137,7 +1141,7 @@ var App;
                                         return false;
                                     }
 
-                                    return !teammate.is_dead && teammate.henchman.is_escort_candidate;
+                                    return !teammate.is_dead() && teammate.henchman.is_escort_candidate;
                                 },
                                 optional: true
                             },
@@ -1229,7 +1233,7 @@ var App;
                             },
                             write: function (all_recruited) {
                                 _this.teammates.forEach(function (teammate) {
-                                    if (all_recruited || !teammate.teammate.henchman.is_essential) {
+                                    if (all_recruited || !teammate.henchman.is_essential) {
                                         teammate.is_recruited(all_recruited);
                                     }
                                 });
@@ -1274,9 +1278,7 @@ var App;
                     };
 
                     Setup.prototype.bootstrapTeammates = function () {
-                        this.teammates = this.stage.stager.app.state.teammates.map(function (teammate) {
-                            return new App.ME2.UI.Teammate(teammate);
-                        });
+                        this.teammates = this.stage.stager.app.state.teammates.value();
 
                         this.normandy = this.stage.stager.app.state.normandy;
                     };
@@ -1312,13 +1314,13 @@ var App;
                             {
                                 name: "vent_venter",
                                 filter: function (teammate) {
-                                    return !teammate.is_dead && teammate.henchman.is_vent_candidate;
+                                    return !teammate.is_dead() && teammate.henchman.is_vent_candidate;
                                 }
                             },
                             {
                                 name: "vent_leader",
                                 filter: function (teammate) {
-                                    return !teammate.is_dead && teammate.henchman.is_leader_candidate;
+                                    return !teammate.is_dead() && teammate.henchman.is_leader_candidate;
                                 }
                             }
                         ];
@@ -1429,116 +1431,6 @@ var App;
 var App;
 (function (App) {
     (function (ME2) {
-        (function (UI) {
-            var Proxy = (function () {
-                function Proxy() {
-                }
-                Proxy.prototype.link = function (target, property) {
-                    var observable;
-                    observable = this[property];
-
-                    observable(target[property]);
-
-                    observable.subscribe(function (new_value) {
-                        target[property] = new_value;
-                    });
-                };
-                return Proxy;
-            })();
-            UI.Proxy = Proxy;
-        })(ME2.UI || (ME2.UI = {}));
-        var UI = ME2.UI;
-    })(App.ME2 || (App.ME2 = {}));
-    var ME2 = App.ME2;
-})(App || (App = {}));
-var App;
-(function (App) {
-    (function (ME2) {
-        (function (UI) {
-            var Teammate = (function (_super) {
-                __extends(Teammate, _super);
-                function Teammate(teammate) {
-                    var _this = this;
-                    _super.call(this);
-                    this.is_recruited = ko.observable(undefined);
-                    this.is_loyal = ko.observable(undefined);
-                    this.is_dead = ko.observable(undefined);
-                    this.teammate = teammate;
-
-                    this.can_be_loyal = ko.computed(function () {
-                        return !!_this.is_recruited();
-                    });
-
-                    this.loyal_attributes = ko.computed(function () {
-                        var attr = {};
-
-                        if (!_this.is_recruited()) {
-                            attr["disabled"] = "disabled";
-                        } else {
-                            attr["disabled"] = undefined;
-                        }
-
-                        return attr;
-                    });
-
-                    this.recruited_attributes = ko.pureComputed(function () {
-                        var attr = {};
-
-                        if (_this.teammate.henchman.is_essential) {
-                            attr["disabled"] = "disabled";
-                        } else {
-                            attr["disabled"] = undefined;
-                        }
-
-                        return attr;
-                    });
-
-                    this.link(this.teammate, "is_recruited");
-                    this.link(this.teammate, "is_loyal");
-                    this.link(this.teammate, "is_dead");
-
-                    this.is_recruited.subscribe(function (is_recruited) {
-                        if (!is_recruited && _this.is_loyal()) {
-                            _this.is_loyal(false);
-                        }
-                    });
-                }
-                return Teammate;
-            })(App.ME2.UI.Proxy);
-            UI.Teammate = Teammate;
-        })(ME2.UI || (ME2.UI = {}));
-        var UI = ME2.UI;
-    })(App.ME2 || (App.ME2 = {}));
-    var ME2 = App.ME2;
-})(App || (App = {}));
-var App;
-(function (App) {
-    (function (ME2) {
-        (function (UI) {
-            var Normandy = (function (_super) {
-                __extends(Normandy, _super);
-                function Normandy(normany) {
-                    _super.call(this);
-                    this.has_armour = ko.observable(undefined);
-                    this.has_shielding = ko.observable(undefined);
-                    this.has_thanix_cannon = ko.observable(undefined);
-                    this.normandy = normany;
-
-                    this.link(this.normandy, "has_armour");
-                    this.link(this.normandy, "has_shielding");
-                    this.link(this.normandy, "has_thanix_cannon");
-                }
-                return Normandy;
-            })(App.ME2.UI.Proxy);
-            UI.Normandy = Normandy;
-        })(ME2.UI || (ME2.UI = {}));
-        var UI = ME2.UI;
-    })(App.ME2 || (App.ME2 = {}));
-    var ME2 = App.ME2;
-})(App || (App = {}));
-var App;
-(function (App) {
-    (function (ME2) {
         var State = (function () {
             function State(app) {
                 this.app = app;
@@ -1580,9 +1472,9 @@ var App;
                         return {
                             henchman_id: teammate.henchman.id,
                             henchman_name: teammate.henchman.name,
-                            is_loyal: teammate.is_loyal,
-                            is_recruited: teammate.is_recruited,
-                            is_dead: teammate.is_dead,
+                            is_loyal: teammate.is_loyal(),
+                            is_recruited: teammate.is_recruited(),
+                            is_dead: teammate.is_dead(),
                             death_cause: teammate.death_cause,
                             death_stage_id: teammate.death_stage_id,
                             roles: teammate.roles

@@ -21,13 +21,13 @@ module App {
                         {
                             name: "boss_squadmate_1",
                             filter: (teammate: App.ME2.Teammate): boolean => {
-                                return !teammate.is_dead && !teammate.hasRole(App.ME2.TeammateRoles.LongWalkEscort);
+                                return !teammate.is_dead() && !teammate.hasRole(App.ME2.TeammateRoles.LongWalkEscort);
                             }
                         },
                         {
                             name: "boss_squadmate_2",
                             filter: (teammate: App.ME2.Teammate): boolean => {
-                                return !teammate.is_dead && !teammate.hasRole(App.ME2.TeammateRoles.LongWalkEscort);
+                                return !teammate.is_dead() && !teammate.hasRole(App.ME2.TeammateRoles.LongWalkEscort);
                             }
                         }
                     ];

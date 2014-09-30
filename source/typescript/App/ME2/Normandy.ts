@@ -30,7 +30,6 @@ module App {
 
                 this.delay = ko.pureComputed<number>({
                     read: (): number => {
-                        console.log("reading delay", this._delay);
                         return this._delay;
                     },
                     write: (value: number): void => {
@@ -38,7 +37,6 @@ module App {
                         delay = parseInt("" + value, 10);
 
                         if (!_.isNaN(delay)) {
-                            console.log("writing delay", delay, "old value", this._delay);
                             this._delay = delay;
                         }
                     }

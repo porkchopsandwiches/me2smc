@@ -54,9 +54,9 @@ module App {
                         return {
                             henchman_id: teammate.henchman.id,
                             henchman_name: teammate.henchman.name,
-                            is_loyal: teammate.is_loyal,
-                            is_recruited: teammate.is_recruited,
-                            is_dead: teammate.is_dead,
+                            is_loyal: teammate.is_loyal(),
+                            is_recruited: teammate.is_recruited(),
+                            is_dead: teammate.is_dead(),
                             death_cause: teammate.death_cause,
                             death_stage_id: teammate.death_stage_id,
                             roles: teammate.roles

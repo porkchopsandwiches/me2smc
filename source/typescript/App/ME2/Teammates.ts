@@ -60,25 +60,25 @@ module App {
 
             public alive (): Teammates {
                 return this.filter((teammate: App.ME2.Teammate): boolean => {
-                    return !teammate.is_dead;
+                    return !teammate.is_dead();
                 });
             }
 
             public dead (): Teammates {
                 return this.filter((teammate: App.ME2.Teammate): boolean => {
-                    return teammate.is_dead;
+                    return teammate.is_dead();
                 });
             }
 
             public loyal (): Teammates {
                 return this.filter((teammate: App.ME2.Teammate): boolean => {
-                    return teammate.is_loyal;
+                    return teammate.is_loyal();
                 });
             }
 
             public disloyal (): Teammates {
                 return this.filter((teammate: App.ME2.Teammate): boolean => {
-                    return !teammate.is_loyal;
+                    return !teammate.is_loyal();
                 });
             }
 
@@ -91,7 +91,7 @@ module App {
 
             public recruited (): Teammates {
                 return this.filter((teammate: App.ME2.Teammate): boolean => {
-                    return teammate.is_recruited;
+                    return teammate.is_recruited();
                 });
             }
 
@@ -251,7 +251,7 @@ module App {
 
                 if (death_count > 0) {
                     return this.sort<number>((teammate: App.ME2.Teammate): number => {
-                        return teammate.henchman.htl_death_priority + (!teammate.is_loyal ? 100 : 0); // Unloyal team members are prioritised over loyal ones
+                        return teammate.henchman.htl_death_priority + (!teammate.is_loyal() ? 100 : 0); // Unloyal team members are prioritised over loyal ones
                     }).slice(-death_count);
                 } else {
                     return new Teammates([]);
