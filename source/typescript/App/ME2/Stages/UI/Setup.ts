@@ -4,14 +4,14 @@ module App {
         export module Stages {
             export module UI {
                 export interface ISetup {
-                    normandy: App.ME2.UI.Normandy;
+                    normandy: App.ME2.Normandy;
                 }
 
                 export class Setup extends Stage implements ISetup {
                     public label: string = "Setup";
                     public teammates: App.ME2.UI.Teammate[];
                     public stage: App.ME2.Stages.Setup;
-                    public normandy: App.ME2.UI.Normandy;
+                    public normandy: App.ME2.Normandy;
                     public all_recruited: KnockoutComputed<boolean>;
                     public all_loyal: KnockoutComputed<boolean>;
 
@@ -79,7 +79,8 @@ module App {
                             return new App.ME2.UI.Teammate(teammate);
                         });
 
-                        this.normandy = new App.ME2.UI.Normandy(this.stage.stager.app.state.normandy);
+                        //this.normandy = new App.ME2.UI.Normandy(this.stage.stager.app.state.normandy);
+                        this.normandy = this.stage.stager.app.state.normandy;
                     }
                 }
             }

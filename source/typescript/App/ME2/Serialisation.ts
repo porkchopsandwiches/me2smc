@@ -45,10 +45,10 @@ module App {
                 serialised = {
                     stage_id: state.stage_id,
                     normandy: {
-                        delay: state.normandy.delay,
-                        has_armour: state.normandy.has_armour,
-                        has_shielding: state.normandy.has_shielding,
-                        has_thanix_cannon: state.normandy.has_thanix_cannon
+                        delay: state.normandy.delay(),
+                        has_armour: state.normandy.has_armour(),
+                        has_shielding: state.normandy.has_shielding(),
+                        has_thanix_cannon: state.normandy.has_thanix_cannon()
                     },
                     teammates: _.map<App.ME2.Teammate, ISerialisedTeammate>(state.teammates.value(), (teammate: App.ME2.Teammate): ISerialisedTeammate => {
                         return {
@@ -78,10 +78,10 @@ module App {
                 deserialised.stage_id = serialised.stage_id;
 
                 // Defrost Normandy
-                deserialised.normandy.delay = serialised.normandy.delay;
-                deserialised.normandy.has_armour = serialised.normandy.has_armour;
-                deserialised.normandy.has_shielding = serialised.normandy.has_shielding;
-                deserialised.normandy.has_thanix_cannon = serialised.normandy.has_thanix_cannon;
+                deserialised.normandy.delay(serialised.normandy.delay);
+                deserialised.normandy.has_armour(serialised.normandy.has_armour);
+                deserialised.normandy.has_shielding(serialised.normandy.has_shielding);
+                deserialised.normandy.has_thanix_cannon(serialised.normandy.has_thanix_cannon);
 
                 // Defrost teammates
                 deserialised.teammates = new App.ME2.Teammates(_.map<ISerialisedTeammate, App.ME2.Teammate>(serialised.teammates, (serialised_teammate: ISerialisedTeammate): App.ME2.Teammate => {

@@ -242,15 +242,15 @@ var App;
 
                     dpt = this.stager.app.state.teammates.withoutRole(0 /* OcculusSquadmate */);
 
-                    if (!this.stager.app.state.normandy.has_shielding) {
+                    if (!this.stager.app.state.normandy.has_shielding()) {
                         dpt.alive().sortByShieldingDeathPriority().last().die(this.id, 1 /* ShieldingFailure */);
                     }
 
-                    if (!this.stager.app.state.normandy.has_armour) {
+                    if (!this.stager.app.state.normandy.has_armour()) {
                         dpt.alive().sortByArmourDeathPriority().last().die(this.id, 0 /* ArmourFailure */);
                     }
 
-                    if (!this.stager.app.state.normandy.has_thanix_cannon) {
+                    if (!this.stager.app.state.normandy.has_thanix_cannon()) {
                         console.log("no thanix channon");
                         console.log("killing", dpt.alive().sortByCannonDeathPriority().last());
                         dpt.alive().sortByCannonDeathPriority().last().die(this.id, 2 /* CannonFailure */);
@@ -932,10 +932,27 @@ var App;
                 if (typeof has_shielding === "undefined") { has_shielding = false; }
                 if (typeof has_thanix_cannon === "undefined") { has_thanix_cannon = false; }
                 if (typeof delay === "undefined") { delay = 0; }
-                this.has_armour = has_armor;
-                this.has_shielding = has_shielding;
-                this.has_thanix_cannon = has_thanix_cannon;
-                this.delay = delay;
+                var _this = this;
+                this.has_armour = ko.observable(has_armor);
+                this.has_shielding = ko.observable(has_shielding);
+                this.has_thanix_cannon = ko.observable(has_thanix_cannon);
+                this._delay = delay;
+
+                this.delay = ko.pureComputed({
+                    read: function () {
+                        console.log("reading delay", _this._delay);
+                        return _this._delay;
+                    },
+                    write: function (value) {
+                        var delay;
+                        delay = parseInt("" + value, 10);
+
+                        if (!_.isNaN(delay)) {
+                            console.log("writing delay", delay, "old value", _this._delay);
+                            _this._delay = delay;
+                        }
+                    }
+                });
             }
             return Normandy;
         })();
@@ -1261,7 +1278,7 @@ var App;
                             return new App.ME2.UI.Teammate(teammate);
                         });
 
-                        this.normandy = new App.ME2.UI.Normandy(this.stage.stager.app.state.normandy);
+                        this.normandy = this.stage.stager.app.state.normandy;
                     };
                     return Setup;
                 })(UI.Stage);
@@ -1382,9 +1399,9 @@ var App;
                             return 2 /* AllDied */;
                         }
 
-                        if (this.stage.stager.app.state.normandy.delay === 0) {
+                        if (this.stage.stager.app.state.normandy.delay() === 0) {
                             return 0 /* AllSurvived */;
-                        } else if (this.stage.stager.app.state.normandy.delay <= 3) {
+                        } else if (this.stage.stager.app.state.normandy.delay() <= 3) {
                             return 1 /* HalfSurvived */;
                         } else {
                             return 2 /* AllDied */;
@@ -1501,7 +1518,6 @@ var App;
             var Normandy = (function (_super) {
                 __extends(Normandy, _super);
                 function Normandy(normany) {
-                    var _this = this;
                     _super.call(this);
                     this.has_armour = ko.observable(undefined);
                     this.has_shielding = ko.observable(undefined);
@@ -1511,20 +1527,6 @@ var App;
                     this.link(this.normandy, "has_armour");
                     this.link(this.normandy, "has_shielding");
                     this.link(this.normandy, "has_thanix_cannon");
-
-                    this.delay = ko.pureComputed({
-                        read: function () {
-                            return "" + _this.normandy.delay;
-                        },
-                        write: function (value) {
-                            var delay;
-                            delay = parseInt(value, 10);
-
-                            if (!_.isNaN(delay)) {
-                                _this.normandy.delay = parseInt(value, 10);
-                            }
-                        }
-                    });
                 }
                 return Normandy;
             })(App.ME2.UI.Proxy);
@@ -1569,10 +1571,10 @@ var App;
                 serialised = {
                     stage_id: state.stage_id,
                     normandy: {
-                        delay: state.normandy.delay,
-                        has_armour: state.normandy.has_armour,
-                        has_shielding: state.normandy.has_shielding,
-                        has_thanix_cannon: state.normandy.has_thanix_cannon
+                        delay: state.normandy.delay(),
+                        has_armour: state.normandy.has_armour(),
+                        has_shielding: state.normandy.has_shielding(),
+                        has_thanix_cannon: state.normandy.has_thanix_cannon()
                     },
                     teammates: _.map(state.teammates.value(), function (teammate) {
                         return {
@@ -1602,10 +1604,10 @@ var App;
                 deserialised = new App.ME2.State(this.app);
                 deserialised.stage_id = serialised.stage_id;
 
-                deserialised.normandy.delay = serialised.normandy.delay;
-                deserialised.normandy.has_armour = serialised.normandy.has_armour;
-                deserialised.normandy.has_shielding = serialised.normandy.has_shielding;
-                deserialised.normandy.has_thanix_cannon = serialised.normandy.has_thanix_cannon;
+                deserialised.normandy.delay(serialised.normandy.delay);
+                deserialised.normandy.has_armour(serialised.normandy.has_armour);
+                deserialised.normandy.has_shielding(serialised.normandy.has_shielding);
+                deserialised.normandy.has_thanix_cannon(serialised.normandy.has_thanix_cannon);
 
                 deserialised.teammates = new App.ME2.Teammates(_.map(serialised.teammates, function (serialised_teammate) {
                     var teammate;

@@ -29,15 +29,15 @@ module App {
                     dpt = this.stager.app.state.teammates.withoutRole(App.ME2.TeammateRoles.OcculusSquadmate);
 
                     // Apply deaths
-                    if (!this.stager.app.state.normandy.has_shielding) {
+                    if (!this.stager.app.state.normandy.has_shielding()) {
                         dpt.alive().sortByShieldingDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.ShieldingFailure);
                     }
 
-                    if (!this.stager.app.state.normandy.has_armour) {
+                    if (!this.stager.app.state.normandy.has_armour()) {
                         dpt.alive().sortByArmourDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.ArmourFailure);
                     }
 
-                    if (!this.stager.app.state.normandy.has_thanix_cannon) {
+                    if (!this.stager.app.state.normandy.has_thanix_cannon()) {
                         console.log("no thanix channon");
                         console.log("killing", dpt.alive().sortByCannonDeathPriority().last());
                         dpt.alive().sortByCannonDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.CannonFailure);
