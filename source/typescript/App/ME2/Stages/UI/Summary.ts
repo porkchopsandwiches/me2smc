@@ -18,7 +18,6 @@ module App {
                 }
 
                 export class Summary extends Stage implements ISummary {
-                    public id: StageIDs = StageIDs.Summary;
                     public label: string = "Summary";
                     public stage: App.ME2.Stages.Setup;
                     public shepard_lives: KnockoutObservable<boolean>;
@@ -39,7 +38,7 @@ module App {
                     }
 
                     private getLivingTeammates (): App.ME2.Teammates {
-                        return this.stage.stager.teammates.alive();
+                        return this.stage.stager.app.state.teammates.alive();
                     }
 
                     private getShepardLives (): boolean {
@@ -59,27 +58,27 @@ module App {
                     }
 
                     private getDefenceReporter (): App.ME2.Teammate {
-                        return this.stage.stager.teammates.withRole(App.ME2.TeammateRoles.HeldTheLine).sortByDefenceReportPriority().last();
+                        return this.stage.stager.app.state.teammates.withRole(App.ME2.TeammateRoles.HeldTheLine).sortByDefenceReportPriority().last();
                     }
 
                     private getKeepBaseAdvocate (): App.ME2.Teammate {
-                        return this.stage.stager.teammates.withRole(App.ME2.TeammateRoles.BossSquadmate).whoAdvocateKeepingTheBase().sortByKeepBasePriority().last();
+                        return this.stage.stager.app.state.teammates.withRole(App.ME2.TeammateRoles.BossSquadmate).whoAdvocateKeepingTheBase().sortByKeepBasePriority().last();
                     }
 
                     private getDestroyBaseAdvocate (): App.ME2.Teammate {
-                        return this.stage.stager.teammates.withRole(App.ME2.TeammateRoles.BossSquadmate).whoAdvocateDestroyingTheBase().sortByDestroyBasePriority().last();
+                        return this.stage.stager.app.state.teammates.withRole(App.ME2.TeammateRoles.BossSquadmate).whoAdvocateDestroyingTheBase().sortByDestroyBasePriority().last();
                     }
 
                     private getCrewSurvival (): SummaryCrewSurvivalOptions {
 
                         // If no escort, they die regardless
-                        if (this.stage.stager.teammates.withRole(App.ME2.TeammateRoles.LongWalkEscort).length() === 0) {
+                        if (this.stage.stager.app.state.teammates.withRole(App.ME2.TeammateRoles.LongWalkEscort).length() === 0) {
                             return SummaryCrewSurvivalOptions.AllDied;
                         }
 
-                        if (this.stage.stager.app.normandy.delay === 0) {
+                        if (this.stage.stager.app.state.normandy.delay === 0) {
                             return SummaryCrewSurvivalOptions.AllSurvived;
-                        } else if (this.stage.stager.app.normandy.delay <= 3) {
+                        } else if (this.stage.stager.app.state.normandy.delay <= 3) {
                             return SummaryCrewSurvivalOptions.HalfSurvived;
                         } else {
                             return SummaryCrewSurvivalOptions.AllDied;

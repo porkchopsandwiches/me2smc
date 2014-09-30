@@ -11,7 +11,7 @@
 		<div id="app" class="container">
 			<!-- ko with: stager.ui.stage -->
 				<h2 data-bind="text: ui.label"></h2>
-				<!-- ko if: ui.id === App.ME2.Stages.UI.StageIDs.Setup -->
+				<!-- ko if: id === App.ME2.Stages.StageIDs.Setup -->
 					<h3>Teammates</h3>
                     <p>The game requires at least <strong>8</strong> teammates to be recruited.</p>
 					<table class="table table-striped setup-table">
@@ -43,21 +43,19 @@
 						</tbody>
 					</table>
 					<h3>Normandy</h3>
-                    <p>The <strong>Armour</strong> upgrade is provided by Jacob, the <strong>Cannon</strong> upgrade by Garrus, and the <strong>Shielding</strong> upgrade by Tali.</p>
-                    <p><em>Mission Delay</em> indicates how many missions were undertaken between the crew being abducted and the Omega 4 relay being accessed.</p>
 					<form role="form">
 						<div class="row">
 							<div class="col-md-6">
 								<div class="form-group">
 									<label>Normandy Upgrades</label>
 									<div class="checkbox">
-										<label><input type="checkbox" data-bind="checked: ui.normandy.has_armour" /> Has Armour upgrade?</label>
+										<label><input type="checkbox" data-bind="checked: ui.normandy.has_armour" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Jacob Taylor</em>">Has Armour upgrade?</span></label>
 									</div>
 									<div class="checkbox">
-										<label><input type="checkbox" data-bind="checked: ui.normandy.has_shielding" /> Has Shielding upgrade?</label>
+										<label><input type="checkbox" data-bind="checked: ui.normandy.has_shielding" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Tali'zorah</em>">Has Shielding upgrade?</span></label>
 									</div>
 									<div class="checkbox">
-										<label><input type="checkbox" data-bind="checked: ui.normandy.has_thanix_cannon" /> Has Thanix Cannon?</label>
+										<label><input type="checkbox" data-bind="checked: ui.normandy.has_thanix_cannon" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Garrus Vakarian</em>">Has Thanix Cannon?</span></label>
 									</div>
 								</div>
 							</div>
@@ -65,12 +63,13 @@
 								<div class="form-group">
 									<label>Mission Delay</label>
 									<input class="form-control" type="number" min="0" max="20" data-bind="value: ui.normandy.delay" />
+									<p class="help-block">How many missions were undertaken between the crew being abducted and the Omega 4 relay being accessed.</p>
 								</div>
 							</div>
 						</div>
 					</form>
 				<!-- /ko -->
-				<!-- ko if: ui.id === App.ME2.Stages.UI.StageIDs.Occulus -->
+				<!-- ko if: id === App.ME2.Stages.StageIDs.Occulus -->
 					<form role="form">
 						<div class="row">
 							<div class="col-md-6">
@@ -88,7 +87,7 @@
 						</div>
 					</form>
 				<!-- /ko -->
-				<!-- ko if: ui.id === App.ME2.Stages.UI.StageIDs.Vents -->
+				<!-- ko if: id === App.ME2.Stages.StageIDs.Vents -->
 					<form role="form">
 						<div class="row">
 							<div class="col-md-6">
@@ -114,7 +113,7 @@
 						</div>
 					</form>
 				<!-- /ko -->
-				<!-- ko if: ui.id === App.ME2.Stages.UI.StageIDs.LongWalk -->
+				<!-- ko if: id === App.ME2.Stages.StageIDs.LongWalk -->
 					<form role="form">
 						<div class="row">
 							<div class="col-md-6">
@@ -144,7 +143,7 @@
 						</div>
 					</form>
 				<!-- /ko -->
-				<!-- ko if: ui.id == App.ME2.Stages.UI.StageIDs.Boss -->
+				<!-- ko if: id == App.ME2.Stages.StageIDs.Boss -->
 					<form role="form">
 						<div class="row">
 							<div class="col-md-6">
@@ -162,7 +161,7 @@
 						</div>
 					</form>
 				<!-- /ko -->
-				<!-- ko if: ui.id === App.ME2.Stages.UI.StageIDs.Summary -->
+				<!-- ko if: id === App.ME2.Stages.StageIDs.Summary -->
 					<form role="form">
 						<div class="row">
 							<div class="col-md-6">
@@ -198,7 +197,7 @@
 				<!-- /ko -->
 			<!-- /ko -->
 
-			<table class="table table-striped summary-table" data-bind="visible: stager.ui.stage().ui.id !== App.ME2.Stages.UI.StageIDs.Setup">
+			<table class="table table-striped summary-table" data-bind="visible: stager.ui.stage().id !== App.ME2.Stages.StageIDs.Setup">
 				<thead>
 					<tr>
 						<th>Teammates</th>
@@ -223,12 +222,12 @@
 										<span data-bind="text: App.Application.renderTeammateDeathCause(death_cause)"></span>
 									<!-- /ko -->
 								</td>
-								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.UI.StageIDs.Occulus ? 'danger' : '') }">
+								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.StageIDs.Occulus ? 'danger' : '') }">
 									<!-- ko if: hasRole(App.ME2.TeammateRoles.OcculusSquadmate) -->
 										<span class="glyphicon glyphicon-user"></span>
 									<!-- /ko -->
 								</td>
-								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.UI.StageIDs.Vents ? 'danger' : '') }">
+								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.StageIDs.Vents ? 'danger' : '') }">
 									<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsSquadmate) -->
 										<span class="glyphicon glyphicon-user"></span>
 									<!-- /ko -->
@@ -239,7 +238,7 @@
 										<span class="glyphicon glyphicon-fire"></span>
 									<!-- /ko -->
 								</td>
-								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.UI.StageIDs.LongWalk ? 'danger' : '') }">
+								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.StageIDs.LongWalk ? 'danger' : '') }">
 									<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkSquadmate) -->
 										<span class="glyphicon glyphicon-user"></span>
 									<!-- /ko -->
@@ -253,7 +252,7 @@
 										<span class="glyphicon glyphicon-heart-empty"></span>
 									<!-- /ko -->
 								</td>
-								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.UI.StageIDs.Boss ? 'danger' : '') }">
+								<td data-bind="attr: { class: (is_dead && death_stage_id === App.ME2.Stages.StageIDs.Boss ? 'danger' : '') }">
 									<!-- ko if: hasRole(App.ME2.TeammateRoles.BossSquadmate) -->
 										<span class="glyphicon glyphicon-user"></span>
 									<!-- /ko -->
@@ -265,7 +264,7 @@
 			</table>
 
 			<!-- ko with: stager.ui.stage -->
-				<button class="btn btn-primary" data-bind="enable: ui.id > App.ME2.Stages.UI.StageIDs.Setup, click: function () { $root.stager.previousStage() }">Previous</button>
+				<button class="btn btn-primary" data-bind="enable: id > App.ME2.Stages.StageIDs.Setup, click: function () { $root.stager.previousStage() }">Previous</button>
 				<button class="btn btn-primary" data-bind="enable: ui.is_evaluatable, click: function () { $root.stager.nextStage() }">Next</button>
 			<!-- /ko -->
 
@@ -434,6 +433,9 @@
 		<script src="../cdn/javascript/app-1.0.0.js"></script>
 		<script>
 			$(function () {
+
+				// Prepare tooltips
+				$("[data-toggle=tooltip]").tooltip();
 
 				var app = new App.Application();
 

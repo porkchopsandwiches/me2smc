@@ -7,6 +7,7 @@ module App {
             }
 
             export class Setup extends Stage implements ISetup {
+                public id: StageIDs = App.ME2.Stages.StageIDs.Setup;
                 public ui: App.ME2.Stages.UI.Setup;
 
                 constructor (stager: App.ME2.Stages.Stager) {
@@ -17,7 +18,7 @@ module App {
                 public evaluate () {
 
                     // Limit teammates to those recruited
-                    this.stager.teammates = this.stager.teammates.recruited();
+                    this.stager.app.state.teammates = this.stager.app.state.teammates.recruited();
                 }
 
                 public isEvaluatable (): boolean {

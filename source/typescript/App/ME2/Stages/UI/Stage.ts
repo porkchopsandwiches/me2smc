@@ -3,14 +3,7 @@ module App {
     export module ME2 {
         export module Stages {
             export module UI {
-                export enum StageIDs {
-                    Setup,
-                    Occulus,
-                    Vents,
-                    LongWalk,
-                    Boss,
-                    Summary
-                }
+
 
                 export interface ITeammateFieldFilter {
                     (teammate: App.ME2.Teammate, teammates: App.ME2.Teammates): boolean;
@@ -23,7 +16,6 @@ module App {
                 }
 
                 export interface IStage {
-                    id: StageIDs;
                     label: string;
                     stage: App.ME2.Stages.IStage;
                     setup: () => void;
@@ -35,7 +27,6 @@ module App {
                 }
 
                 export class Stage implements IStage {
-                    public id: StageIDs;
                     public label: string;
                     public stage: App.ME2.Stages.IStage;
                     public teammate_fields: ITeammateField[] = [];
@@ -62,8 +53,8 @@ module App {
                         var candidates: App.ME2.Teammate[];
 
                         // Candidates are those who fulfill the field's filter, and are not in use elsewhere
-                        candidates = this.stage.stager.teammates.filter((teammate: App.ME2.Teammate) => {
-                            return field.filter(teammate, this.stage.stager.teammates);
+                        candidates = this.stage.stager.app.state.teammates.filter((teammate: App.ME2.Teammate) => {
+                            return field.filter(teammate, this.stage.stager.app.state.teammates);
                         }).filter((candidate: App.ME2.Teammate): boolean => {
                             return !_.find(this.teammate_fields, (other_field: ITeammateField): boolean => {
                                 return other_field.name !== field.name && this.stage[other_field.name] === candidate;

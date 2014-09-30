@@ -10,6 +10,7 @@ module App {
             }
 
             export class LongWalk extends Stage implements ILongWalk {
+                public id: StageIDs = App.ME2.Stages.StageIDs.LongWalk;
                 public ui: App.ME2.Stages.UI.LongWalk;
                 long_walk_squadmate_1: App.ME2.Teammate;
                 long_walk_squadmate_2: App.ME2.Teammate;
@@ -31,17 +32,17 @@ module App {
 
                     // If escort is not loyal, they will die
                     if (this.long_walk_escort.henchman.id !== undefined && !this.long_walk_escort.willBeEffectiveLongWalkEscort()) {
-                        this.long_walk_escort.die(this.ui.id, App.ME2.TeammateDeathCauses.Escort);
+                        this.long_walk_escort.die(this.id, App.ME2.TeammateDeathCauses.Escort);
                     }
 
                     // If bubbler is not an expert, or is not loyal, one of the squadmates dies
                     if (!this.long_walk_bubbler.willBeEffectiveLongWalkBubbler()) {
-                        this.stager.teammates.withRole(App.ME2.TeammateRoles.LongWalkSquadmate).sortByLongWalkDeathPriority().last().die(this.ui.id, App.ME2.TeammateDeathCauses.LongWalkBadBubbler);
+                        this.stager.app.state.teammates.withRole(App.ME2.TeammateRoles.LongWalkSquadmate).sortByLongWalkDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.LongWalkBadBubbler);
                     }
 
                     // If leader is not loyal and not
                     if (!this.long_walk_leader.willBeEffectiveLongWalkLeader()) {
-                        this.long_walk_leader.die(this.ui.id, App.ME2.TeammateDeathCauses.LongWalkBadLeader);
+                        this.long_walk_leader.die(this.id, App.ME2.TeammateDeathCauses.LongWalkBadLeader);
                     }
                 }
 

@@ -17,7 +17,6 @@ module App {
                 }
 
                 export class LongWalk extends Stage implements ILongWalk {
-                    public id: StageIDs = StageIDs.LongWalk;
                     public label: string = "Long Walk";
 
                     public long_walk_squadmate_1: KnockoutObservable<App.ME2.Teammate>;

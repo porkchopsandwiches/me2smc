@@ -3,14 +3,13 @@ module App {
 
     export class Application {
 
-        public normandy: App.ME2.Normandy;
         private henchmen: App.ME2.Henchman[];
         public stager: App.ME2.Stages.Stager;
         public henchman: KnockoutObservable<App.ME2.Henchman>;
+        public state: App.ME2.State;
+        public serialisation: App.ME2.Serialisation;
 
         constructor () {
-            this.normandy = new App.ME2.Normandy(true, true, true);
-
             this.henchmen = [
                 //                          ID                             Name                    Ess     HTL     HTLD    AD      SD      CD      LWD     CRP     DRP     KBP         DPB     Tech    Biotic      Leader      SLd     EC      VC      BC      LC
                 new App.ME2.Henchman(this,  App.ME2.HenchmanIDs.Garrus,    "Garrus Vakarian",      true,   3,      5,      0,      8,      11,     10,     2,      11,     8,          0,      false,  false,      true,       false,  true,   true,   false,  true),
@@ -28,9 +27,9 @@ module App {
                 new App.ME2.Henchman(this,  App.ME2.HenchmanIDs.Zaeed,     "Zaeed Masani",         false,  3,      1,      0,      7,      10,     2,      10,     3,      11,         0,      false,  false,      false,      false,  true,   false,  false,  true)
             ];
 
+            this.serialisation = new App.ME2.Serialisation(this);
             this.henchman = ko.observable(undefined);
-
-
+            this.state = new App.ME2.State(this);
             this.stager = new App.ME2.Stages.Stager(this);
             this.stager.nextStage();
         }
@@ -44,6 +43,9 @@ module App {
                 return henchman.id === id;
             });
         }
+
+        //static ideal_symbol = "✓";
+        static ideal_symbol = "✭";
 
         static formatTeammateRole (role: App.ME2.TeammateRoles): string {
             switch (role) {
@@ -86,7 +88,7 @@ module App {
 
         static renderTeammateName (teammate: App.ME2.Teammate, highlight: boolean = false): string {
             if (teammate) {
-                return teammate.henchman.name + (highlight ? " ✸" : "");
+                return teammate.henchman.name + (highlight ? " " + Application.ideal_symbol : "");
             } else {
                 return "N/A";
             }

@@ -8,7 +8,6 @@ module App {
                 }
 
                 export class Setup extends Stage implements ISetup {
-                    public id: StageIDs = StageIDs.Setup;
                     public label: string = "Setup";
                     public teammates: App.ME2.UI.Teammate[];
                     public stage: App.ME2.Stages.Setup;
@@ -76,11 +75,11 @@ module App {
                     }
 
                     private bootstrapTeammates () {
-                        this.teammates = this.stage.stager.teammates.map<App.ME2.UI.Teammate>((teammate: App.ME2.Teammate): App.ME2.UI.Teammate => {
+                        this.teammates = this.stage.stager.app.state.teammates.map<App.ME2.UI.Teammate>((teammate: App.ME2.Teammate): App.ME2.UI.Teammate => {
                             return new App.ME2.UI.Teammate(teammate);
                         });
 
-                        this.normandy = new App.ME2.UI.Normandy(this.stage.stager.app.normandy);
+                        this.normandy = new App.ME2.UI.Normandy(this.stage.stager.app.state.normandy);
                     }
                 }
             }

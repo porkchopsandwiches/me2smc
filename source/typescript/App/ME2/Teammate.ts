@@ -33,10 +33,10 @@ module App {
             is_recruited: boolean;
             is_dead: boolean;
             death_cause: TeammateDeathCauses;
-            death_stage_id: App.ME2.Stages.UI.StageIDs;
+            death_stage_id: App.ME2.Stages.StageIDs;
             hasRole (role: TeammateRoles): boolean;
             addRole (role: TeammateRoles): ITeammate;
-            die (stage_id: App.ME2.Stages.UI.StageIDs, death_cause: TeammateDeathCauses): ITeammate;
+            die (stage_id: App.ME2.Stages.StageIDs, death_cause: TeammateDeathCauses): ITeammate;
             willBeEffectiveLongWalkLeader (): boolean;
             willBeEffectiveLongWalkEscort (): boolean;
             willBeEffectiveLongWalkBubbler (): boolean;
@@ -49,7 +49,7 @@ module App {
 
         export class Teammate implements ITeammate {
             public death_cause: TeammateDeathCauses;
-            public death_stage_id: App.ME2.Stages.UI.StageIDs;
+            public death_stage_id: App.ME2.Stages.StageIDs;
             public henchman: App.ME2.Henchman;
             public is_recruited: boolean = false;
             public is_loyal: boolean = false;
@@ -107,7 +107,7 @@ module App {
                 return this.henchman.is_leader && this.is_loyal;
             }
 
-            public die (stage_id: App.ME2.Stages.UI.StageIDs, death_cause: TeammateDeathCauses): Teammate {
+            public die (stage_id: App.ME2.Stages.StageIDs, death_cause: TeammateDeathCauses): Teammate {
                 this.death_stage_id = stage_id;
                 this.is_dead = true;
                 this.death_cause = death_cause;

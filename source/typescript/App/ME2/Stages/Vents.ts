@@ -11,6 +11,7 @@ module App {
             }
 
             export class Vents extends Stage implements IVents {
+                public id: StageIDs = App.ME2.Stages.StageIDs.Boss;
                 public vent_squadmate_1: App.ME2.Teammate;
                 public vent_squadmate_2: App.ME2.Teammate;
                 public vent_venter: App.ME2.Teammate;
@@ -29,9 +30,9 @@ module App {
                     this.vent_leader.addRole(App.ME2.TeammateRoles.VentsLeader);
 
                     if (!this.vent_venter.willBeEffectiveVentVenter()) {
-                        this.vent_venter.die(this.ui.id, App.ME2.TeammateDeathCauses.VentsBadVenter);
+                        this.vent_venter.die(this.id, App.ME2.TeammateDeathCauses.VentsBadVenter);
                     } else if (!this.vent_leader.willBeEffectiveVentLeader()) {
-                        this.vent_venter.die(this.ui.id, App.ME2.TeammateDeathCauses.VentsBadLeader);
+                        this.vent_venter.die(this.id, App.ME2.TeammateDeathCauses.VentsBadLeader);
                     }
                 }
 

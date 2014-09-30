@@ -82,7 +82,7 @@ module App {
                 });
             }
 
-            public die (stage_id: App.ME2.Stages.UI.StageIDs, death_cause: App.ME2.TeammateDeathCauses): Teammates {
+            public die (stage_id: App.ME2.Stages.StageIDs, death_cause: App.ME2.TeammateDeathCauses): Teammates {
                 this.each((teammate: App.ME2.Teammate): void => {
                     teammate.die(stage_id, death_cause);
                 });

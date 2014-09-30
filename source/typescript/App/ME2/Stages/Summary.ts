@@ -7,6 +7,7 @@ module App {
             }
 
             export class Summary extends Stage implements ISummary {
+                public id: StageIDs = App.ME2.Stages.StageIDs.Summary;
                 public ui: App.ME2.Stages.UI.Summary;
 
                 constructor (stager: App.ME2.Stages.Stager) {
