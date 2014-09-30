@@ -10,7 +10,7 @@
 	<body>
 		<div id="app" class="container">
 			<!-- ko with: stager.stage -->
-				<h2 data-bind="text: ui.label"></h2>
+				<h2 data-bind="text: label"></h2>
 				<!-- ko if: id === App.ME2.Stages.StageIDs.Setup -->
 					<h3>Teammates</h3>
                     <p>The game requires at least <strong>8</strong> teammates to be recruited.</p>
@@ -18,12 +18,12 @@
 						<thead>
 							<tr>
 								<th>Teammate</th>
-								<th><label><input type="checkbox" data-bind="checked: ui.all_recruited" /> Is Recruited</label></th>
-								<th><label><input type="checkbox" data-bind="checked: ui.all_loyal" /> Is Loyal</label></th>
+								<th><label><input type="checkbox" data-bind="checked: all_recruited" /> Is Recruited</label></th>
+								<th><label><input type="checkbox" data-bind="checked: all_loyal" /> Is Loyal</label></th>
 							</tr>
 						</thead>
 						<tbody>
-							<!-- ko foreach: ui.teammates -->
+							<!-- ko foreach: $root.state.teammates.value() -->
 								<tr>
 									<td>
 										<a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }, text: henchman.name"></a>
@@ -49,20 +49,20 @@
 								<div class="form-group">
 									<label>Normandy Upgrades</label>
 									<div class="checkbox">
-										<label><input type="checkbox" data-bind="checked: ui.normandy.has_armour" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Jacob Taylor</em>">Has Armour upgrade?</span></label>
+										<label><input type="checkbox" data-bind="checked: $root.state.normandy.has_armour" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Jacob Taylor</em>">Has Armour upgrade?</span></label>
 									</div>
 									<div class="checkbox">
-										<label><input type="checkbox" data-bind="checked: ui.normandy.has_shielding" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Tali'zorah</em>">Has Shielding upgrade?</span></label>
+										<label><input type="checkbox" data-bind="checked: $root.state.normandy.has_shielding" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Tali'zorah</em>">Has Shielding upgrade?</span></label>
 									</div>
 									<div class="checkbox">
-										<label><input type="checkbox" data-bind="checked: ui.normandy.has_thanix_cannon" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Garrus Vakarian</em>">Has Thanix Cannon?</span></label>
+										<label><input type="checkbox" data-bind="checked: $root.state.normandy.has_thanix_cannon" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Garrus Vakarian</em>">Has Thanix Cannon?</span></label>
 									</div>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 									<label>Mission Delay</label>
-									<input class="form-control" type="number" min="0" max="20" data-bind="value: ui.normandy.delay" />
+									<input class="form-control" type="number" min="0" max="20" data-bind="value: $root.state.normandy.delay" />
 									<p class="help-block">How many missions were undertaken between the crew being abducted and the Omega 4 relay being accessed.</p>
 								</div>
 							</div>
@@ -75,13 +75,13 @@
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="occulus-squadmate-1">Squadmate #1</label>
-									<select class="form-control" id="occulus-squadmate-1" data-bind="options: ui.occulus_squadmate_1_candidates, optionsText: App.Application.renderTeammateName, value: ui.occulus_squadmate_1"></select>
+									<select class="form-control" id="occulus-squadmate-1" data-bind="options: occulus_squadmate_1_candidates, optionsText: App.Application.renderTeammateName, value: occulus_squadmate_1"></select>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="occulus-squadmate-2">Squadmate #2</label>
-									<select class="form-control" id="occulus-squadmate-2" data-bind="options: ui.occulus_squadmate_2_candidates, optionsText: App.Application.renderTeammateName, value: ui.occulus_squadmate_2"></select>
+									<select class="form-control" id="occulus-squadmate-2" data-bind="options: occulus_squadmate_2_candidates, optionsText: App.Application.renderTeammateName, value: occulus_squadmate_2"></select>
 								</div>
 							</div>
 						</div>
@@ -93,21 +93,21 @@
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="vent-venter">Venter</label>
-									<select class="form-control" id="vent-venter" data-bind="options: ui.vent_venter_candidates, optionsText: App.Application.renderTeammateNameVentVenter, value: ui.vent_venter"></select>
+									<select class="form-control" id="vent-venter" data-bind="options: vent_venter_candidates, optionsText: App.Application.renderTeammateNameVentVenter, value: vent_venter"></select>
 								</div>
 								<div class="form-group">
 									<label for="vent-leader">Leader</label>
-									<select class="form-control" id="vent-leader" data-bind="options: ui.vent_leader_candidates, optionsText: App.Application.renderTeammateNameVentLeader, value: ui.vent_leader"></select>
+									<select class="form-control" id="vent-leader" data-bind="options: vent_leader_candidates, optionsText: App.Application.renderTeammateNameVentLeader, value: vent_leader"></select>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="vent-squadmate-1">Squadmate #1</label>
-									<select class="form-control" id="vent-squadmate-1" data-bind="options: ui.vent_squadmate_1_candidates, optionsText: App.Application.renderTeammateName, value: ui.vent_squadmate_1"></select>
+									<select class="form-control" id="vent-squadmate-1" data-bind="options: vent_squadmate_1_candidates, optionsText: App.Application.renderTeammateName, value: vent_squadmate_1"></select>
 								</div>
 								<div class="form-group">
 									<label for="vent-squadmate-1">Squadmate #2</label>
-									<select class="form-control" id="vent-squadmate-1" data-bind="options: ui.vent_squadmate_2_candidates, optionsText: App.Application.renderTeammateName, value: ui.vent_squadmate_2"></select>
+									<select class="form-control" id="vent-squadmate-1" data-bind="options: vent_squadmate_2_candidates, optionsText: App.Application.renderTeammateName, value: vent_squadmate_2"></select>
 								</div>
 							</div>
 						</div>
@@ -119,25 +119,25 @@
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="long-walk-bubbler">Bubbler</label>
-									<select class="form-control" id="long-walk-bubbler" data-bind="options: ui.long_walk_bubbler_candidates, optionsText: App.Application.renderTeammateNameLongWalkBubbler, value: ui.long_walk_bubbler"></select>
+									<select class="form-control" id="long-walk-bubbler" data-bind="options: long_walk_bubbler_candidates, optionsText: App.Application.renderTeammateNameLongWalkBubbler, value: long_walk_bubbler"></select>
 								</div>
 								<div class="form-group">
 									<label for="long-walk-leader">Leader</label>
-									<select class="form-control" id="long-walk-leader" data-bind="options: ui.long_walk_leader_candidates, optionsText: App.Application.renderTeammateNameLongWalkLeader, value: ui.long_walk_leader"></select>
+									<select class="form-control" id="long-walk-leader" data-bind="options: long_walk_leader_candidates, optionsText: App.Application.renderTeammateNameLongWalkLeader, value: long_walk_leader"></select>
 								</div>
 								<div class="form-group">
 									<label for="long-walk-escort">Escort</label>
-									<select class="form-control" id="long-walk-escort" data-bind="options: ui.long_walk_escort_candidates, optionsText: App.Application.renderTeammateNameLongWalkEscort, value: ui.long_walk_escort"></select>
+									<select class="form-control" id="long-walk-escort" data-bind="options: long_walk_escort_candidates, optionsText: App.Application.renderTeammateNameLongWalkEscort, value: long_walk_escort"></select>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="long-walk-squadmate-1">Squadmate #1</label>
-									<select class="form-control" id="long-walk-squadmate-1" data-bind="options: ui.long_walk_squadmate_1_candidates, optionsText: App.Application.renderTeammateName, value: ui.long_walk_squadmate_1"></select>
+									<select class="form-control" id="long-walk-squadmate-1" data-bind="options: long_walk_squadmate_1_candidates, optionsText: App.Application.renderTeammateName, value: long_walk_squadmate_1"></select>
 								</div>
 								<div class="form-group">
 									<label for="long-walk-squadmate-2">Squadmate #2</label>
-									<select class="form-control" id="long-walk-squadmate-2" data-bind="options: ui.long_walk_squadmate_2_candidates, optionsText: App.Application.renderTeammateName, value: ui.long_walk_squadmate_2"></select>
+									<select class="form-control" id="long-walk-squadmate-2" data-bind="options: long_walk_squadmate_2_candidates, optionsText: App.Application.renderTeammateName, value: long_walk_squadmate_2"></select>
 								</div>
 							</div>
 						</div>
@@ -149,13 +149,13 @@
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="boss-squadmate-1">Squadmate #1</label>
-									<select class="form-control" id="boss-squadmate-1" data-bind="options: ui.boss_squadmate_1_candidates, optionsText: App.Application.renderTeammateNameBossSquadmate, value: ui.boss_squadmate_1"></select>
+									<select class="form-control" id="boss-squadmate-1" data-bind="options: boss_squadmate_1_candidates, optionsText: App.Application.renderTeammateNameBossSquadmate, value: boss_squadmate_1"></select>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="boss-squadmate-2">Squadmate #2</label>
-									<select class="form-control" id="boss-squadmate-2" data-bind="options: ui.boss_squadmate_2_candidates, optionsText: App.Application.renderTeammateNameBossSquadmate, value: ui.boss_squadmate_2"></select>
+									<select class="form-control" id="boss-squadmate-2" data-bind="options: boss_squadmate_2_candidates, optionsText: App.Application.renderTeammateNameBossSquadmate, value: boss_squadmate_2"></select>
 								</div>
 							</div>
 						</div>
@@ -167,29 +167,29 @@
 							<div class="col-md-6">
 								<div class="form-group">
 									<label>Reports on defence</label>
-									<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(ui.defence_reporter())"></p>
+									<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(defence_reporter())"></p>
 								</div>
 								<div class="form-group">
 									<label>Advocates keeping the base</label>
-									<p class="form-control-static" data-bind="text: App.Application.renderTeammateNameKeepBaseAdvocate(ui.keep_base_advocate())"></p>
+									<p class="form-control-static" data-bind="text: App.Application.renderTeammateNameKeepBaseAdvocate(keep_base_advocate())"></p>
 								</div>
 								<div class="form-group">
 									<label>Advocates destroying the base</label>
-									<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(ui.destroy_base_advocate())"></p>
+									<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(destroy_base_advocate())"></p>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 									<label>Shepard lives</label>
-									<p class="form-control-static" data-bind="text: App.Application.renderYesNo(ui.shepard_lives())"></p>
+									<p class="form-control-static" data-bind="text: App.Application.renderYesNo(shepard_lives())"></p>
 								</div>
 								<div class="form-group">
 									<label>Shepard caught by</label>
-									<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(ui.shepard_pulled_up_by())"></p>
+									<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(shepard_pulled_up_by())"></p>
 								</div>
 								<div class="form-group">
 									<label>Crew</label>
-									<p class="form-control-static" data-bind="text: App.Application.renderCrewSurvival(ui.crew_survival())"></p>
+									<p class="form-control-static" data-bind="text: App.Application.renderCrewSurvival(crew_survival())"></p>
 								</div>
 							</div>
 						</div>
@@ -265,7 +265,7 @@
 
 			<!-- ko with: stager.stage -->
 				<button class="btn btn-primary" data-bind="enable: id > App.ME2.Stages.StageIDs.Setup, click: function () { $root.stager.previousStage() }">Previous</button>
-				<button class="btn btn-primary" data-bind="enable: ui.is_evaluatable, click: function () { $root.stager.nextStage() }">Next</button>
+				<button class="btn btn-primary" data-bind="enable: is_evaluatable, click: function () { $root.stager.nextStage() }">Next</button>
 			<!-- /ko -->
 
 			<div class="modal fade" tabindex="-1" role="dialog" data-bind="modal: $root.henchman()">

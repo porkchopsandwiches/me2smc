@@ -3,27 +3,41 @@ module App {
     export module ME2 {
         export module Stages {
             export interface IOcculus {
-                occulus_squadmate_1: App.ME2.Teammate;
-                occulus_squadmate_2: App.ME2.Teammate;
+                occulus_squadmate_1: KnockoutObservable<App.ME2.Teammate>;
+                occulus_squadmate_2: KnockoutObservable<App.ME2.Teammate>;
+                occulus_squadmate_1_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
+                occulus_squadmate_2_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
             }
 
-            export class Occulus extends Stage implements IOcculus {
+            export class Occulus extends UIStage implements IOcculus {
                 public id: StageIDs = App.ME2.Stages.StageIDs.Occulus;
-                public ui: App.ME2.Stages.UI.Occulus;
-                public occulus_squadmate_1: App.ME2.Teammate;
-                public occulus_squadmate_2: App.ME2.Teammate;
+                public label: string = "Occulus";
+                public occulus_squadmate_1: KnockoutObservable<App.ME2.Teammate>;
+                public occulus_squadmate_2: KnockoutObservable<App.ME2.Teammate>;
+                public occulus_squadmate_1_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
+                public occulus_squadmate_2_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
+                public teammate_fields: ITeammateField[] = [
+                    {
+                        name: "occulus_squadmate_1",
+                        filter: UIStage.genericTeammateFieldFilter
+                    },
+                    {
+                        name: "occulus_squadmate_2",
+                        filter: UIStage.genericTeammateFieldFilter
+                    }
+                ];
 
                 constructor (stager: App.ME2.Stages.Stager) {
                     super(stager);
-                    this.ui = new App.ME2.Stages.UI.Occulus(this);
+                    this.bootstrapTeammateFields();
                 }
 
                 public evaluate () {
                     var dpt: App.ME2.Teammates;
 
                     // Assign roles
-                    this.occulus_squadmate_1.addRole(App.ME2.TeammateRoles.OcculusSquadmate);
-                    this.occulus_squadmate_2.addRole(App.ME2.TeammateRoles.OcculusSquadmate);
+                    this.occulus_squadmate_1().addRole(App.ME2.TeammateRoles.OcculusSquadmate);
+                    this.occulus_squadmate_2().addRole(App.ME2.TeammateRoles.OcculusSquadmate);
 
                     // Get candidates to die (that is, they were not Occulus Squadmates)
                     dpt = this.stager.app.state.teammates.withoutRole(App.ME2.TeammateRoles.OcculusSquadmate);
@@ -38,14 +52,8 @@ module App {
                     }
 
                     if (!this.stager.app.state.normandy.has_thanix_cannon()) {
-                        console.log("no thanix channon");
-                        console.log("killing", dpt.alive().sortByCannonDeathPriority().last());
                         dpt.alive().sortByCannonDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.CannonFailure);
                     }
-                }
-
-                public isEvaluatable (): boolean {
-                    return this.ui.is_evaluatable();
                 }
             }
         }

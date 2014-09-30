@@ -25,7 +25,7 @@ interface KnockoutStatic {
 */
 
 interface KnockoutStatic {
-    forcibleComputed: <T>(func: () => T, context?: any, options?: any) => KnockoutForcibleComputed<T>;
+    forcibleComputed<T>(func: () => T, context?: any, options?: any): KnockoutForcibleComputed<T>;
 }
 
 ko["forcibleComputed"] = function ko_forcibleComputed<T>(func: () => T, context?: any, options?: any): KnockoutForcibleComputed<T> {

@@ -149,16 +149,16 @@ module App {
             }
         }
 
-        static renderCrewSurvival (crew_survival: App.ME2.Stages.UI.SummaryCrewSurvivalOptions): string {
+        static renderCrewSurvival (crew_survival: App.ME2.Stages.SummaryCrewSurvivalOptions): string {
             switch (crew_survival) {
-                case App.ME2.Stages.UI.SummaryCrewSurvivalOptions.AllDied:
+                case App.ME2.Stages.SummaryCrewSurvivalOptions.AllDied:
                     return "All Died";
-                case App.ME2.Stages.UI.SummaryCrewSurvivalOptions.HalfSurvived:
+                case App.ME2.Stages.SummaryCrewSurvivalOptions.HalfSurvived:
                     return "Half Survived";
-                case App.ME2.Stages.UI.SummaryCrewSurvivalOptions.AllSurvived:
+                case App.ME2.Stages.SummaryCrewSurvivalOptions.AllSurvived:
                     return "All Survived";
                 default:
-                    return App.ME2.Stages.UI.SummaryCrewSurvivalOptions[crew_survival];
+                    return App.ME2.Stages.SummaryCrewSurvivalOptions[crew_survival];
             }
         }
 
