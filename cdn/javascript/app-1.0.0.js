@@ -147,8 +147,10 @@ var App;
         (function (Stages) {
             var Stager = (function () {
                 function Stager(app) {
+                    var _this = this;
                     this.app = app;
                     this.freezes = [];
+                    this.stage = ko.observable(undefined);
 
                     this.stages = _.sortBy([
                         new App.ME2.Stages.Setup(this),
@@ -161,37 +163,38 @@ var App;
                         return stage.id;
                     });
 
-                    this.ui = new App.ME2.Stages.UI.Stager(this);
+                    this.teammates = ko.forcibleComputed(function () {
+                        return _this.app.state.teammates.value();
+                    });
+
+                    this.stage.subscribe(function (stage) {
+                        _this.app.state.stage_id = stage.id;
+                    });
                 }
-                Stager.prototype.getIndexOfStage = function (stage) {
-                    return stage.id;
-                };
-
                 Stager.prototype.previousStage = function () {
-                    var index;
-                    if (this.stage) {
-                        index = this.getIndexOfStage(this.stage) - 1;
-
-                        this.app.state = this.app.serialisation.deserialise(this.freezes[index]);
-                        this.setStage(this.stages[index]);
-                        this.ui.teammates.evaluateImmediate();
+                    var current_stage;
+                    current_stage = this.stage();
+                    if (current_stage) {
+                        this.app.state = this.app.serialisation.deserialise(this.freezes[current_stage.id - 1]);
+                        this.setStage(this.stages[current_stage.id - 1]);
+                        this.teammates.evaluateImmediate();
                     }
                 };
 
                 Stager.prototype.nextStage = function () {
-                    var index;
+                    var current_stage;
 
-                    if (this.stage) {
-                        index = this.getIndexOfStage(this.stage);
+                    current_stage = this.stage();
 
-                        if (this.stage.isEvaluatable()) {
-                            this.freezes[this.getIndexOfStage(this.stage)] = this.app.serialisation.serialise(this.app.state);
+                    if (current_stage) {
+                        if (current_stage.isEvaluatable()) {
+                            this.freezes[current_stage.id] = this.app.serialisation.serialise(this.app.state);
 
-                            this.stage.evaluate();
-                            this.ui.teammates.evaluateImmediate();
+                            this.stage().evaluate();
+                            this.teammates.evaluateImmediate();
 
-                            if (index < this.stages.length - 1) {
-                                this.setStage(this.stages[this.getIndexOfStage(this.stage) + 1]);
+                            if (current_stage.id < this.stages.length - 1) {
+                                this.setStage(this.stages[current_stage.id + 1]);
                             }
                         } else {
                             throw new Error("Current Stage is not evaluatable.");
@@ -203,8 +206,8 @@ var App;
 
                 Stager.prototype.setStage = function (stage) {
                     stage.setup();
-                    this.stage = stage;
-                    this.ui.stage(stage);
+
+                    this.stage(stage);
                 };
                 return Stager;
             })();
@@ -937,30 +940,6 @@ var App;
             return Normandy;
         })();
         ME2.Normandy = Normandy;
-    })(App.ME2 || (App.ME2 = {}));
-    var ME2 = App.ME2;
-})(App || (App = {}));
-var App;
-(function (App) {
-    (function (ME2) {
-        (function (Stages) {
-            (function (UI) {
-                var Stager = (function () {
-                    function Stager(stager) {
-                        var _this = this;
-                        this.stage = ko.observable(undefined);
-                        this.stager = stager;
-                        this.teammates = ko.forcibleComputed(function () {
-                            return _this.stager.app.state.teammates.value();
-                        });
-                    }
-                    return Stager;
-                })();
-                UI.Stager = Stager;
-            })(Stages.UI || (Stages.UI = {}));
-            var UI = Stages.UI;
-        })(ME2.Stages || (ME2.Stages = {}));
-        var Stages = ME2.Stages;
     })(App.ME2 || (App.ME2 = {}));
     var ME2 = App.ME2;
 })(App || (App = {}));

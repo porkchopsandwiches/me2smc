@@ -16,7 +16,6 @@
 ///<reference path="App/ME2/Teammate.ts" />
 ///<reference path="App/ME2/Teammates.ts" />
 ///<reference path="App/ME2/Normandy.ts" />
-///<reference path="App/ME2/Stages/UI/Stager.ts" />
 ///<reference path="App/ME2/Stages/UI/Stage.ts" />
 ///<reference path="App/ME2/Stages/UI/Boss.ts" />
 ///<reference path="App/ME2/Stages/UI/LongWalk.ts" />
