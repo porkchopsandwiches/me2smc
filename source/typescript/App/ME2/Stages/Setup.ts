@@ -21,7 +21,6 @@ module App {
                     this.stager.app.state.teammates = this.stager.app.state.teammates.recruited();
                 }
 
-
                 private getTeammates (): App.ME2.Teammates {
                     return this.stager.app.state.teammates;
                 }
