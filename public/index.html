@@ -75,13 +75,13 @@
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="occulus-squadmate-1">Squadmate #1</label>
-									<select class="form-control" id="occulus-squadmate-1" data-bind="options: occulus_squadmate_1_candidates, optionsText: App.Application.renderTeammateName, value: occulus_squadmate_1"></select>
+									<select class="form-control" id="occulus-squadmate-1" data-bind="options: getFieldCandidates('occulus_squadmate_1'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('occulus_squadmate_1')"></select>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="occulus-squadmate-2">Squadmate #2</label>
-									<select class="form-control" id="occulus-squadmate-2" data-bind="options: occulus_squadmate_2_candidates, optionsText: App.Application.renderTeammateName, value: occulus_squadmate_2"></select>
+									<select class="form-control" id="occulus-squadmate-2" data-bind="options: getFieldCandidates('occulus_squadmate_2'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('occulus_squadmate_2')"></select>
 								</div>
 							</div>
 						</div>
@@ -93,21 +93,21 @@
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="vent-venter">Venter</label>
-									<select class="form-control" id="vent-venter" data-bind="options: vent_venter_candidates, optionsText: App.Application.renderTeammateNameVentVenter, value: vent_venter"></select>
+									<select class="form-control" id="vent-venter" data-bind="options: getFieldCandidates('vent_venter'), optionsText: App.Application.renderTeammateNameVentVenter, value: getFieldObservable('vent_venter')"></select>
 								</div>
 								<div class="form-group">
 									<label for="vent-leader">Leader</label>
-									<select class="form-control" id="vent-leader" data-bind="options: vent_leader_candidates, optionsText: App.Application.renderTeammateNameVentLeader, value: vent_leader"></select>
+									<select class="form-control" id="vent-leader" data-bind="options: getFieldCandidates('vent_leader'), optionsText: App.Application.renderTeammateNameVentLeader, value: getFieldObservable('vent_leader')"></select>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="vent-squadmate-1">Squadmate #1</label>
-									<select class="form-control" id="vent-squadmate-1" data-bind="options: vent_squadmate_1_candidates, optionsText: App.Application.renderTeammateName, value: vent_squadmate_1"></select>
+									<select class="form-control" id="vent-squadmate-1" data-bind="options: getFieldCandidates('vent_squadmate_1'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('vent_squadmate_1')"></select>
 								</div>
 								<div class="form-group">
 									<label for="vent-squadmate-1">Squadmate #2</label>
-									<select class="form-control" id="vent-squadmate-1" data-bind="options: vent_squadmate_2_candidates, optionsText: App.Application.renderTeammateName, value: vent_squadmate_2"></select>
+									<select class="form-control" id="vent-squadmate-1" data-bind="options: getFieldCandidates('vent_squadmate_2'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('vent_squadmate_2')"></select>
 								</div>
 							</div>
 						</div>
@@ -119,25 +119,25 @@
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="long-walk-bubbler">Bubbler</label>
-									<select class="form-control" id="long-walk-bubbler" data-bind="options: long_walk_bubbler_candidates, optionsText: App.Application.renderTeammateNameLongWalkBubbler, value: long_walk_bubbler"></select>
+									<select class="form-control" id="long-walk-bubbler" data-bind="options: getFieldCandidates('long_walk_bubbler'), optionsText: App.Application.renderTeammateNameLongWalkBubbler, value: getFieldObservable('long_walk_bubbler')"></select>
 								</div>
 								<div class="form-group">
 									<label for="long-walk-leader">Leader</label>
-									<select class="form-control" id="long-walk-leader" data-bind="options: long_walk_leader_candidates, optionsText: App.Application.renderTeammateNameLongWalkLeader, value: long_walk_leader"></select>
+									<select class="form-control" id="long-walk-leader" data-bind="options: getFieldCandidates('long_walk_leader'), optionsText: App.Application.renderTeammateNameLongWalkLeader, value: getFieldObservable('long_walk_leader')"></select>
 								</div>
 								<div class="form-group">
 									<label for="long-walk-escort">Escort</label>
-									<select class="form-control" id="long-walk-escort" data-bind="options: long_walk_escort_candidates, optionsText: App.Application.renderTeammateNameLongWalkEscort, value: long_walk_escort"></select>
+									<select class="form-control" id="long-walk-escort" data-bind="options: getFieldCandidates('long_walk_escort'), optionsText: App.Application.renderTeammateNameLongWalkEscort, value: getFieldObservable('long_walk_escort')"></select>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="long-walk-squadmate-1">Squadmate #1</label>
-									<select class="form-control" id="long-walk-squadmate-1" data-bind="options: long_walk_squadmate_1_candidates, optionsText: App.Application.renderTeammateName, value: long_walk_squadmate_1"></select>
+									<select class="form-control" id="long-walk-squadmate-1" data-bind="options: getFieldCandidates('long_walk_squadmate_1'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('long_walk_squadmate_1')"></select>
 								</div>
 								<div class="form-group">
 									<label for="long-walk-squadmate-2">Squadmate #2</label>
-									<select class="form-control" id="long-walk-squadmate-2" data-bind="options: long_walk_squadmate_2_candidates, optionsText: App.Application.renderTeammateName, value: long_walk_squadmate_2"></select>
+									<select class="form-control" id="long-walk-squadmate-2" data-bind="options: getFieldCandidates('long_walk_squadmate_2'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('long_walk_squadmate_2')"></select>
 								</div>
 							</div>
 						</div>
@@ -149,13 +149,13 @@
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="boss-squadmate-1">Squadmate #1</label>
-									<select class="form-control" id="boss-squadmate-1" data-bind="options: boss_squadmate_1_candidates, optionsText: App.Application.renderTeammateNameBossSquadmate, value: boss_squadmate_1"></select>
+									<select class="form-control" id="boss-squadmate-1" data-bind="options: getFieldCandidates('boss_squadmate_1'), optionsText: App.Application.renderTeammateNameBossSquadmate, value: getFieldObservable('boss_squadmate_1')"></select>
 								</div>
 							</div>
 							<div class="col-md-6">
 								<div class="form-group">
 									<label for="boss-squadmate-2">Squadmate #2</label>
-									<select class="form-control" id="boss-squadmate-2" data-bind="options: boss_squadmate_2_candidates, optionsText: App.Application.renderTeammateNameBossSquadmate, value: boss_squadmate_2"></select>
+									<select class="form-control" id="boss-squadmate-2" data-bind="options: getFieldCandidates('boss_squadmate_2'), optionsText: App.Application.renderTeammateNameBossSquadmate, value: getFieldObservable('boss_squadmate_2')"></select>
 								</div>
 							</div>
 						</div>
