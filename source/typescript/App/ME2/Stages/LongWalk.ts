@@ -1,14 +1,12 @@
+///<reference path="../../../references.ts" />
 module App {
     export module ME2 {
         export module Stages {
-            export interface ILongWalk {
+            export interface ILongWalk {}
 
-            }
-
-            export class LongWalk extends UIStage implements ILongWalk {
+            export class LongWalk extends Stage implements ILongWalk {
                 public id: StageIDs = App.ME2.Stages.StageIDs.LongWalk;
                 public label: string = "Long Walk";
-
 
                 constructor (stager: App.ME2.Stages.Stager) {
                     super(stager);
@@ -40,11 +38,11 @@ module App {
                         },
                         {
                             name: "long_walk_squadmate_1",
-                            filter: UIStage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
                         },
                         {
                             name: "long_walk_squadmate_2",
-                            filter: UIStage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
                         }
                     ]);
                 }

@@ -32,17 +32,6 @@ module App {
                     ], (stage: App.ME2.Stages.IStage): App.ME2.Stages.StageIDs => {
                         return stage.id;
                     });
-                    /*
-
-                    this.stages = [
-                        new App.ME2.Stages.Setup(this),
-                        new App.ME2.Stages.Occulus(this),
-                        new App.ME2.Stages.Vents(this),
-                        new App.ME2.Stages.LongWalk(this),
-                        new App.ME2.Stages.Boss(this),
-                        new App.ME2.Stages.Summary(this)
-                    ];
-                    */
 
                     this.teammates = ko.forcibleComputed(() => {
                         return this.app.state.teammates.value();
@@ -77,8 +66,6 @@ module App {
 
                             this.stage().evaluate();
                             this.teammates.evaluateImmediate();
-
-                            console.log(current_stage.id, this.stages[current_stage.id + 1]);
 
                             if (current_stage.id < this.stages.length - 1) {
                                 this.setStage(this.stages[current_stage.id + 1]);

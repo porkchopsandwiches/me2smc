@@ -19,7 +19,7 @@ module App {
                 AllDied
             }
 
-            export class Summary extends UIStage implements ISummary {
+            export class Summary extends Stage implements ISummary {
                 public id: StageIDs = App.ME2.Stages.StageIDs.Summary;
                 public label: string = "Summary";
                 public shepard_lives: KnockoutObservable<boolean>;

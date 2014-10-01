@@ -64,8 +64,6 @@ module App {
                     })
                 };
 
-                console.log(JSON.stringify(serialised));
-
                 return JSON.stringify(serialised);
             }
 

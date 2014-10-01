@@ -8,7 +8,7 @@ module App {
                 is_evaluatable: KnockoutComputed<boolean>;
             }
 
-            export class Setup extends UIStage implements ISetup {
+            export class Setup extends Stage implements ISetup {
                 public id: StageIDs = App.ME2.Stages.StageIDs.Setup;
                 public label: string = "Set up";
                 public all_recruited: KnockoutComputed<boolean>;

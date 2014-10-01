@@ -6,7 +6,7 @@ module App {
             export interface IVents {
             }
 
-            export class Vents extends UIStage implements IVents {
+            export class Vents extends Stage implements IVents {
                 public id: StageIDs = App.ME2.Stages.StageIDs.Vents;
                 public label: string = "Vents";
 
@@ -16,11 +16,11 @@ module App {
                     this.configureFields([
                         {
                             name: "vent_squadmate_1",
-                            filter: UIStage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
                         },
                         {
                             name: "vent_squadmate_2",
-                            filter: UIStage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
                         },
                         {
                             name: "vent_venter",

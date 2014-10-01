@@ -9,7 +9,6 @@
 ///<reference path="App/ME2/Teammates.ts" />
 ///<reference path="App/ME2/Normandy.ts" />
 ///<reference path="App/ME2/Stages/Stage.ts" />
-///<reference path="App/ME2/Stages/UIStage.ts" />
 ///<reference path="App/ME2/Stages/Stager.ts" />
 ///<reference path="App/ME2/Stages/Occulus.ts" />
 ///<reference path="App/ME2/Stages/Vents.ts" />

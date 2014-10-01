@@ -5,7 +5,7 @@ module App {
             export interface IBoss {
             }
 
-            export class Boss extends UIStage implements IBoss {
+            export class Boss extends Stage implements IBoss {
                 public id: StageIDs = App.ME2.Stages.StageIDs.Boss;
                 public label: string = "Boss";
 

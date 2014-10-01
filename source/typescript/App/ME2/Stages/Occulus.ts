@@ -5,7 +5,7 @@ module App {
             export interface IOcculus {
             }
 
-            export class Occulus extends UIStage implements IOcculus {
+            export class Occulus extends Stage implements IOcculus {
                 public id: StageIDs = App.ME2.Stages.StageIDs.Occulus;
                 public label: string = "Occulus";
 
@@ -15,11 +15,11 @@ module App {
                     this.configureFields([
                         {
                             name: "occulus_squadmate_1",
-                            filter: UIStage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
                         },
                         {
                             name: "occulus_squadmate_2",
-                            filter: UIStage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
                         }
                     ]);
                 }

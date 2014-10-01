@@ -654,65 +654,29 @@ var App;
                 function Stage(stager) {
                     this.stager = stager;
                 }
-                Stage.prototype.setStager = function (stager) {
-                    this.stager = stager;
-                    return this;
+                Stage.genericTeammateFieldFilter = function (teammate) {
+                    return !teammate.is_dead();
                 };
 
                 Stage.prototype.evaluate = function () {
                 };
 
-                Stage.prototype.setup = function () {
-                };
-
-                Stage.prototype.isEvaluatable = function () {
-                    return false;
-                };
-                return Stage;
-            })();
-            Stages.Stage = Stage;
-        })(ME2.Stages || (ME2.Stages = {}));
-        var Stages = ME2.Stages;
-    })(App.ME2 || (App.ME2 = {}));
-    var ME2 = App.ME2;
-})(App || (App = {}));
-var __extends = this.__extends || function (d, b) {
-    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
-    function __() { this.constructor = d; }
-    __.prototype = b.prototype;
-    d.prototype = new __();
-};
-var App;
-(function (App) {
-    (function (ME2) {
-        (function (Stages) {
-            var UIStage = (function (_super) {
-                __extends(UIStage, _super);
-                function UIStage() {
-                    _super.apply(this, arguments);
-                }
-                UIStage.genericTeammateFieldFilter = function (teammate) {
-                    return !teammate.is_dead();
-                };
-
-                UIStage.prototype.configureFields = function (fields) {
+                Stage.prototype.configureFields = function (configs) {
                     var _this = this;
-                    this.fields = _.map(fields, function (field) {
-                        var observable_field;
+                    this.fields = _.map(configs, function (config) {
+                        var field;
 
-                        observable_field = {
-                            name: field.name,
-                            filter: field.filter,
-                            optional: field.optional,
+                        field = {
+                            config: config,
                             observable: ko.observable(undefined),
                             candidates: ko.forcibleComputed(function () {
                                 var candidates;
 
                                 candidates = _this.stager.app.state.teammates.filter(function (teammate) {
-                                    return field.filter(teammate, _this.stager.app.state.teammates);
+                                    return config.filter(teammate, _this.stager.app.state.teammates);
                                 }).filter(function (candidate) {
                                     return !_.find(_this.fields, function (other_field) {
-                                        if (other_field.name !== field.name && other_field.observable) {
+                                        if (other_field.config.name !== config.name && other_field.observable) {
                                             if (other_field.observable() === candidate) {
                                                 return true;
                                             }
@@ -722,41 +686,41 @@ var App;
                                     });
                                 }).value();
 
-                                candidates.unshift(App.ME2.Stages.UIStage.no_teammate);
+                                candidates.unshift(App.ME2.Stages.Stage.no_teammate);
 
                                 return candidates;
                             })
                         };
 
-                        return observable_field;
+                        return field;
                     });
                 };
 
-                UIStage.prototype.getField = function (name) {
+                Stage.prototype.getField = function (name) {
                     return _.find(this.fields, function (field) {
-                        return field.name === name;
+                        return field.config.name === name;
                     });
                 };
 
-                UIStage.prototype.getFieldObservable = function (name) {
+                Stage.prototype.getFieldObservable = function (name) {
                     return this.getField(name).observable;
                 };
 
-                UIStage.prototype.getFieldCandidates = function (name) {
+                Stage.prototype.getFieldCandidates = function (name) {
                     return this.getField(name).candidates;
                 };
 
-                UIStage.prototype.getFieldValue = function (name) {
+                Stage.prototype.getFieldValue = function (name) {
                     return this.getFieldObservable(name)();
                 };
 
-                UIStage.prototype.setupFields = function () {
+                Stage.prototype.setupFields = function () {
                     var _this = this;
                     if (this.fields) {
                         _.each(this.fields, function (field) {
-                            field.observable.subscribe(function (new_value) {
+                            field.observable.subscribe(function () {
                                 _.each(_this.fields, function (other_field) {
-                                    if (other_field.name !== field.name) {
+                                    if (other_field.config.name !== field.config.name) {
                                         other_field.candidates.evaluateImmediate();
                                     }
                                 });
@@ -769,7 +733,7 @@ var App;
                     }
                 };
 
-                UIStage.prototype.linkIsEvaluatableToFields = function () {
+                Stage.prototype.linkIsEvaluatableToFields = function () {
                     var _this = this;
                     if (this.fields) {
                         this.is_evaluatable = ko.forcibleComputed(function () {
@@ -777,7 +741,7 @@ var App;
                             var fields_missing;
 
                             fields_missing = !!_.find(_this.fields, function (field) {
-                                if (field.optional) {
+                                if (field.config.optional) {
                                     return false;
                                 }
 
@@ -788,23 +752,21 @@ var App;
 
                             return !fields_missing;
                         });
-                    } else {
-                        console.log("Fields not set");
                     }
                 };
 
-                UIStage.prototype.setup = function () {
+                Stage.prototype.setup = function () {
                     this.setupFields();
                     this.linkIsEvaluatableToFields();
                 };
 
-                UIStage.prototype.isEvaluatable = function () {
+                Stage.prototype.isEvaluatable = function () {
                     return this.is_evaluatable();
                 };
-                UIStage.no_teammate = new App.ME2.Teammate(new App.ME2.Henchman(undefined, undefined, "— None —"));
-                return UIStage;
-            })(App.ME2.Stages.Stage);
-            Stages.UIStage = UIStage;
+                Stage.no_teammate = new App.ME2.Teammate(new App.ME2.Henchman(undefined, undefined, "— None —"));
+                return Stage;
+            })();
+            Stages.Stage = Stage;
         })(ME2.Stages || (ME2.Stages = {}));
         var Stages = ME2.Stages;
     })(App.ME2 || (App.ME2 = {}));
@@ -862,8 +824,6 @@ var App;
                             this.stage().evaluate();
                             this.teammates.evaluateImmediate();
 
-                            console.log(current_stage.id, this.stages[current_stage.id + 1]);
-
                             if (current_stage.id < this.stages.length - 1) {
                                 this.setStage(this.stages[current_stage.id + 1]);
                             }
@@ -888,6 +848,12 @@ var App;
     })(App.ME2 || (App.ME2 = {}));
     var ME2 = App.ME2;
 })(App || (App = {}));
+var __extends = this.__extends || function (d, b) {
+    for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p];
+    function __() { this.constructor = d; }
+    __.prototype = b.prototype;
+    d.prototype = new __();
+};
 var App;
 (function (App) {
     (function (ME2) {
@@ -902,11 +868,11 @@ var App;
                     this.configureFields([
                         {
                             name: "occulus_squadmate_1",
-                            filter: Stages.UIStage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
                         },
                         {
                             name: "occulus_squadmate_2",
-                            filter: Stages.UIStage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
                         }
                     ]);
                 }
@@ -931,7 +897,7 @@ var App;
                     }
                 };
                 return Occulus;
-            })(Stages.UIStage);
+            })(Stages.Stage);
             Stages.Occulus = Occulus;
         })(ME2.Stages || (ME2.Stages = {}));
         var Stages = ME2.Stages;
@@ -952,11 +918,11 @@ var App;
                     this.configureFields([
                         {
                             name: "vent_squadmate_1",
-                            filter: Stages.UIStage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
                         },
                         {
                             name: "vent_squadmate_2",
-                            filter: Stages.UIStage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
                         },
                         {
                             name: "vent_venter",
@@ -991,7 +957,7 @@ var App;
                     }
                 };
                 return Vents;
-            })(Stages.UIStage);
+            })(Stages.Stage);
             Stages.Vents = Vents;
         })(ME2.Stages || (ME2.Stages = {}));
         var Stages = ME2.Stages;
@@ -1034,11 +1000,11 @@ var App;
                         },
                         {
                             name: "long_walk_squadmate_1",
-                            filter: Stages.UIStage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
                         },
                         {
                             name: "long_walk_squadmate_2",
-                            filter: Stages.UIStage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
                         }
                     ]);
                 }
@@ -1074,7 +1040,7 @@ var App;
                     }
                 };
                 return LongWalk;
-            })(Stages.UIStage);
+            })(Stages.Stage);
             Stages.LongWalk = LongWalk;
         })(ME2.Stages || (ME2.Stages = {}));
         var Stages = ME2.Stages;
@@ -1126,7 +1092,7 @@ var App;
                     this.stager.app.state.teammates.alive().withoutRole(8 /* BossSquadmate */).withoutRole(5 /* LongWalkEscort */).addRole(9 /* HeldTheLine */).whoDieHoldingTheLine().die(this.id, 9 /* HoldTheLine */);
                 };
                 return Boss;
-            })(Stages.UIStage);
+            })(Stages.Stage);
             Stages.Boss = Boss;
         })(ME2.Stages || (ME2.Stages = {}));
         var Stages = ME2.Stages;
@@ -1202,7 +1168,7 @@ var App;
                     });
                 };
                 return Setup;
-            })(Stages.UIStage);
+            })(Stages.Stage);
             Stages.Setup = Setup;
         })(ME2.Stages || (ME2.Stages = {}));
         var Stages = ME2.Stages;
@@ -1289,7 +1255,7 @@ var App;
                     this.crew_survival(this.getCrewSurvival());
                 };
                 return Summary;
-            })(Stages.UIStage);
+            })(Stages.Stage);
             Stages.Summary = Summary;
         })(ME2.Stages || (ME2.Stages = {}));
         var Stages = ME2.Stages;
@@ -1349,8 +1315,6 @@ var App;
                         };
                     })
                 };
-
-                console.log(JSON.stringify(serialised));
 
                 return JSON.stringify(serialised);
             };
