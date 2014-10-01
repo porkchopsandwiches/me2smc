@@ -2,37 +2,13 @@ module App {
     export module ME2 {
         export module Stages {
             export interface ILongWalk {
-                /*
-                long_walk_squadmate_1: KnockoutObservable<App.ME2.Teammate>;
-                long_walk_squadmate_1_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
-                long_walk_squadmate_2: KnockoutObservable<App.ME2.Teammate>;
-                long_walk_squadmate_2_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
-                long_walk_escort: KnockoutObservable<App.ME2.Teammate>;
-                long_walk_escort_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
-                long_walk_bubbler: KnockoutObservable<App.ME2.Teammate>;
-                long_walk_bubbler_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
-                long_walk_leader: KnockoutObservable<App.ME2.Teammate>;
-                long_walk_leader_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
-                */
+
             }
 
             export class LongWalk extends UIStage implements ILongWalk {
                 public id: StageIDs = App.ME2.Stages.StageIDs.LongWalk;
                 public label: string = "Long Walk";
-                /*
-                public long_walk_squadmate_1: KnockoutObservable<App.ME2.Teammate>;
-                public long_walk_squadmate_1_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
-                public long_walk_squadmate_2: KnockoutObservable<App.ME2.Teammate>;
-                public long_walk_squadmate_2_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
-                public long_walk_escort: KnockoutObservable<App.ME2.Teammate>;
-                public long_walk_escort_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
-                public long_walk_bubbler: KnockoutObservable<App.ME2.Teammate>;
-                public long_walk_bubbler_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
-                public long_walk_leader: KnockoutObservable<App.ME2.Teammate>;
-                public long_walk_leader_candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
-                */
 
-                public teammate_fields: ITeammateField[] = [];
 
                 constructor (stager: App.ME2.Stages.Stager) {
                     super(stager);
@@ -71,7 +47,6 @@ module App {
                             filter: UIStage.genericTeammateFieldFilter
                         }
                     ]);
-                    //this.bootstrapTeammateFields();
                 }
 
                 public evaluate (): void {

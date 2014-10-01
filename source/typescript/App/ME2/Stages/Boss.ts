@@ -8,11 +8,9 @@ module App {
             export class Boss extends UIStage implements IBoss {
                 public id: StageIDs = App.ME2.Stages.StageIDs.Boss;
                 public label: string = "Boss";
-                public teammate_fields: ITeammateField[] = [];
 
                 constructor (stager: App.ME2.Stages.Stager) {
                     super(stager);
-                    //this.bootstrapTeammateFields();
                     this.configureFields([
                         {
                             name: "boss_squadmate_1",

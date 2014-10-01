@@ -9,7 +9,6 @@ module App {
             export class Vents extends UIStage implements IVents {
                 public id: StageIDs = App.ME2.Stages.StageIDs.Vents;
                 public label: string = "Vents";
-                public teammate_fields: ITeammateField[] = [];
 
                 constructor (stager: App.ME2.Stages.Stager) {
                     super(stager);

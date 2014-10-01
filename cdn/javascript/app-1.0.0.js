@@ -690,52 +690,9 @@ var App;
                 __extends(UIStage, _super);
                 function UIStage() {
                     _super.apply(this, arguments);
-                    this.teammate_fields = [];
                 }
                 UIStage.genericTeammateFieldFilter = function (teammate) {
                     return !teammate.is_dead();
-                };
-
-                UIStage.prototype.getTeammateFieldByName = function (name) {
-                    return _.find(this.teammate_fields, function (field) {
-                        return field.name === name;
-                    });
-                };
-
-                UIStage.prototype.getTeammateCandidatesFor = function (field) {
-                    var _this = this;
-                    var candidates;
-                    var other_value;
-
-                    candidates = this.stager.app.state.teammates.filter(function (teammate) {
-                        return field.filter(teammate, _this.stager.app.state.teammates);
-                    }).filter(function (candidate) {
-                        return !_.find(_this.teammate_fields, function (other_field) {
-                            if (other_field.name !== field.name && _this[other_field.name]) {
-                                other_value = _this[other_field.name]();
-
-                                if (other_value === candidate) {
-                                    return true;
-                                }
-                            }
-
-                            return false;
-                        });
-                    }).value();
-
-                    candidates.unshift(App.ME2.Stages.UIStage.no_teammate);
-
-                    return candidates;
-                };
-
-                UIStage.prototype.bootstrapTeammateFields = function () {
-                    var _this = this;
-                    _.each(this.teammate_fields, function (field) {
-                        _this[field.name] = ko.observable(undefined);
-                        _this[field.name + "_candidates"] = ko.forcibleComputed(function () {
-                            return _this.getTeammateCandidatesFor(field);
-                        });
-                    });
                 };
 
                 UIStage.prototype.configureFields = function (fields) {
@@ -793,23 +750,6 @@ var App;
                     return this.getFieldObservable(name)();
                 };
 
-                UIStage.prototype.setupTeammateFields = function () {
-                    var _this = this;
-                    _.each(this.teammate_fields, function (field) {
-                        _this[field.name].subscribe(function (new_value) {
-                            _.each(_this.teammate_fields, function (other_field) {
-                                if (other_field.name !== field.name) {
-                                    _this[other_field.name + "_candidates"].evaluateImmediate();
-                                }
-                            });
-                        });
-                    });
-
-                    _.each(this.teammate_fields, function (field) {
-                        _this[field.name + "_candidates"].evaluateImmediate();
-                    });
-                };
-
                 UIStage.prototype.setupFields = function () {
                     var _this = this;
                     if (this.fields) {
@@ -827,27 +767,6 @@ var App;
                             field.candidates.evaluateImmediate();
                         });
                     }
-                };
-
-                UIStage.prototype.linkIsEvaluatableToTeammateFields = function () {
-                    var _this = this;
-                    this.is_evaluatable = ko.forcibleComputed(function () {
-                        var observable;
-                        var teammate;
-                        var fields_missing;
-
-                        fields_missing = !!_.find(_this.teammate_fields, function (field) {
-                            if (field.optional) {
-                                return false;
-                            }
-
-                            observable = _this[field.name];
-                            teammate = observable();
-                            return teammate ? (teammate.henchman.id === undefined) : true;
-                        });
-
-                        return !fields_missing;
-                    });
                 };
 
                 UIStage.prototype.linkIsEvaluatableToFields = function () {
@@ -875,10 +794,8 @@ var App;
                 };
 
                 UIStage.prototype.setup = function () {
-                    this.setupTeammateFields();
                     this.setupFields();
                     this.linkIsEvaluatableToFields();
-                    this.linkIsEvaluatableToTeammateFields();
                 };
 
                 UIStage.prototype.isEvaluatable = function () {
@@ -1031,7 +948,6 @@ var App;
                     _super.call(this, stager);
                     this.id = 2 /* Vents */;
                     this.label = "Vents";
-                    this.teammate_fields = [];
 
                     this.configureFields([
                         {
@@ -1092,7 +1008,6 @@ var App;
                     _super.call(this, stager);
                     this.id = 3 /* LongWalk */;
                     this.label = "Long Walk";
-                    this.teammate_fields = [];
                     this.configureFields([
                         {
                             name: "long_walk_bubbler",
@@ -1176,8 +1091,6 @@ var App;
                     _super.call(this, stager);
                     this.id = 4 /* Boss */;
                     this.label = "Boss";
-                    this.teammate_fields = [];
-
                     this.configureFields([
                         {
                             name: "boss_squadmate_1",
