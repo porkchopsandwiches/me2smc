@@ -1,4 +1,4 @@
-/**//*! me2smc 2014-09-30 07:22 */
+/**//*! me2smc 2014-10-02 12:24 */
 
 /*! normalize.css v3.0.1 | MIT License | git.io/normalize */
 html {
@@ -5293,19 +5293,25 @@ button.close {
 .setup-table label {
   width: 100%; }
 
-.summary-table .roles {
-  list-style: none;
-  margin: 0;
-  padding: 0; }
-  .summary-table .roles li {
-    display: inline-block;
-    padding-right: 1em;
-    margin: 0; }
-.summary-table .glyphicon-heart {
-  color: #c00; }
-.summary-table td:nth-child(n + 2),
-.summary-table th:nth-child(n + 2) {
-  text-align: center; }
+.summary-table {
+  /*
+  .warning a{
+  	color: $state-warning-text;
+  }
+  */ }
+  .summary-table .roles {
+    list-style: none;
+    margin: 0;
+    padding: 0; }
+    .summary-table .roles li {
+      display: inline-block;
+      padding-right: 1em;
+      margin: 0; }
+  .summary-table .glyphicon-heart {
+    color: #c00; }
+  .summary-table td:nth-child(n + 2),
+  .summary-table th:nth-child(n + 2) {
+    text-align: center; }
 
 .rank-popover-list {
   width: 15em; }

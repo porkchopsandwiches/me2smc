@@ -214,11 +214,9 @@
 				<tbody>
 					<!-- ko with: $root.state.teammates().value() -->
 						<!-- ko foreach: $data -->
-							<tr data-bind="attr: { class: (is_recruited() ? '' : 'warning') }">
+							<tr data-bind="attr: { class: (is_recruited() ? '' : 'text-warning warning') }, click: function () { $root.henchman(henchman) }">
 								<td data-bind="attr: { class: (is_dead() ? 'danger' : '') }">
-									<a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }">
-										<span data-bind="text: henchman.name"></span>
-									</a> <!-- ko if: is_loyal() --><span class="glyphicon glyphicon-heart"></span><!-- /ko -->
+									<span data-bind="text: henchman.name"></span> <!-- ko if: is_loyal() --><span class="glyphicon glyphicon-heart"></span><!-- /ko -->
 								</td>
 								<td data-bind="attr: { class: (is_dead() ? 'danger' : '') }">
 									<!-- ko if: is_dead() -->
@@ -270,6 +268,16 @@
 				<button class="btn btn-primary" data-bind="enable: id > App.ME2.Stages.StageIDs.Setup, click: function () { $root.stager.previousStage() }">Previous</button>
 				<button class="btn btn-primary" data-bind="enable: is_evaluatable, click: function () { $root.stager.nextStage() }">Next</button>
 			<!-- /ko -->
+
+			<form role="form" class="form-horizontal">
+				<div class="input-group">
+					<span class="input-group-addon">ID</span>
+					<input class="form-control" type="text" id="serialised" data-bind="value: $root.state.serialised" />
+					<span class="input-group-btn">
+						<button class="btn btn-primary" type="button" data-bind="click: function () { $root.state.applySerialisedState($('#serialised').val()) }">Restore</button>
+					</span>
+				</div>
+			</form>
 
 			<div class="modal fade" tabindex="-1" role="dialog" data-bind="modal: $root.henchman()">
 				<!-- ko with: $root.henchman() -->

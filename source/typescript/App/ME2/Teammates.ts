@@ -176,6 +176,16 @@ module App {
                 return this.oa.find(iterator);
             }
 
+            public findByHenchman (henchman: App.ME2.Henchman): App.ME2.Teammate {
+                return this.findByHenchmanID(henchman.id);
+            }
+
+            public findByHenchmanID (id: App.ME2.HenchmanIDs): App.ME2.Teammate {
+                return this.find((teammate: App.ME2.Teammate): boolean => {
+                    return teammate.henchman.id === id;
+                });
+            }
+
             public sort<TSort> (iterator: Utilities.IObjectArrayIterator<App.ME2.Teammate, TSort>): Teammates {
                 return Teammates.fromObjectArray(this.oa.sort<TSort>(iterator));
             }

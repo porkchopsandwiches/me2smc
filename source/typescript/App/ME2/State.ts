@@ -7,6 +7,7 @@ module App {
             //stage_id: App.ME2.Stages.StageIDs;
             stage: KnockoutObservable<App.ME2.Stages.IStage>;
             app: App.Application;
+            serialised: KnockoutForcibleComputed<App.ME2.ISerialisationSerialised>;
         }
 
         export class State implements IState {
@@ -16,6 +17,7 @@ module App {
             //public stage_id: App.ME2.Stages.StageIDs;
             public stage: KnockoutObservable<App.ME2.Stages.IStage>;
             public app: App.Application;
+            public serialised: KnockoutForcibleComputed<App.ME2.ISerialisationSerialised>;
 
             constructor (app: App.Application) {
                 this.app = app;
@@ -23,10 +25,21 @@ module App {
                 this.stage = ko.observable(undefined);
                 this.bootstrapTeammates();
 
+                this.serialised = ko.forcibleComputed<App.ME2.ISerialisationSerialised>(() => {
+                    if (this.stage()) {
+                        return this.serialise();
+                    } else {
+                        return "";
+                    }
+
+                });
+
                 // When stage changes, forces a refresh on the teammates
                 this.stage.subscribe(() => {
                     this.teammates.valueHasMutated();
+                    //this.serialised.evaluateImmediate();
                 });
+
             }
 
             private bootstrapTeammates (): void {

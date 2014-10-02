@@ -134,7 +134,9 @@ module App {
                 is_dead         = !!(flags & 4);
                 roles           = this.deserialiseRoles(teammate.substr(5));
 
-                deserialised = new App.ME2.Teammate(this.app.getHenchman(henchman_id), is_loyal, is_recruited, is_dead);
+                console.log("deserialising", teammate, this.app.getHenchman(henchman_id).name, is_recruited);
+
+                deserialised = new App.ME2.Teammate(this.app.getHenchman(henchman_id), is_recruited, is_loyal, is_dead);
                 if (is_dead) {
                     deserialised.die(death_stage_id, death_cause);
                 }
@@ -213,12 +215,35 @@ module App {
             public applySerialisedState (state: App.ME2.State, serialised: ISerialisationSerialised): void {
                 var new_state = this.deserialise(serialised);
 
-                state.stage(new_state.stage());
+
                 state.normandy.delay(new_state.normandy.delay());
                 state.normandy.has_armour(new_state.normandy.has_armour());
                 state.normandy.has_shielding(new_state.normandy.has_shielding());
                 state.normandy.has_thanix_cannon(new_state.normandy.has_thanix_cannon());
-                state.teammates(new App.ME2.Teammates(new_state.teammates().value()));
+
+                var new_teammates: App.ME2.Teammates;
+                new_teammates = new_state.teammates();
+
+                window["deserialised"] = new_state;
+
+                state.teammates().each((teammate: App.ME2.Teammate, index: number): void => {
+                    var new_teammate: App.ME2.Teammate;
+
+                    new_teammate = new_teammates.findByHenchman(teammate.henchman);
+
+                    console.log("Restoring", teammate.henchman.name, "current recruited", teammate.is_recruited(), "restoring to", new_teammate.is_recruited());
+
+                    teammate.is_recruited(new_teammate.is_recruited());
+                    teammate.is_loyal(new_teammate.is_loyal());
+                    teammate.is_dead(new_teammate.is_dead());
+                    teammate.roles = new_teammate.roles;
+                    teammate.death_cause = new_teammate.death_cause;
+                    teammate.death_stage_id = new_teammate.death_stage_id;
+                });
+
+                state.stage(new_state.stage());
+
+                //state.teammates(new App.ME2.Teammates(new_state.teammates().value()));
             }
         }
     }
