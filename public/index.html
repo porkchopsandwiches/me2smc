@@ -9,7 +9,7 @@
 	</head>
 	<body>
 		<div id="app" class="container">
-			<!-- ko with: stager.stage -->
+			<!-- ko with: $root.state.stage -->
 				<h2 data-bind="text: label"></h2>
 				<!-- ko if: id === App.ME2.Stages.StageIDs.Setup -->
 					<h3>Teammates</h3>
@@ -197,7 +197,7 @@
 				<!-- /ko -->
 			<!-- /ko -->
 
-			<table class="table table-striped summary-table" data-bind="visible: stager.stage().id !== App.ME2.Stages.StageIDs.Setup">
+			<table class="table table-striped summary-table" data-bind="visible: $root.state.stage().id !== App.ME2.Stages.StageIDs.Setup">
 				<thead>
 					<tr>
 						<th>Teammates</th>
@@ -263,7 +263,7 @@
 				</tbody>
 			</table>
 
-			<!-- ko with: stager.stage -->
+			<!-- ko with: $root.state.stage -->
 				<button class="btn btn-primary" data-bind="enable: id > App.ME2.Stages.StageIDs.Setup, click: function () { $root.stager.previousStage() }">Previous</button>
 				<button class="btn btn-primary" data-bind="enable: is_evaluatable, click: function () { $root.stager.nextStage() }">Next</button>
 			<!-- /ko -->

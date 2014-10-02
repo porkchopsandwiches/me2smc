@@ -778,10 +778,8 @@ var App;
         (function (Stages) {
             var Stager = (function () {
                 function Stager(app) {
-                    var _this = this;
                     this.app = app;
                     this.freezes = [];
-                    this.stage = ko.observable(undefined);
 
                     this.stages = _.sortBy([
                         new App.ME2.Stages.Setup(this),
@@ -793,32 +791,31 @@ var App;
                     ], function (stage) {
                         return stage.id;
                     });
-
-                    this.stage.subscribe(function (stage) {
-                        _this.app.state.stage_id = stage.id;
-                    });
                 }
+                Stager.prototype.getStage = function (id) {
+                    return this.stages[id];
+                };
+
                 Stager.prototype.previousStage = function () {
                     var current_stage;
-                    current_stage = this.stage();
+                    current_stage = this.app.state.stage();
                     if (current_stage) {
-                        this.app.state = this.app.serialisation.deserialise(this.freezes[current_stage.id - 1]);
+                        this.app.serialisation.applyStateChanges(this.app.state, this.freezes[current_stage.id - 1]);
+
                         this.setStage(this.stages[current_stage.id - 1]);
-                        this.app.state.teammates.valueHasMutated();
                     }
                 };
 
                 Stager.prototype.nextStage = function () {
                     var current_stage;
 
-                    current_stage = this.stage();
+                    current_stage = this.app.state.stage();
 
                     if (current_stage) {
                         if (current_stage.isEvaluatable()) {
                             this.freezes[current_stage.id] = this.app.serialisation.serialise(this.app.state);
 
-                            this.stage().evaluate();
-                            this.app.state.teammates.valueHasMutated();
+                            current_stage.evaluate();
 
                             if (current_stage.id < this.stages.length - 1) {
                                 this.setStage(this.stages[current_stage.id + 1]);
@@ -833,8 +830,7 @@ var App;
 
                 Stager.prototype.setStage = function (stage) {
                     stage.setup();
-
-                    this.stage(stage);
+                    this.app.state.stage(stage);
                 };
                 return Stager;
             })();
@@ -1262,9 +1258,15 @@ var App;
     (function (ME2) {
         var State = (function () {
             function State(app) {
+                var _this = this;
                 this.app = app;
                 this.normandy = new App.ME2.Normandy(true, true, true);
+                this.stage = ko.observable(undefined);
                 this.bootstrapTeammates();
+
+                this.stage.subscribe(function () {
+                    _this.teammates.valueHasMutated();
+                });
             }
             State.prototype.bootstrapTeammates = function () {
                 this._teammates = new App.ME2.Teammates(_.chain(this.app.getHenchmen()).map(function (henchman) {
@@ -1411,7 +1413,7 @@ var App;
                 var elements;
 
                 elements = [
-                    this.lpad(state.stage_id, 2),
+                    this.lpad(state.stage().id, 2),
                     this.serialiseNormandy(state.normandy),
                     _.map(state.teammates().value(), function (teammate) {
                         return _this.serialiseTeammate(teammate);
@@ -1426,7 +1428,7 @@ var App;
                 var deserialised;
 
                 deserialised = new App.ME2.State(this.app);
-                deserialised.stage_id = parseInt(serialised.substr(0, 2), 10);
+                deserialised.stage(this.app.stager.getStage(parseInt(serialised.substr(0, 2), 10)));
                 deserialised.normandy = this.deserialiseNormandy(serialised.substr(2, 3));
                 deserialised.teammates(new App.ME2.Teammates(_.map(serialised.substr(5).match(/.{9}/g), function (serialised_teammate) {
                     return _this.deserialiseTeammate(serialised_teammate);
@@ -1438,7 +1440,7 @@ var App;
             Serialisation.prototype.applyStateChanges = function (state, serialised) {
                 var new_state = this.deserialise(serialised);
 
-                state.stage_id = new_state.stage_id;
+                state.stage(new_state.stage());
                 state.normandy.delay(new_state.normandy.delay());
                 state.normandy.has_armour(new_state.normandy.has_armour());
                 state.normandy.has_shielding(new_state.normandy.has_shielding());

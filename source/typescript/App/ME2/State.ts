@@ -4,7 +4,8 @@ module App {
         export interface IState {
             teammates: KnockoutObservable<App.ME2.Teammates>;
             normandy: App.ME2.Normandy;
-            stage_id: App.ME2.Stages.StageIDs;
+            //stage_id: App.ME2.Stages.StageIDs;
+            stage: KnockoutObservable<App.ME2.Stages.IStage>;
             app: App.Application;
         }
 
@@ -12,13 +13,20 @@ module App {
             private _teammates: App.ME2.Teammates;
             public teammates: KnockoutObservable<App.ME2.Teammates>;
             public normandy: App.ME2.Normandy;
-            public stage_id: App.ME2.Stages.StageIDs;
+            //public stage_id: App.ME2.Stages.StageIDs;
+            public stage: KnockoutObservable<App.ME2.Stages.IStage>;
             public app: App.Application;
 
             constructor (app: App.Application) {
                 this.app = app;
                 this.normandy = new App.ME2.Normandy(true, true, true);
+                this.stage = ko.observable(undefined);
                 this.bootstrapTeammates();
+
+                // When stage changes, forces a refresh on the teammates
+                this.stage.subscribe(() => {
+                    this.teammates.valueHasMutated();
+                });
             }
 
             private bootstrapTeammates (): void {

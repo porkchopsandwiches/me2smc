@@ -187,7 +187,7 @@ module App {
                 var elements: any[];
 
                 elements = [
-                    this.lpad(state.stage_id, 2),
+                    this.lpad(state.stage().id, 2),
                     this.serialiseNormandy(state.normandy),
                     _.map<App.ME2.Teammate, ISerialisedTeammate>(state.teammates().value(), (teammate: App.ME2.Teammate): ISerialisedTeammate => {
                         return this.serialiseTeammate(teammate);
@@ -201,7 +201,7 @@ module App {
                 var deserialised: App.ME2.State;
 
                 deserialised = new App.ME2.State(this.app);
-                deserialised.stage_id = parseInt(serialised.substr(0, 2), 10);
+                deserialised.stage(this.app.stager.getStage(parseInt(serialised.substr(0, 2), 10)));
                 deserialised.normandy = this.deserialiseNormandy(serialised.substr(2, 3));
                 deserialised.teammates(new App.ME2.Teammates(_.map(serialised.substr(5).match(/.{9}/g), (serialised_teammate: ISerialisedTeammate): App.ME2.Teammate => {
                     return this.deserialiseTeammate(serialised_teammate);
@@ -213,7 +213,7 @@ module App {
             public applyStateChanges (state: App.ME2.State, serialised: ISerialisationSerialised): void {
                 var new_state = this.deserialise(serialised);
 
-                state.stage_id = new_state.stage_id;
+                state.stage(new_state.stage());
                 state.normandy.delay(new_state.normandy.delay());
                 state.normandy.has_armour(new_state.normandy.has_armour());
                 state.normandy.has_shielding(new_state.normandy.has_shielding());
