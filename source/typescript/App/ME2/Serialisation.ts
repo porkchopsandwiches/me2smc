@@ -104,8 +104,8 @@ module App {
 
                 elements = [
                     (<number> teammate.henchman.id).toString(16),
-                    this.lpad(teammate.death_cause || 0, 1),
-                    this.lpad(teammate.death_stage_id || 0, 1),
+                    this.lpad((teammate.death_cause() === undefined ? 0 : teammate.death_cause() + 1).toString(16), 1),
+                    this.lpad(teammate.death_stage_id() || 0, 1),
                     this.lpad(this.indexesToFlags(roles).toString(16), 4)
                 ];
 
@@ -124,7 +124,7 @@ module App {
                 var deserialised: App.ME2.Teammate;
 
                 henchman_id         = parseInt("0x" + teammate.substr(0, 1), 16);
-                death_cause         = parseInt(teammate.substr(1, 1), 10) || undefined;
+                death_cause         = parseInt("0x" + teammate.substr(1, 1), 16);
                 death_stage_id      = parseInt(teammate.substr(2, 1), 10) || undefined;
                 roles               = this.flagsToIndexes(parseInt("0x" + teammate.substr(3), 16));
 
@@ -136,7 +136,8 @@ module App {
 
                 deserialised = new App.ME2.Teammate(this.app.getHenchman(henchman_id), is_recruited, is_loyal, is_dead);
                 if (is_dead) {
-                    deserialised.die(death_stage_id, death_cause);
+                    console.log("die", death_cause - 1);
+                    deserialised.die(death_stage_id, death_cause - 1);
                 }
                 deserialised.roles = roles;
 

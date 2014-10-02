@@ -32,8 +32,8 @@ module App {
             is_loyal: KnockoutObservable<boolean>;
             is_recruited: KnockoutObservable<boolean>;
             is_dead: KnockoutObservable<boolean>;
-            death_cause: TeammateDeathCauses;
-            death_stage_id: App.ME2.Stages.StageIDs;
+            death_cause: KnockoutObservable<TeammateDeathCauses>;
+            death_stage_id: KnockoutObservable<App.ME2.Stages.StageIDs>;
             hasRole (role: TeammateRoles): boolean;
             addRole (role: TeammateRoles): ITeammate;
             die (stage_id: App.ME2.Stages.StageIDs, death_cause: TeammateDeathCauses): ITeammate;
@@ -48,8 +48,8 @@ module App {
         }
 
         export class Teammate implements ITeammate {
-            public death_cause: TeammateDeathCauses;
-            public death_stage_id: App.ME2.Stages.StageIDs;
+            public death_cause: KnockoutObservable<TeammateDeathCauses>;
+            public death_stage_id: KnockoutObservable<App.ME2.Stages.StageIDs>;
             public henchman: App.ME2.Henchman;
             public is_recruited: KnockoutObservable<boolean>;
             public is_loyal: KnockoutObservable<boolean>;
@@ -75,6 +75,9 @@ module App {
                         this.is_loyal(false);
                     }
                 });
+
+                this.death_cause = ko.observable<TeammateDeathCauses>(undefined);
+                this.death_stage_id = ko.observable<App.ME2.Stages.StageIDs>(undefined);
 
             }
 
@@ -118,8 +121,8 @@ module App {
             }
 
             public die (stage_id: App.ME2.Stages.StageIDs, death_cause: TeammateDeathCauses): Teammate {
-                this.death_stage_id = stage_id;
-                this.death_cause = death_cause;
+                this.death_stage_id(stage_id);
+                this.death_cause(death_cause);
                 this.is_dead(true);
                 return this;
             }

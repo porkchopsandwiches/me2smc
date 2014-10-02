@@ -302,6 +302,9 @@ var App;
                         _this.is_loyal(false);
                     }
                 });
+
+                this.death_cause = ko.observable(undefined);
+                this.death_stage_id = ko.observable(undefined);
             }
             Teammate.prototype.addRole = function (role) {
                 if (!this.hasRole(role)) {
@@ -343,8 +346,8 @@ var App;
             };
 
             Teammate.prototype.die = function (stage_id, death_cause) {
-                this.death_stage_id = stage_id;
-                this.death_cause = death_cause;
+                this.death_stage_id(stage_id);
+                this.death_cause(death_cause);
                 this.is_dead(true);
                 return this;
             };
@@ -519,15 +522,18 @@ var App;
                 }, 0)["value"]();
             };
 
+            Teammates.prototype.getHoldTheLineScore = function () {
+                return this.getHoldTheLineTotal() / this.length();
+            };
+
             Teammates.prototype.getHoldTheLineDeathCount = function () {
                 var score;
-                var total;
                 var pool_size;
-                total = this.getHoldTheLineTotal();
-                pool_size = this.length();
-                score = this.getHoldTheLineTotal() / pool_size;
 
-                console.log("HTL Total", total, "pool", pool_size, " = score", score);
+                pool_size = this.length();
+                score = this.getHoldTheLineScore();
+
+                console.log("HTL Total", this.getHoldTheLineTotal(), "pool", pool_size, " = score", score);
 
                 if (score < 2.0) {
                     if (pool_size >= 5) {
@@ -573,7 +579,6 @@ var App;
             Teammates.prototype.whoDieHoldingTheLine = function () {
                 var death_count;
                 death_count = this.getHoldTheLineDeathCount();
-                console.log("HTL deaths", death_count);
 
                 if (death_count > 0) {
                     return this.sort(function (teammate) {
@@ -870,7 +875,7 @@ var App;
                     this.getFieldValue("occulus_squadmate_1").addRole(0 /* OcculusSquadmate */);
                     this.getFieldValue("occulus_squadmate_2").addRole(0 /* OcculusSquadmate */);
 
-                    dpt = this.stager.app.state.teammates().withoutRole(0 /* OcculusSquadmate */);
+                    dpt = this.stager.app.state.teammates().whoAreRecruited().withoutRole(0 /* OcculusSquadmate */);
 
                     if (!this.stager.app.state.normandy.has_shielding()) {
                         dpt.whoAreAlive().sortByShieldingDeathPriority().last().die(this.id, 1 /* ShieldingFailure */);
@@ -1186,9 +1191,13 @@ var App;
                     this.destroy_base_advocate = ko.observable(undefined);
                     this.crew_survival = ko.observable(undefined);
                     this.is_evaluatable = ko.observable(false);
+                    this.htl_total = ko.observable(undefined);
+                    this.htl_score = ko.observable(undefined);
+                    this.htl_candidates_count = ko.observable(undefined);
+                    this.htl_death_count = ko.observable(undefined);
                 }
                 Summary.prototype.getLivingTeammates = function () {
-                    return this.stager.app.state.teammates().whoAreAlive();
+                    return this.stager.app.state.teammates().whoAreAlive().whoAreRecruited();
                 };
 
                 Summary.prototype.getShepardLives = function () {
@@ -1234,12 +1243,21 @@ var App;
                 };
 
                 Summary.prototype.setup = function () {
+                    var htl_teammates;
+
+                    htl_teammates = this.stager.app.state.teammates().withRole(9 /* HeldTheLine */);
+
                     this.defence_reporter(this.getDefenceReporter());
                     this.shepard_lives(this.getShepardLives());
                     this.shepard_pulled_up_by(this.getShepardCatcher());
                     this.keep_base_advocate(this.getKeepBaseAdvocate());
                     this.destroy_base_advocate(this.getDestroyBaseAdvocate());
                     this.crew_survival(this.getCrewSurvival());
+
+                    this.htl_total(htl_teammates.getHoldTheLineTotal());
+                    this.htl_score(htl_teammates.getHoldTheLineScore().toFixed(2));
+                    this.htl_candidates_count(htl_teammates.length());
+                    this.htl_death_count(htl_teammates.getHoldTheLineDeathCount());
                 };
                 return Summary;
             })(Stages.Stage);
@@ -1351,8 +1369,8 @@ var App;
 
                 elements = [
                     teammate.henchman.id.toString(16),
-                    this.lpad(teammate.death_cause || 0, 1),
-                    this.lpad(teammate.death_stage_id || 0, 1),
+                    this.lpad((teammate.death_cause() === undefined ? 0 : teammate.death_cause() + 1).toString(16), 1),
+                    this.lpad(teammate.death_stage_id() || 0, 1),
                     this.lpad(this.indexesToFlags(roles).toString(16), 4)
                 ];
 
@@ -1371,7 +1389,7 @@ var App;
                 var deserialised;
 
                 henchman_id = parseInt("0x" + teammate.substr(0, 1), 16);
-                death_cause = parseInt(teammate.substr(1, 1), 10) || undefined;
+                death_cause = parseInt("0x" + teammate.substr(1, 1), 16);
                 death_stage_id = parseInt(teammate.substr(2, 1), 10) || undefined;
                 roles = this.flagsToIndexes(parseInt("0x" + teammate.substr(3), 16));
 
@@ -1383,7 +1401,8 @@ var App;
 
                 deserialised = new App.ME2.Teammate(this.app.getHenchman(henchman_id), is_recruited, is_loyal, is_dead);
                 if (is_dead) {
-                    deserialised.die(death_stage_id, death_cause);
+                    console.log("die", death_cause - 1);
+                    deserialised.die(death_stage_id, death_cause - 1);
                 }
                 deserialised.roles = roles;
 

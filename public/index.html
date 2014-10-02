@@ -8,12 +8,6 @@
 		<link rel="stylesheet" href="../cdn/stylesheets/app-1.0.0.min.css" />
 	</head>
 	<body>
-	<!--
-
-
-	040070000c8810004002000c403000400400000050000006000c137000c239000000a000c14b000000c000400
-	050070000e8810006002000e403000600400000050000006000d137000c239000000a000d14b000000c000600
-	-->
 		<div id="app" class="container">
 			<div class="panel panel-default">
 				<!-- ko with: $root.state.stage -->
@@ -177,7 +171,7 @@
 						<!-- ko if: id === App.ME2.Stages.StageIDs.Summary -->
 							<form role="form">
 								<div class="row">
-									<div class="col-md-6">
+									<div class="col-md-4">
 										<div class="form-group">
 											<label>Reports on defence</label>
 											<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(defence_reporter())"></p>
@@ -191,7 +185,7 @@
 											<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(destroy_base_advocate())"></p>
 										</div>
 									</div>
-									<div class="col-md-6">
+									<div class="col-md-4">
 										<div class="form-group">
 											<label>Shepard lives</label>
 											<p class="form-control-static" data-bind="text: App.Application.renderYesNo(shepard_lives())"></p>
@@ -203,6 +197,18 @@
 										<div class="form-group">
 											<label>Crew</label>
 											<p class="form-control-static" data-bind="text: App.Application.renderCrewSurvival(crew_survival())"></p>
+										</div>
+									</div>
+									<div class="col-md-4">
+										<div class="form-group">
+											<label>Hold the line score</label>
+											<p class="form-control-static">
+												<span data-bind="text: htl_total"></span> ÷ <span data-bind="text: htl_candidates_count"></span> = <span data-bind="text: htl_score"></span>
+											</p>
+										</div>
+										<div class="form-group">
+											<label>Hold the line deaths</label>
+											<p class="form-control-static" data-bind="text: htl_death_count"></p>
 										</div>
 									</div>
 								</div>
@@ -230,15 +236,15 @@
 										</td>
 										<td data-bind="attr: { class: (is_dead() ? 'danger' : '') }">
 											<!-- ko if: is_dead() -->
-												<span data-bind="text: App.Application.renderTeammateDeathCause(death_cause)"></span>
+												<span data-bind="text: App.Application.renderTeammateDeathCause(death_cause())"></span>
 											<!-- /ko -->
 										</td>
-										<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.Occulus ? 'danger' : '') }">
+										<td data-bind="attr: { class: (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.Occulus ? 'danger' : '') }">
 											<!-- ko if: hasRole(App.ME2.TeammateRoles.OcculusSquadmate) -->
 												<span class="glyphicon glyphicon-user"></span>
 											<!-- /ko -->
 										</td>
-										<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.Vents ? 'danger' : '') }">
+										<td data-bind="attr: { class: (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.Vents ? 'danger' : '') }">
 											<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsSquadmate) -->
 												<span class="glyphicon glyphicon-user"></span>
 											<!-- /ko -->
@@ -249,7 +255,7 @@
 												<span class="glyphicon glyphicon-fire"></span>
 											<!-- /ko -->
 										</td>
-										<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.LongWalk ? 'danger' : '') }">
+										<td data-bind="attr: { class: (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.LongWalk ? 'danger' : '') }">
 											<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkSquadmate) -->
 												<span class="glyphicon glyphicon-user"></span>
 											<!-- /ko -->
@@ -263,7 +269,7 @@
 												<span class="glyphicon glyphicon-heart-empty"></span>
 											<!-- /ko -->
 										</td>
-										<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.Boss ? 'danger' : '') }">
+										<td data-bind="attr: { class: (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.Boss ? 'danger' : '') }">
 											<!-- ko if: hasRole(App.ME2.TeammateRoles.BossSquadmate) -->
 												<span class="glyphicon glyphicon-user"></span>
 											<!-- /ko -->

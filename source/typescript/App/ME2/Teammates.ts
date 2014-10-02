@@ -181,15 +181,18 @@ module App {
                 }, 0)["value"]();
             }
 
-            private getHoldTheLineDeathCount (): number {
-                var score: number;
-                var total: number;
-                var pool_size: number;
-                total = this.getHoldTheLineTotal();
-                pool_size = this.length();
-                score = this.getHoldTheLineTotal() / pool_size;
+            public getHoldTheLineScore (): number {
+                return this.getHoldTheLineTotal() / this.length();
+            }
 
-                console.log("HTL Total", total, "pool", pool_size, " = score", score);
+            public getHoldTheLineDeathCount (): number {
+                var score: number;
+                var pool_size: number;
+
+                pool_size = this.length();
+                score = this.getHoldTheLineScore();
+
+                console.log("HTL Total", this.getHoldTheLineTotal(), "pool", pool_size, " = score", score);
 
                 if (score < 2.0) {
                     if (pool_size >= 5) {
@@ -236,7 +239,6 @@ module App {
 
                 var death_count: number;
                 death_count = this.getHoldTheLineDeathCount();
-                console.log("HTL deaths", death_count);
 
                 if (death_count > 0) {
                     return this.sort<number>((teammate: App.ME2.Teammate): number => {
