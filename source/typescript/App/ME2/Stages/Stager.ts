@@ -28,7 +28,6 @@ module App {
                     });
 
                     this.app.state.stage.subscribe((stage: App.ME2.Stages.IStage) => {
-                        console.log("Before stage change...");
                         stage.setup();
                     }, "beforeChange");
                 }

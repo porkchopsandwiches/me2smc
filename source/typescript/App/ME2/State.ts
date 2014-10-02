@@ -37,9 +37,7 @@ module App {
                 // When stage changes, forces a refresh on the teammates
                 this.stage.subscribe(() => {
                     this.teammates.valueHasMutated();
-                    //this.serialised.evaluateImmediate();
                 });
-
             }
 
             private bootstrapTeammates (): void {

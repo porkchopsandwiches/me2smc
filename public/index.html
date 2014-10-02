@@ -19,18 +19,20 @@
 				<div class="panel-body">
 					<!-- ko with: $root.state.stage -->
 						<!-- ko if: id === App.ME2.Stages.StageIDs.Setup -->
-							<h3>Teammates</h3>
-							<p>The game requires at least <strong>8</strong> teammates to be recruited.</p>
-							<table class="table table-striped setup-table">
-								<thead>
-									<tr>
-										<th>Teammate</th>
-										<th><label><input type="checkbox" data-bind="checked: all_recruited" /> Is Recruited</label></th>
-										<th><label><input type="checkbox" data-bind="checked: all_loyal" /> Is Loyal</label></th>
-									</tr>
-								</thead>
-								<tbody>
-									<!-- ko foreach: $root.state.teammates().value() -->
+							<div class="row">
+								<div class="col-md-8">
+									<h3>Teammates</h3>
+									<p>The game requires at least <strong>8</strong> teammates to be recruited.</p>
+									<table class="table table-striped setup-table">
+										<thead>
+										<tr>
+											<th>Teammate</th>
+											<th><label><input type="checkbox" data-bind="checked: all_recruited" /> Is Recruited</label></th>
+											<th><label><input type="checkbox" data-bind="checked: all_loyal" /> Is Loyal</label></th>
+										</tr>
+										</thead>
+										<tbody>
+										<!-- ko foreach: $root.state.teammates().value() -->
 										<tr>
 											<td>
 												<a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }, text: henchman.name"></a>
@@ -46,15 +48,15 @@
 												</label>
 											</td>
 										</tr>
-									<!-- /ko -->
-								</tbody>
-							</table>
-							<h3>Normandy</h3>
-							<form role="form">
-								<div class="row">
-									<div class="col-md-6">
+										<!-- /ko -->
+										</tbody>
+									</table>
+								</div>
+								<div class="col-md-4">
+									<h3>Normandy</h3>
+									<form role="form">
 										<div class="form-group">
-											<label>Normandy Upgrades</label>
+											<label>Upgrades</label>
 											<div class="checkbox">
 												<label><input type="checkbox" data-bind="checked: $root.state.normandy.has_armour" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Jacob Taylor</em>">Has Armour upgrade?</span></label>
 											</div>
@@ -65,16 +67,15 @@
 												<label><input type="checkbox" data-bind="checked: $root.state.normandy.has_thanix_cannon" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Garrus Vakarian</em>">Has Thanix Cannon?</span></label>
 											</div>
 										</div>
-									</div>
-									<div class="col-md-6">
 										<div class="form-group">
-											<label>Mission Delay</label>
+											<label><span data-placement="right" data-toggle="tooltip" data-html="true" title="How many missions were undertaken between the crew being abducted and the Omega 4 relay being accessed.">Mission Delay</span></label>
 											<input class="form-control" type="number" min="0" max="20" data-bind="value: $root.state.normandy.delay" />
-											<p class="help-block">How many missions were undertaken between the crew being abducted and the Omega 4 relay being accessed.</p>
 										</div>
-									</div>
+									</form>
 								</div>
-							</form>
+							</div>
+
+
 						<!-- /ko -->
 						<!-- ko if: id === App.ME2.Stages.StageIDs.Occulus -->
 							<form role="form">
@@ -295,7 +296,7 @@
 							<div class="col-md-8">
 								<form role="form" class="form-horizontal">
 									<div class="input-group">
-										<span class="input-group-addon">ID</span>
+										<span class="input-group-addon">State</span>
 										<input class="form-control" type="text" id="serialised" data-bind="value: $root.state.serialised" />
 										<span class="input-group-btn">
 											<button class="btn btn-primary" type="button" data-bind="click: function () { $root.state.applySerialisedState($('#serialised').val()) }">Restore</button>

@@ -533,8 +533,6 @@ var App;
                 pool_size = this.length();
                 score = this.getHoldTheLineScore();
 
-                console.log("HTL Total", this.getHoldTheLineTotal(), "pool", pool_size, " = score", score);
-
                 if (score < 2.0) {
                     if (pool_size >= 5) {
                         if (score >= 1.5) {
@@ -790,7 +788,6 @@ var App;
                     });
 
                     this.app.state.stage.subscribe(function (stage) {
-                        console.log("Before stage change...");
                         stage.setup();
                     }, "beforeChange");
                 }
