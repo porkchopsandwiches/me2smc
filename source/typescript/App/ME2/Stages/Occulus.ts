@@ -35,15 +35,15 @@ module App {
 
                     // Apply deaths
                     if (!this.stager.app.state.normandy.has_shielding()) {
-                        dpt.alive().sortByShieldingDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.ShieldingFailure);
+                        dpt.whoAreAlive().sortByShieldingDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.ShieldingFailure);
                     }
 
                     if (!this.stager.app.state.normandy.has_armour()) {
-                        dpt.alive().sortByArmourDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.ArmourFailure);
+                        dpt.whoAreAlive().sortByArmourDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.ArmourFailure);
                     }
 
                     if (!this.stager.app.state.normandy.has_thanix_cannon()) {
-                        dpt.alive().sortByCannonDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.CannonFailure);
+                        dpt.whoAreAlive().sortByCannonDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.CannonFailure);
                     }
                 }
             }

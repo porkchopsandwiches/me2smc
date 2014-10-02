@@ -28,7 +28,7 @@ module App {
                             filter: (teammate: App.ME2.Teammate, teammates: App.ME2.Teammates): boolean => {
 
                                 // If there are only 4 living teammates, no one can be escort
-                                if (teammates.alive().length() <= 4) {
+                                if (teammates.whoAreAlive().length() <= 4) {
                                     return false;
                                 }
 

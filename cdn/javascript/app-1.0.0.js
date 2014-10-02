@@ -381,27 +381,9 @@ var App;
                 return this.oa.length();
             };
 
-            Teammates.prototype.alive = function () {
+            Teammates.prototype.whoAreAlive = function () {
                 return this.filter(function (teammate) {
                     return !teammate.is_dead();
-                });
-            };
-
-            Teammates.prototype.dead = function () {
-                return this.filter(function (teammate) {
-                    return teammate.is_dead();
-                });
-            };
-
-            Teammates.prototype.loyal = function () {
-                return this.filter(function (teammate) {
-                    return teammate.is_loyal();
-                });
-            };
-
-            Teammates.prototype.disloyal = function () {
-                return this.filter(function (teammate) {
-                    return !teammate.is_loyal();
                 });
             };
 
@@ -412,7 +394,7 @@ var App;
                 return this;
             };
 
-            Teammates.prototype.recruited = function () {
+            Teammates.prototype.whoAreRecruited = function () {
                 return this.filter(function (teammate) {
                     return teammate.is_recruited();
                 });
@@ -891,15 +873,15 @@ var App;
                     dpt = this.stager.app.state.teammates().withoutRole(0 /* OcculusSquadmate */);
 
                     if (!this.stager.app.state.normandy.has_shielding()) {
-                        dpt.alive().sortByShieldingDeathPriority().last().die(this.id, 1 /* ShieldingFailure */);
+                        dpt.whoAreAlive().sortByShieldingDeathPriority().last().die(this.id, 1 /* ShieldingFailure */);
                     }
 
                     if (!this.stager.app.state.normandy.has_armour()) {
-                        dpt.alive().sortByArmourDeathPriority().last().die(this.id, 0 /* ArmourFailure */);
+                        dpt.whoAreAlive().sortByArmourDeathPriority().last().die(this.id, 0 /* ArmourFailure */);
                     }
 
                     if (!this.stager.app.state.normandy.has_thanix_cannon()) {
-                        dpt.alive().sortByCannonDeathPriority().last().die(this.id, 2 /* CannonFailure */);
+                        dpt.whoAreAlive().sortByCannonDeathPriority().last().die(this.id, 2 /* CannonFailure */);
                     }
                 };
                 return Occulus;
@@ -996,7 +978,7 @@ var App;
                         {
                             name: "long_walk_escort",
                             filter: function (teammate, teammates) {
-                                if (teammates.alive().length() <= 4) {
+                                if (teammates.whoAreAlive().length() <= 4) {
                                     return false;
                                 }
 
@@ -1095,7 +1077,7 @@ var App;
                         squadmate_2.die(this.id, 8 /* Boss */);
                     }
 
-                    this.stager.app.state.teammates().alive().withoutRole(8 /* BossSquadmate */).withoutRole(5 /* LongWalkEscort */).addRole(9 /* HeldTheLine */).whoDieHoldingTheLine().die(this.id, 9 /* HoldTheLine */);
+                    this.stager.app.state.teammates().whoAreRecruited().whoAreAlive().withoutRole(8 /* BossSquadmate */).withoutRole(5 /* LongWalkEscort */).addRole(9 /* HeldTheLine */).whoDieHoldingTheLine().die(this.id, 9 /* HoldTheLine */);
                 };
                 return Boss;
             })(Stages.Stage);
@@ -1206,7 +1188,7 @@ var App;
                     this.is_evaluatable = ko.observable(false);
                 }
                 Summary.prototype.getLivingTeammates = function () {
-                    return this.stager.app.state.teammates().alive();
+                    return this.stager.app.state.teammates().whoAreAlive();
                 };
 
                 Summary.prototype.getShepardLives = function () {

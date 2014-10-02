@@ -9,441 +9,456 @@
 	</head>
 	<body>
 	<!--
-	01007000030000010010000020030000030010000040000000050000000060030000070030000090000000100030000110000000120010000
+
+
+	040070000c8810004002000c403000400400000050000006000c137000c239000000a000c14b000000c000400
+	050070000e8810006002000e403000600400000050000006000d137000c239000000a000d14b000000c000600
 	-->
 		<div id="app" class="container">
-			<!-- ko with: $root.state.stage -->
-				<h2 data-bind="text: label"></h2>
-				<!-- ko if: id === App.ME2.Stages.StageIDs.Setup -->
-					<h3>Teammates</h3>
-                    <p>The game requires at least <strong>8</strong> teammates to be recruited.</p>
-					<table class="table table-striped setup-table">
+			<div class="panel panel-default">
+				<!-- ko with: $root.state.stage -->
+					<div class="panel-heading">
+						<h2 class="panel-title" data-bind="text: label"></h2>
+					</div>
+				<!-- /ko -->
+
+				<div class="panel-body">
+					<!-- ko with: $root.state.stage -->
+						<!-- ko if: id === App.ME2.Stages.StageIDs.Setup -->
+							<h3>Teammates</h3>
+							<p>The game requires at least <strong>8</strong> teammates to be recruited.</p>
+							<table class="table table-striped setup-table">
+								<thead>
+									<tr>
+										<th>Teammate</th>
+										<th><label><input type="checkbox" data-bind="checked: all_recruited" /> Is Recruited</label></th>
+										<th><label><input type="checkbox" data-bind="checked: all_loyal" /> Is Loyal</label></th>
+									</tr>
+								</thead>
+								<tbody>
+									<!-- ko foreach: $root.state.teammates().value() -->
+										<tr>
+											<td>
+												<a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }, text: henchman.name"></a>
+											</td>
+											<td>
+												<label>
+													<input type="checkbox" data-bind="attr: { 'disabled': (henchman.is_essential ? 'disabled' : undefined) }, checked: is_recruited" />
+												</label>
+											</td>
+											<td>
+												<label>
+													<input type="checkbox" data-bind="attr: { 'disabled': (is_recruited() ? undefined : 'disabled') }, checked: is_loyal" />
+												</label>
+											</td>
+										</tr>
+									<!-- /ko -->
+								</tbody>
+							</table>
+							<h3>Normandy</h3>
+							<form role="form">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>Normandy Upgrades</label>
+											<div class="checkbox">
+												<label><input type="checkbox" data-bind="checked: $root.state.normandy.has_armour" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Jacob Taylor</em>">Has Armour upgrade?</span></label>
+											</div>
+											<div class="checkbox">
+												<label><input type="checkbox" data-bind="checked: $root.state.normandy.has_shielding" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Tali'zorah</em>">Has Shielding upgrade?</span></label>
+											</div>
+											<div class="checkbox">
+												<label><input type="checkbox" data-bind="checked: $root.state.normandy.has_thanix_cannon" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Garrus Vakarian</em>">Has Thanix Cannon?</span></label>
+											</div>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>Mission Delay</label>
+											<input class="form-control" type="number" min="0" max="20" data-bind="value: $root.state.normandy.delay" />
+											<p class="help-block">How many missions were undertaken between the crew being abducted and the Omega 4 relay being accessed.</p>
+										</div>
+									</div>
+								</div>
+							</form>
+						<!-- /ko -->
+						<!-- ko if: id === App.ME2.Stages.StageIDs.Occulus -->
+							<form role="form">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="occulus-squadmate-1">Squadmate #1</label>
+											<select class="form-control" id="occulus-squadmate-1" data-bind="options: getFieldCandidates('occulus_squadmate_1'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('occulus_squadmate_1')"></select>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="occulus-squadmate-2">Squadmate #2</label>
+											<select class="form-control" id="occulus-squadmate-2" data-bind="options: getFieldCandidates('occulus_squadmate_2'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('occulus_squadmate_2')"></select>
+										</div>
+									</div>
+								</div>
+							</form>
+						<!-- /ko -->
+						<!-- ko if: id === App.ME2.Stages.StageIDs.Vents -->
+							<form role="form">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="vent-venter">Venter</label>
+											<select class="form-control" id="vent-venter" data-bind="options: getFieldCandidates('vent_venter'), optionsText: App.Application.renderTeammateNameVentVenter, value: getFieldObservable('vent_venter')"></select>
+										</div>
+										<div class="form-group">
+											<label for="vent-leader">Leader</label>
+											<select class="form-control" id="vent-leader" data-bind="options: getFieldCandidates('vent_leader'), optionsText: App.Application.renderTeammateNameVentLeader, value: getFieldObservable('vent_leader')"></select>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="vent-squadmate-1">Squadmate #1</label>
+											<select class="form-control" id="vent-squadmate-1" data-bind="options: getFieldCandidates('vent_squadmate_1'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('vent_squadmate_1')"></select>
+										</div>
+										<div class="form-group">
+											<label for="vent-squadmate-1">Squadmate #2</label>
+											<select class="form-control" id="vent-squadmate-1" data-bind="options: getFieldCandidates('vent_squadmate_2'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('vent_squadmate_2')"></select>
+										</div>
+									</div>
+								</div>
+							</form>
+						<!-- /ko -->
+						<!-- ko if: id === App.ME2.Stages.StageIDs.LongWalk -->
+							<form role="form">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="long-walk-bubbler">Bubbler</label>
+											<select class="form-control" id="long-walk-bubbler" data-bind="options: getFieldCandidates('long_walk_bubbler'), optionsText: App.Application.renderTeammateNameLongWalkBubbler, value: getFieldObservable('long_walk_bubbler')"></select>
+										</div>
+										<div class="form-group">
+											<label for="long-walk-leader">Leader</label>
+											<select class="form-control" id="long-walk-leader" data-bind="options: getFieldCandidates('long_walk_leader'), optionsText: App.Application.renderTeammateNameLongWalkLeader, value: getFieldObservable('long_walk_leader')"></select>
+										</div>
+										<div class="form-group">
+											<label for="long-walk-escort">Escort</label>
+											<select class="form-control" id="long-walk-escort" data-bind="options: getFieldCandidates('long_walk_escort'), optionsText: App.Application.renderTeammateNameLongWalkEscort, value: getFieldObservable('long_walk_escort')"></select>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="long-walk-squadmate-1">Squadmate #1</label>
+											<select class="form-control" id="long-walk-squadmate-1" data-bind="options: getFieldCandidates('long_walk_squadmate_1'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('long_walk_squadmate_1')"></select>
+										</div>
+										<div class="form-group">
+											<label for="long-walk-squadmate-2">Squadmate #2</label>
+											<select class="form-control" id="long-walk-squadmate-2" data-bind="options: getFieldCandidates('long_walk_squadmate_2'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('long_walk_squadmate_2')"></select>
+										</div>
+									</div>
+								</div>
+							</form>
+						<!-- /ko -->
+						<!-- ko if: id == App.ME2.Stages.StageIDs.Boss -->
+							<form role="form">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="boss-squadmate-1">Squadmate #1</label>
+											<select class="form-control" id="boss-squadmate-1" data-bind="options: getFieldCandidates('boss_squadmate_1'), optionsText: App.Application.renderTeammateNameBossSquadmate, value: getFieldObservable('boss_squadmate_1')"></select>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label for="boss-squadmate-2">Squadmate #2</label>
+											<select class="form-control" id="boss-squadmate-2" data-bind="options: getFieldCandidates('boss_squadmate_2'), optionsText: App.Application.renderTeammateNameBossSquadmate, value: getFieldObservable('boss_squadmate_2')"></select>
+										</div>
+									</div>
+								</div>
+							</form>
+						<!-- /ko -->
+						<!-- ko if: id === App.ME2.Stages.StageIDs.Summary -->
+							<form role="form">
+								<div class="row">
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>Reports on defence</label>
+											<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(defence_reporter())"></p>
+										</div>
+										<div class="form-group">
+											<label>Advocates keeping the base</label>
+											<p class="form-control-static" data-bind="text: App.Application.renderTeammateNameKeepBaseAdvocate(keep_base_advocate())"></p>
+										</div>
+										<div class="form-group">
+											<label>Advocates destroying the base</label>
+											<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(destroy_base_advocate())"></p>
+										</div>
+									</div>
+									<div class="col-md-6">
+										<div class="form-group">
+											<label>Shepard lives</label>
+											<p class="form-control-static" data-bind="text: App.Application.renderYesNo(shepard_lives())"></p>
+										</div>
+										<div class="form-group">
+											<label>Shepard caught by</label>
+											<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(shepard_pulled_up_by())"></p>
+										</div>
+										<div class="form-group">
+											<label>Crew</label>
+											<p class="form-control-static" data-bind="text: App.Application.renderCrewSurvival(crew_survival())"></p>
+										</div>
+									</div>
+								</div>
+							</form>
+						<!-- /ko -->
+					<!-- /ko -->
+
+					<table class="table table-striped summary-table" data-bind="visible: $root.state.stage().id !== App.ME2.Stages.StageIDs.Setup">
 						<thead>
 							<tr>
-								<th>Teammate</th>
-								<th><label><input type="checkbox" data-bind="checked: all_recruited" /> Is Recruited</label></th>
-								<th><label><input type="checkbox" data-bind="checked: all_loyal" /> Is Loyal</label></th>
+								<th>Teammates</th>
+								<th>Death</th>
+								<th>Occulus</th>
+								<th>Vents</th>
+								<th>Long Walk</th>
+								<th>Boss</th>
 							</tr>
 						</thead>
 						<tbody>
-							<!-- ko foreach: $root.state.teammates().value() -->
-								<tr>
-									<td>
-										<a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }, text: henchman.name"></a>
-									</td>
-									<td>
-										<label>
-											<input type="checkbox" data-bind="attr: { 'disabled': (henchman.is_essential ? 'disabled' : undefined) }, checked: is_recruited" />
-										</label>
-									</td>
-									<td>
-										<label>
-											<input type="checkbox" data-bind="attr: { 'disabled': (is_recruited() ? undefined : 'disabled') }, checked: is_loyal" />
-										</label>
-									</td>
-								</tr>
+							<!-- ko with: $root.state.teammates().value() -->
+								<!-- ko foreach: $data -->
+									<tr data-bind="attr: { class: (is_recruited() ? '' : 'text-warning warning') }, click: function () { $root.henchman(henchman) }">
+										<td data-bind="attr: { class: (is_dead() ? 'danger' : '') }">
+											<span data-bind="text: henchman.name"></span> <!-- ko if: is_loyal() --><span class="glyphicon glyphicon-heart"></span><!-- /ko -->
+										</td>
+										<td data-bind="attr: { class: (is_dead() ? 'danger' : '') }">
+											<!-- ko if: is_dead() -->
+												<span data-bind="text: App.Application.renderTeammateDeathCause(death_cause)"></span>
+											<!-- /ko -->
+										</td>
+										<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.Occulus ? 'danger' : '') }">
+											<!-- ko if: hasRole(App.ME2.TeammateRoles.OcculusSquadmate) -->
+												<span class="glyphicon glyphicon-user"></span>
+											<!-- /ko -->
+										</td>
+										<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.Vents ? 'danger' : '') }">
+											<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsSquadmate) -->
+												<span class="glyphicon glyphicon-user"></span>
+											<!-- /ko -->
+											<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsVenter) -->
+												<span class="glyphicon glyphicon-star"></span>
+											<!-- /ko -->
+											<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsLeader) -->
+												<span class="glyphicon glyphicon-fire"></span>
+											<!-- /ko -->
+										</td>
+										<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.LongWalk ? 'danger' : '') }">
+											<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkSquadmate) -->
+												<span class="glyphicon glyphicon-user"></span>
+											<!-- /ko -->
+											<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkBubbler) -->
+												<span class="glyphicon glyphicon-star"></span>
+											<!-- /ko -->
+											<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkLeader) -->
+												<span class="glyphicon glyphicon-fire"></span>
+											<!-- /ko -->
+											<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkEscort) -->
+												<span class="glyphicon glyphicon-heart-empty"></span>
+											<!-- /ko -->
+										</td>
+										<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.Boss ? 'danger' : '') }">
+											<!-- ko if: hasRole(App.ME2.TeammateRoles.BossSquadmate) -->
+												<span class="glyphicon glyphicon-user"></span>
+											<!-- /ko -->
+										</td>
+									</tr>
+								<!-- /ko -->
 							<!-- /ko -->
 						</tbody>
 					</table>
-					<h3>Normandy</h3>
-					<form role="form">
-						<div class="row">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label>Normandy Upgrades</label>
-									<div class="checkbox">
-										<label><input type="checkbox" data-bind="checked: $root.state.normandy.has_armour" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Jacob Taylor</em>">Has Armour upgrade?</span></label>
-									</div>
-									<div class="checkbox">
-										<label><input type="checkbox" data-bind="checked: $root.state.normandy.has_shielding" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Tali'zorah</em>">Has Shielding upgrade?</span></label>
-									</div>
-									<div class="checkbox">
-										<label><input type="checkbox" data-bind="checked: $root.state.normandy.has_thanix_cannon" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Garrus Vakarian</em>">Has Thanix Cannon?</span></label>
-									</div>
-								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="form-group">
-									<label>Mission Delay</label>
-									<input class="form-control" type="number" min="0" max="20" data-bind="value: $root.state.normandy.delay" />
-									<p class="help-block">How many missions were undertaken between the crew being abducted and the Omega 4 relay being accessed.</p>
-								</div>
-							</div>
-						</div>
-					</form>
-				<!-- /ko -->
-				<!-- ko if: id === App.ME2.Stages.StageIDs.Occulus -->
-					<form role="form">
-						<div class="row">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label for="occulus-squadmate-1">Squadmate #1</label>
-									<select class="form-control" id="occulus-squadmate-1" data-bind="options: getFieldCandidates('occulus_squadmate_1'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('occulus_squadmate_1')"></select>
-								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="form-group">
-									<label for="occulus-squadmate-2">Squadmate #2</label>
-									<select class="form-control" id="occulus-squadmate-2" data-bind="options: getFieldCandidates('occulus_squadmate_2'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('occulus_squadmate_2')"></select>
-								</div>
-							</div>
-						</div>
-					</form>
-				<!-- /ko -->
-				<!-- ko if: id === App.ME2.Stages.StageIDs.Vents -->
-					<form role="form">
-						<div class="row">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label for="vent-venter">Venter</label>
-									<select class="form-control" id="vent-venter" data-bind="options: getFieldCandidates('vent_venter'), optionsText: App.Application.renderTeammateNameVentVenter, value: getFieldObservable('vent_venter')"></select>
-								</div>
-								<div class="form-group">
-									<label for="vent-leader">Leader</label>
-									<select class="form-control" id="vent-leader" data-bind="options: getFieldCandidates('vent_leader'), optionsText: App.Application.renderTeammateNameVentLeader, value: getFieldObservable('vent_leader')"></select>
-								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="form-group">
-									<label for="vent-squadmate-1">Squadmate #1</label>
-									<select class="form-control" id="vent-squadmate-1" data-bind="options: getFieldCandidates('vent_squadmate_1'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('vent_squadmate_1')"></select>
-								</div>
-								<div class="form-group">
-									<label for="vent-squadmate-1">Squadmate #2</label>
-									<select class="form-control" id="vent-squadmate-1" data-bind="options: getFieldCandidates('vent_squadmate_2'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('vent_squadmate_2')"></select>
-								</div>
-							</div>
-						</div>
-					</form>
-				<!-- /ko -->
-				<!-- ko if: id === App.ME2.Stages.StageIDs.LongWalk -->
-					<form role="form">
-						<div class="row">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label for="long-walk-bubbler">Bubbler</label>
-									<select class="form-control" id="long-walk-bubbler" data-bind="options: getFieldCandidates('long_walk_bubbler'), optionsText: App.Application.renderTeammateNameLongWalkBubbler, value: getFieldObservable('long_walk_bubbler')"></select>
-								</div>
-								<div class="form-group">
-									<label for="long-walk-leader">Leader</label>
-									<select class="form-control" id="long-walk-leader" data-bind="options: getFieldCandidates('long_walk_leader'), optionsText: App.Application.renderTeammateNameLongWalkLeader, value: getFieldObservable('long_walk_leader')"></select>
-								</div>
-								<div class="form-group">
-									<label for="long-walk-escort">Escort</label>
-									<select class="form-control" id="long-walk-escort" data-bind="options: getFieldCandidates('long_walk_escort'), optionsText: App.Application.renderTeammateNameLongWalkEscort, value: getFieldObservable('long_walk_escort')"></select>
-								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="form-group">
-									<label for="long-walk-squadmate-1">Squadmate #1</label>
-									<select class="form-control" id="long-walk-squadmate-1" data-bind="options: getFieldCandidates('long_walk_squadmate_1'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('long_walk_squadmate_1')"></select>
-								</div>
-								<div class="form-group">
-									<label for="long-walk-squadmate-2">Squadmate #2</label>
-									<select class="form-control" id="long-walk-squadmate-2" data-bind="options: getFieldCandidates('long_walk_squadmate_2'), optionsText: App.Application.renderTeammateName, value: getFieldObservable('long_walk_squadmate_2')"></select>
-								</div>
-							</div>
-						</div>
-					</form>
-				<!-- /ko -->
-				<!-- ko if: id == App.ME2.Stages.StageIDs.Boss -->
-					<form role="form">
-						<div class="row">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label for="boss-squadmate-1">Squadmate #1</label>
-									<select class="form-control" id="boss-squadmate-1" data-bind="options: getFieldCandidates('boss_squadmate_1'), optionsText: App.Application.renderTeammateNameBossSquadmate, value: getFieldObservable('boss_squadmate_1')"></select>
-								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="form-group">
-									<label for="boss-squadmate-2">Squadmate #2</label>
-									<select class="form-control" id="boss-squadmate-2" data-bind="options: getFieldCandidates('boss_squadmate_2'), optionsText: App.Application.renderTeammateNameBossSquadmate, value: getFieldObservable('boss_squadmate_2')"></select>
-								</div>
-							</div>
-						</div>
-					</form>
-				<!-- /ko -->
-				<!-- ko if: id === App.ME2.Stages.StageIDs.Summary -->
-					<form role="form">
-						<div class="row">
-							<div class="col-md-6">
-								<div class="form-group">
-									<label>Reports on defence</label>
-									<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(defence_reporter())"></p>
-								</div>
-								<div class="form-group">
-									<label>Advocates keeping the base</label>
-									<p class="form-control-static" data-bind="text: App.Application.renderTeammateNameKeepBaseAdvocate(keep_base_advocate())"></p>
-								</div>
-								<div class="form-group">
-									<label>Advocates destroying the base</label>
-									<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(destroy_base_advocate())"></p>
-								</div>
-							</div>
-							<div class="col-md-6">
-								<div class="form-group">
-									<label>Shepard lives</label>
-									<p class="form-control-static" data-bind="text: App.Application.renderYesNo(shepard_lives())"></p>
-								</div>
-								<div class="form-group">
-									<label>Shepard caught by</label>
-									<p class="form-control-static" data-bind="text: App.Application.renderTeammateName(shepard_pulled_up_by())"></p>
-								</div>
-								<div class="form-group">
-									<label>Crew</label>
-									<p class="form-control-static" data-bind="text: App.Application.renderCrewSurvival(crew_survival())"></p>
-								</div>
-							</div>
-						</div>
-					</form>
-				<!-- /ko -->
-			<!-- /ko -->
+				</div>
 
-			<table class="table table-striped summary-table" data-bind="visible: $root.state.stage().id !== App.ME2.Stages.StageIDs.Setup">
-				<thead>
-					<tr>
-						<th>Teammates</th>
-						<th>Death</th>
-						<th>Occulus</th>
-						<th>Vents</th>
-						<th>Long Walk</th>
-						<th>Boss</th>
-					</tr>
-				</thead>
-				<tbody>
-					<!-- ko with: $root.state.teammates().value() -->
-						<!-- ko foreach: $data -->
-							<tr data-bind="attr: { class: (is_recruited() ? '' : 'text-warning warning') }, click: function () { $root.henchman(henchman) }">
-								<td data-bind="attr: { class: (is_dead() ? 'danger' : '') }">
-									<span data-bind="text: henchman.name"></span> <!-- ko if: is_loyal() --><span class="glyphicon glyphicon-heart"></span><!-- /ko -->
-								</td>
-								<td data-bind="attr: { class: (is_dead() ? 'danger' : '') }">
-									<!-- ko if: is_dead() -->
-										<span data-bind="text: App.Application.renderTeammateDeathCause(death_cause)"></span>
-									<!-- /ko -->
-								</td>
-								<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.Occulus ? 'danger' : '') }">
-									<!-- ko if: hasRole(App.ME2.TeammateRoles.OcculusSquadmate) -->
-										<span class="glyphicon glyphicon-user"></span>
-									<!-- /ko -->
-								</td>
-								<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.Vents ? 'danger' : '') }">
-									<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsSquadmate) -->
-										<span class="glyphicon glyphicon-user"></span>
-									<!-- /ko -->
-									<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsVenter) -->
-										<span class="glyphicon glyphicon-star"></span>
-									<!-- /ko -->
-									<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsLeader) -->
-										<span class="glyphicon glyphicon-fire"></span>
-									<!-- /ko -->
-								</td>
-								<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.LongWalk ? 'danger' : '') }">
-									<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkSquadmate) -->
-										<span class="glyphicon glyphicon-user"></span>
-									<!-- /ko -->
-									<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkBubbler) -->
-										<span class="glyphicon glyphicon-star"></span>
-									<!-- /ko -->
-									<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkLeader) -->
-										<span class="glyphicon glyphicon-fire"></span>
-									<!-- /ko -->
-									<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkEscort) -->
-										<span class="glyphicon glyphicon-heart-empty"></span>
-									<!-- /ko -->
-								</td>
-								<td data-bind="attr: { class: (is_dead() && death_stage_id === App.ME2.Stages.StageIDs.Boss ? 'danger' : '') }">
-									<!-- ko if: hasRole(App.ME2.TeammateRoles.BossSquadmate) -->
-										<span class="glyphicon glyphicon-user"></span>
-									<!-- /ko -->
-								</td>
-							</tr>
-						<!-- /ko -->
+
+				<div class="panel-footer">
+
+					<!-- ko with: $root.state.stage -->
+						<div class="row">
+							<div class="col-md-2">
+								<button class="btn btn-primary btn-block" data-bind="enable: id > App.ME2.Stages.StageIDs.Setup, click: function () { $root.stager.previousStage() }">Previous</button>
+							</div>
+							<div class="col-md-2">
+								<button class="btn btn-primary btn-block" data-bind="enable: is_evaluatable, click: function () { $root.stager.nextStage() }">Next</button>
+							</div>
+							<div class="col-md-8">
+								<form role="form" class="form-horizontal">
+									<div class="input-group">
+										<span class="input-group-addon">ID</span>
+										<input class="form-control" type="text" id="serialised" data-bind="value: $root.state.serialised" />
+										<span class="input-group-btn">
+											<button class="btn btn-primary" type="button" data-bind="click: function () { $root.state.applySerialisedState($('#serialised').val()) }">Restore</button>
+										</span>
+									</div>
+								</form>
+							</div>
+						</div>
 					<!-- /ko -->
-				</tbody>
-			</table>
+				</div>
+			</div>
+		</div>
 
-			<!-- ko with: $root.state.stage -->
-				<div class="row">
-					<div class="col-md-2">
-						<button class="btn btn-primary btn-block" data-bind="enable: id > App.ME2.Stages.StageIDs.Setup, click: function () { $root.stager.previousStage() }">Previous</button>
-					</div>
-					<div class="col-md-2">
-						<button class="btn btn-primary btn-block" data-bind="enable: is_evaluatable, click: function () { $root.stager.nextStage() }">Next</button>
-					</div>
-					<div class="col-md-8">
-						<form role="form" class="form-horizontal">
-							<div class="input-group">
-								<span class="input-group-addon">ID</span>
-								<input class="form-control" type="text" id="serialised" data-bind="value: $root.state.serialised" />
-								<span class="input-group-btn">
-									<button class="btn btn-primary" type="button" data-bind="click: function () { $root.state.applySerialisedState($('#serialised').val()) }">Restore</button>
-								</span>
-							</div>
-						</form>
+
+		<div class="modal fade" tabindex="-1" role="dialog" data-bind="modal: $root.henchman()">
+			<!-- ko with: $root.henchman() -->
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<h4 class="modal-title" data-bind="text: name"></h4>
+						</div>
+						<div class="modal-body">
+							<form class="form-horizontal" role="form">
+								<div class="form-group">
+									<label class="col-sm-6 control-label">Recruitment can be skipped</label>
+									<div class="col-sm-6">
+										<p class="form-control-static" data-bind="text: App.Application.renderYesNo(!is_essential)"></p>
+									</div>
+								</div>
+
+
+								<fieldset>
+									<legend>Attributes</legend>
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="col-sm-8 control-label">Tech Expert</label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_tech_expert)"></p>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-8 control-label">Biotic Expert</label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_biotic_expert)"></p>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="col-sm-8 control-label">Fireteam Leader</label>
+												<div class="col-sm-4">
+													<p class="form-control-static"><span data-bind="text: App.Application.renderYesNo(is_leader)"></span><span data-bind="visible: is_super_leader"> ✸</span></p>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-8 control-label"><abbr title="Hold the line">HTL</abbr> score</label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="text: htl_value"></p>
+												</div>
+											</div>
+										</div>
+									</div>
+								</fieldset>
+								<fieldset>
+									<legend>Eligibility for Roles</legend>
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="col-sm-8 control-label">Vents</label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_vent_candidate)"></p>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-8 control-label">Biotic Bubble</label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_bubble_candidate)"></p>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="col-sm-8 control-label">Leader</label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_leader_candidate)"></p>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-8 control-label">Crew Escort</label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_escort_candidate)"></p>
+												</div>
+											</div>
+										</div>
+									</div>
+								</fieldset>
+								<fieldset>
+									<legend>Priority</legend>
+									<div class="row">
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="col-sm-8 control-label"><a tabindex="0" data-bind="click: App.Application.showArmourDeathRankPopover">Armour Death</a></label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="text: App.Application.renderRank(getArmourDeathPriorityRank())"></p>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-8 control-label"><a tabindex="1" data-bind="click: App.Application.showShieldingDeathRankPopover">Shielding Death</a></label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="text: App.Application.renderRank(getShieldingDeathPriorityRank())"></p>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-8 control-label"><a tabindex="2" data-bind="click: App.Application.showCannonDeathRankPopover">Cannon Death</a></label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="text: App.Application.renderRank(getCannonDeathPriorityRank())"></p>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-8 control-label"><a tabindex="3" data-bind="click: App.Application.showLongWalkDeathRankPopover">Long Walk Death</a></label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="text: App.Application.renderRank(getLongWalkDeathPriorityRank())"></p>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-8 control-label"><a tabindex="4" data-bind="click: App.Application.showHTMLDeathRankPopover">HTL Death</a></label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="text: App.Application.renderRank(getHTLDeathPriorityRank())"></p>
+												</div>
+											</div>
+										</div>
+										<div class="col-md-6">
+											<div class="form-group">
+												<label class="col-sm-8 control-label"><a tabindex="5" data-bind="click: App.Application.showDefenceReportRankPopover">Defence Report</a></label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="text: App.Application.renderRank(getDefenceReportPriorityRank())"></p>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-8 control-label"><a tabindex="6" data-bind="click: App.Application.showKeepBaseAdvocateRankPopover">Keep Base Advocate</a></label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="html: App.Application.renderRank(getKeepBasePriorityRank())"></p>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-8 control-label"><a tabindex="7" data-bind="click: App.Application.showDestroyBaseAdvocateRankPopover">Destroy Base Advocate</a></label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="html: App.Application.renderRank(getDestroyBasePriorityRank())"></p>
+												</div>
+											</div>
+											<div class="form-group">
+												<label class="col-sm-8 control-label"><a tabindex="8" data-bind="click: App.Application.showCutsceneRescueRankPopover">Catch Shepard</a></label>
+												<div class="col-sm-4">
+													<p class="form-control-static" data-bind="text: App.Application.renderRank(getCutsceneRescuePriorityRank())"></p>
+												</div>
+											</div>
+										</div>
+									</div>
+								</fieldset>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-bind="click: function () { $root.henchman(undefined); }">Close</button>
+						</div>
 					</div>
 				</div>
 			<!-- /ko -->
-
-
-
-			<div class="modal fade" tabindex="-1" role="dialog" data-bind="modal: $root.henchman()">
-				<!-- ko with: $root.henchman() -->
-					<div class="modal-dialog">
-						<div class="modal-content">
-							<div class="modal-header">
-								<button type="button" class="close" data-dismiss="modal">&times;</button>
-								<h4 class="modal-title" data-bind="text: name"></h4>
-							</div>
-							<div class="modal-body">
-								<form class="form-horizontal" role="form">
-									<div class="form-group">
-										<label class="col-sm-6 control-label">Recruitment can be skipped</label>
-										<div class="col-sm-6">
-											<p class="form-control-static" data-bind="text: App.Application.renderYesNo(!is_essential)"></p>
-										</div>
-									</div>
-
-
-									<fieldset>
-										<legend>Attributes</legend>
-										<div class="row">
-											<div class="col-md-6">
-												<div class="form-group">
-													<label class="col-sm-8 control-label">Tech Expert</label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_tech_expert)"></p>
-													</div>
-												</div>
-												<div class="form-group">
-													<label class="col-sm-8 control-label">Biotic Expert</label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_biotic_expert)"></p>
-													</div>
-												</div>
-											</div>
-											<div class="col-md-6">
-												<div class="form-group">
-													<label class="col-sm-8 control-label">Fireteam Leader</label>
-													<div class="col-sm-4">
-														<p class="form-control-static"><span data-bind="text: App.Application.renderYesNo(is_leader)"></span><span data-bind="visible: is_super_leader"> ✸</span></p>
-													</div>
-												</div>
-												<div class="form-group">
-													<label class="col-sm-8 control-label"><abbr title="Hold the line">HTL</abbr> score</label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: htl_value"></p>
-													</div>
-												</div>
-											</div>
-										</div>
-									</fieldset>
-									<fieldset>
-										<legend>Eligibility for Roles</legend>
-										<div class="row">
-											<div class="col-md-6">
-												<div class="form-group">
-													<label class="col-sm-8 control-label">Vents</label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_vent_candidate)"></p>
-													</div>
-												</div>
-												<div class="form-group">
-													<label class="col-sm-8 control-label">Biotic Bubble</label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_bubble_candidate)"></p>
-													</div>
-												</div>
-											</div>
-											<div class="col-md-6">
-												<div class="form-group">
-													<label class="col-sm-8 control-label">Leader</label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_leader_candidate)"></p>
-													</div>
-												</div>
-												<div class="form-group">
-													<label class="col-sm-8 control-label">Crew Escort</label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.renderYesNo(is_escort_candidate)"></p>
-													</div>
-												</div>
-											</div>
-										</div>
-									</fieldset>
-									<fieldset>
-										<legend>Priority</legend>
-										<div class="row">
-											<div class="col-md-6">
-												<div class="form-group">
-													<label class="col-sm-8 control-label"><a tabindex="0" data-bind="click: App.Application.showArmourDeathRankPopover">Armour Death</a></label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.renderRank(getArmourDeathPriorityRank())"></p>
-													</div>
-												</div>
-												<div class="form-group">
-													<label class="col-sm-8 control-label"><a tabindex="1" data-bind="click: App.Application.showShieldingDeathRankPopover">Shielding Death</a></label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.renderRank(getShieldingDeathPriorityRank())"></p>
-													</div>
-												</div>
-												<div class="form-group">
-													<label class="col-sm-8 control-label"><a tabindex="2" data-bind="click: App.Application.showCannonDeathRankPopover">Cannon Death</a></label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.renderRank(getCannonDeathPriorityRank())"></p>
-													</div>
-												</div>
-												<div class="form-group">
-													<label class="col-sm-8 control-label"><a tabindex="3" data-bind="click: App.Application.showLongWalkDeathRankPopover">Long Walk Death</a></label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.renderRank(getLongWalkDeathPriorityRank())"></p>
-													</div>
-												</div>
-												<div class="form-group">
-													<label class="col-sm-8 control-label"><a tabindex="4" data-bind="click: App.Application.showHTMLDeathRankPopover">HTL Death</a></label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.renderRank(getHTLDeathPriorityRank())"></p>
-													</div>
-												</div>
-											</div>
-											<div class="col-md-6">
-												<div class="form-group">
-													<label class="col-sm-8 control-label"><a tabindex="5" data-bind="click: App.Application.showDefenceReportRankPopover">Defence Report</a></label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.renderRank(getDefenceReportPriorityRank())"></p>
-													</div>
-												</div>
-												<div class="form-group">
-													<label class="col-sm-8 control-label"><a tabindex="6" data-bind="click: App.Application.showKeepBaseAdvocateRankPopover">Keep Base Advocate</a></label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="html: App.Application.renderRank(getKeepBasePriorityRank())"></p>
-													</div>
-												</div>
-												<div class="form-group">
-													<label class="col-sm-8 control-label"><a tabindex="7" data-bind="click: App.Application.showDestroyBaseAdvocateRankPopover">Destroy Base Advocate</a></label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="html: App.Application.renderRank(getDestroyBasePriorityRank())"></p>
-													</div>
-												</div>
-												<div class="form-group">
-													<label class="col-sm-8 control-label"><a tabindex="8" data-bind="click: App.Application.showCutsceneRescueRankPopover">Catch Shepard</a></label>
-													<div class="col-sm-4">
-														<p class="form-control-static" data-bind="text: App.Application.renderRank(getCutsceneRescuePriorityRank())"></p>
-													</div>
-												</div>
-											</div>
-										</div>
-									</fieldset>
-								</form>
-							</div>
-							<div class="modal-footer">
-								<button type="button" class="btn btn-primary" data-bind="click: function () { $root.henchman(undefined); }">Close</button>
-							</div>
-						</div>
-					</div>
-				<!-- /ko -->
-			</div>
 		</div>
 
 		<script src="../bower_components/jquery/dist/jquery.js"></script>

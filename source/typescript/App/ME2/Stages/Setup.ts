@@ -16,9 +16,6 @@ module App {
                 public is_evaluatable: KnockoutComputed<boolean>;
 
                 public evaluate () {
-
-                    // Limit teammates to those recruited
-                    //this.stager.app.state.teammates = this.stager.app.state.teammates.recruited();
                 }
 
                 private getTeammates (): App.ME2.Teammates {

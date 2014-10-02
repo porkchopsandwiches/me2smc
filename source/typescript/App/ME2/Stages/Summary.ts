@@ -41,7 +41,7 @@ module App {
                 }
 
                 private getLivingTeammates (): App.ME2.Teammates {
-                    return this.stager.app.state.teammates().alive();
+                    return this.stager.app.state.teammates().whoAreAlive();
                 }
 
                 private getShepardLives (): boolean {

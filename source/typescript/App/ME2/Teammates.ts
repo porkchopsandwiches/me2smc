@@ -7,11 +7,8 @@ module App {
             first (): App.ME2.Teammate;
             last (): App.ME2.Teammate;
             length (): number;
-            alive (): Teammates;
-            dead (): Teammates;
-            loyal (): Teammates;
-            disloyal (): Teammates;
-            recruited (): Teammates;
+            whoAreAlive (): Teammates;
+            whoAreRecruited (): Teammates;
             withRole (role: App.ME2.TeammateRoles): Teammates;
             withoutRole (role: App.ME2.TeammateRoles): Teammates;
             sortByHenchmanProperty (property: string, ascending?: boolean): Teammates;
@@ -58,27 +55,9 @@ module App {
                 return this.oa.length();
             }
 
-            public alive (): Teammates {
+            public whoAreAlive (): Teammates {
                 return this.filter((teammate: App.ME2.Teammate): boolean => {
                     return !teammate.is_dead();
-                });
-            }
-
-            public dead (): Teammates {
-                return this.filter((teammate: App.ME2.Teammate): boolean => {
-                    return teammate.is_dead();
-                });
-            }
-
-            public loyal (): Teammates {
-                return this.filter((teammate: App.ME2.Teammate): boolean => {
-                    return teammate.is_loyal();
-                });
-            }
-
-            public disloyal (): Teammates {
-                return this.filter((teammate: App.ME2.Teammate): boolean => {
-                    return !teammate.is_loyal();
                 });
             }
 
@@ -89,7 +68,7 @@ module App {
                 return this;
             }
 
-            public recruited (): Teammates {
+            public whoAreRecruited (): Teammates {
                 return this.filter((teammate: App.ME2.Teammate): boolean => {
                     return teammate.is_recruited();
                 });
