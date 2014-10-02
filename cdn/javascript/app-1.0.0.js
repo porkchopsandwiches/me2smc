@@ -655,7 +655,7 @@ var App;
                     this.stager = stager;
                 }
                 Stage.genericTeammateFieldFilter = function (teammate) {
-                    return !teammate.is_dead();
+                    return teammate.is_recruited() && !teammate.is_dead();
                 };
 
                 Stage.prototype.evaluate = function () {
@@ -791,6 +791,11 @@ var App;
                     ], function (stage) {
                         return stage.id;
                     });
+
+                    this.app.state.stage.subscribe(function (stage) {
+                        console.log("Before stage change...");
+                        stage.setup();
+                    }, "beforeChange");
                 }
                 Stager.prototype.getStage = function (id) {
                     return this.stages[id];
@@ -800,7 +805,7 @@ var App;
                     var current_stage;
                     current_stage = this.app.state.stage();
                     if (current_stage) {
-                        this.app.serialisation.applyStateChanges(this.app.state, this.freezes[current_stage.id - 1]);
+                        this.app.state.applySerialisedState(this.freezes[current_stage.id - 1]);
 
                         this.setStage(this.stages[current_stage.id - 1]);
                     }
@@ -813,7 +818,7 @@ var App;
 
                     if (current_stage) {
                         if (current_stage.isEvaluatable()) {
-                            this.freezes[current_stage.id] = this.app.serialisation.serialise(this.app.state);
+                            this.freezes[current_stage.id] = this.app.state.serialise();
 
                             current_stage.evaluate();
 
@@ -829,7 +834,6 @@ var App;
                 };
 
                 Stager.prototype.setStage = function (stage) {
-                    stage.setup();
                     this.app.state.stage(stage);
                 };
                 return Stager;
@@ -919,13 +923,13 @@ var App;
                         {
                             name: "vent_venter",
                             filter: function (teammate) {
-                                return !teammate.is_dead() && teammate.henchman.is_vent_candidate;
+                                return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_vent_candidate;
                             }
                         },
                         {
                             name: "vent_leader",
                             filter: function (teammate) {
-                                return !teammate.is_dead() && teammate.henchman.is_leader_candidate;
+                                return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_leader_candidate;
                             }
                         }
                     ]);
@@ -970,13 +974,13 @@ var App;
                         {
                             name: "long_walk_bubbler",
                             filter: function (teammate) {
-                                return !teammate.is_dead() && teammate.henchman.is_bubble_candidate;
+                                return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_bubble_candidate;
                             }
                         },
                         {
                             name: "long_walk_leader",
                             filter: function (teammate) {
-                                return !teammate.is_dead() && teammate.henchman.is_leader_candidate;
+                                return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_leader_candidate;
                             }
                         },
                         {
@@ -986,7 +990,7 @@ var App;
                                     return false;
                                 }
 
-                                return !teammate.is_dead() && teammate.henchman.is_escort_candidate;
+                                return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_escort_candidate;
                             },
                             optional: true
                         },
@@ -1053,13 +1057,13 @@ var App;
                         {
                             name: "boss_squadmate_1",
                             filter: function (teammate) {
-                                return !teammate.is_dead() && !teammate.hasRole(5 /* LongWalkEscort */);
+                                return teammate.is_recruited() && !teammate.is_dead() && !teammate.hasRole(5 /* LongWalkEscort */);
                             }
                         },
                         {
                             name: "boss_squadmate_2",
                             filter: function (teammate) {
-                                return !teammate.is_dead() && !teammate.hasRole(5 /* LongWalkEscort */);
+                                return teammate.is_recruited() && !teammate.is_dead() && !teammate.hasRole(5 /* LongWalkEscort */);
                             }
                         }
                     ]);
@@ -1277,6 +1281,14 @@ var App;
 
                 this.teammates = ko.observable(this._teammates);
             };
+
+            State.prototype.serialise = function () {
+                return this.app.serialisation.serialise(this);
+            };
+
+            State.prototype.applySerialisedState = function (serialised) {
+                this.app.serialisation.applySerialisedState(this, serialised);
+            };
             return State;
         })();
         ME2.State = State;
@@ -1437,7 +1449,7 @@ var App;
                 return deserialised;
             };
 
-            Serialisation.prototype.applyStateChanges = function (state, serialised) {
+            Serialisation.prototype.applySerialisedState = function (state, serialised) {
                 var new_state = this.deserialise(serialised);
 
                 state.stage(new_state.stage());

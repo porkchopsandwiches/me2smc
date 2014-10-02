@@ -210,7 +210,7 @@ module App {
                 return deserialised;
             }
 
-            public applyStateChanges (state: App.ME2.State, serialised: ISerialisationSerialised): void {
+            public applySerialisedState (state: App.ME2.State, serialised: ISerialisationSerialised): void {
                 var new_state = this.deserialise(serialised);
 
                 state.stage(new_state.stage());

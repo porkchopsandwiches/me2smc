@@ -38,6 +38,14 @@ module App {
 
                 this.teammates = ko.observable<App.ME2.Teammates>(this._teammates);
             }
+
+            public serialise (): App.ME2.ISerialisationSerialised {
+                return this.app.serialisation.serialise(this);
+            }
+
+            public applySerialisedState (serialised: App.ME2.ISerialisationSerialised): void {
+                this.app.serialisation.applySerialisedState(this, serialised);
+            }
         }
     }
 }

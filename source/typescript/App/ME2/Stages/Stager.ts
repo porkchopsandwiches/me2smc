@@ -26,6 +26,11 @@ module App {
                     ], (stage: App.ME2.Stages.IStage): App.ME2.Stages.StageIDs => {
                         return stage.id;
                     });
+
+                    this.app.state.stage.subscribe((stage: App.ME2.Stages.IStage) => {
+                        console.log("Before stage change...");
+                        stage.setup();
+                    }, "beforeChange");
                 }
 
                 public getStage (id: App.ME2.Stages.StageIDs): App.ME2.Stages.IStage {
@@ -36,7 +41,8 @@ module App {
                     var current_stage: App.ME2.Stages.IStage;
                     current_stage = this.app.state.stage();
                     if (current_stage) {
-                        this.app.serialisation.applyStateChanges(this.app.state, this.freezes[current_stage.id - 1]);
+                        //this.app.serialisation.applySerialisedState(this.app.state, this.freezes[current_stage.id - 1]);
+                        this.app.state.applySerialisedState(this.freezes[current_stage.id - 1]);
 
                         this.setStage(this.stages[current_stage.id - 1]);
                     }
@@ -51,7 +57,7 @@ module App {
                         if (current_stage.isEvaluatable()) {
 
                             // Freeze the current state
-                            this.freezes[current_stage.id] = this.app.serialisation.serialise(this.app.state);
+                            this.freezes[current_stage.id] = this.app.state.serialise();
 
                             current_stage.evaluate();
 
@@ -67,7 +73,7 @@ module App {
                 }
 
                 private setStage (stage: App.ME2.Stages.IStage) {
-                    stage.setup();
+                    //stage.setup();
                     this.app.state.stage(stage);
                 }
             }

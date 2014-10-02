@@ -47,7 +47,7 @@ module App {
 
                 // Generic filter only requires the teammate be alive
                 static genericTeammateFieldFilter (teammate: App.ME2.Teammate): boolean {
-                    return !teammate.is_dead();
+                    return teammate.is_recruited() && !teammate.is_dead();
                 }
 
                 static no_teammate: App.ME2.Teammate = new App.ME2.Teammate(new App.ME2.Henchman(undefined, undefined, "— None —"));

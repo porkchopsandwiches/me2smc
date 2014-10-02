@@ -8,6 +8,9 @@
 		<link rel="stylesheet" href="../cdn/stylesheets/app-1.0.0.min.css" />
 	</head>
 	<body>
+	<!--
+	01007000030000010010000020030000030010000040000000050000000060030000070030000090000000100030000110000000120010000
+	-->
 		<div id="app" class="container">
 			<!-- ko with: $root.state.stage -->
 				<h2 data-bind="text: label"></h2>
@@ -211,12 +214,12 @@
 				<tbody>
 					<!-- ko with: $root.state.teammates().value() -->
 						<!-- ko foreach: $data -->
-							<tr>
+							<tr data-bind="attr: { class: (is_recruited() ? '' : 'warning') }">
 								<td data-bind="attr: { class: (is_dead() ? 'danger' : '') }">
-                                    <a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }">
-                                        <span data-bind="text: henchman.name"></span>
-								    </a> <!-- ko if: is_loyal() --><span class="glyphicon glyphicon-heart"></span><!-- /ko -->
-                                </td>
+									<a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }">
+										<span data-bind="text: henchman.name"></span>
+									</a> <!-- ko if: is_loyal() --><span class="glyphicon glyphicon-heart"></span><!-- /ko -->
+								</td>
 								<td data-bind="attr: { class: (is_dead() ? 'danger' : '') }">
 									<!-- ko if: is_dead() -->
 										<span data-bind="text: App.Application.renderTeammateDeathCause(death_cause)"></span>
