@@ -748,7 +748,6 @@ var App;
                 };
 
                 Stage.prototype.setup = function () {
-                    console.log("setup being called...");
                 };
 
                 Stage.prototype.isEvaluatable = function () {

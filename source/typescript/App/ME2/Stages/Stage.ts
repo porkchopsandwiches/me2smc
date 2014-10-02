@@ -154,7 +154,6 @@ module App {
                 }
 
                 public setup (): void {
-                    console.log("setup being called...");
                 }
 
                 public isEvaluatable (): boolean {
