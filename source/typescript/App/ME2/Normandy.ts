@@ -8,14 +8,11 @@ module App {
         }
 
         export class Normandy implements INormandy {
-            //public has_armour: boolean;
-            //public has_shielding: boolean;
-            //public has_thanix_cannon: boolean;
             public has_armour: KnockoutObservable<boolean>;
             public has_shielding: KnockoutObservable<boolean>;
             public has_thanix_cannon: KnockoutObservable<boolean>;
             public delay: KnockoutComputed<number>;
-            private _delay: number;
+            private _delay: KnockoutObservable<number>;
 
             constructor (
                 has_armor: boolean = false,
@@ -26,18 +23,18 @@ module App {
                 this.has_armour = ko.observable<boolean>(has_armor);
                 this.has_shielding = ko.observable<boolean>(has_shielding);
                 this.has_thanix_cannon = ko.observable<boolean>(has_thanix_cannon);
-                this._delay = delay;
+                this._delay = ko.observable<number>(delay);
 
                 this.delay = ko.pureComputed<number>({
                     read: (): number => {
-                        return this._delay;
+                        return this._delay();
                     },
                     write: (value: number): void => {
                         var delay: number;
                         delay = parseInt("" + value, 10);
 
                         if (!_.isNaN(delay)) {
-                            this._delay = delay;
+                            this._delay(delay);
                         }
                     }
                 });

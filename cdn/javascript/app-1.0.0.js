@@ -614,18 +614,18 @@ var App;
                 this.has_armour = ko.observable(has_armor);
                 this.has_shielding = ko.observable(has_shielding);
                 this.has_thanix_cannon = ko.observable(has_thanix_cannon);
-                this._delay = delay;
+                this._delay = ko.observable(delay);
 
                 this.delay = ko.pureComputed({
                     read: function () {
-                        return _this._delay;
+                        return _this._delay();
                     },
                     write: function (value) {
                         var delay;
                         delay = parseInt("" + value, 10);
 
                         if (!_.isNaN(delay)) {
-                            _this._delay = delay;
+                            _this._delay(delay);
                         }
                     }
                 });
@@ -1291,55 +1291,149 @@ var App;
             function Serialisation(app) {
                 this.app = app;
             }
-            Serialisation.prototype.serialise = function (state) {
-                var serialised;
-
-                serialised = {
-                    stage_id: state.stage_id,
-                    normandy: {
-                        delay: state.normandy.delay(),
-                        has_armour: state.normandy.has_armour(),
-                        has_shielding: state.normandy.has_shielding(),
-                        has_thanix_cannon: state.normandy.has_thanix_cannon()
-                    },
-                    teammates: _.map(state.teammates.value(), function (teammate) {
-                        return {
-                            henchman_id: teammate.henchman.id,
-                            henchman_name: teammate.henchman.name,
-                            is_loyal: teammate.is_loyal(),
-                            is_recruited: teammate.is_recruited(),
-                            is_dead: teammate.is_dead(),
-                            death_cause: teammate.death_cause,
-                            death_stage_id: teammate.death_stage_id,
-                            roles: teammate.roles
-                        };
-                    })
-                };
-
-                return JSON.stringify(serialised);
+            Serialisation.prototype.lpad = function (value, length) {
+                if (typeof length === "undefined") { length = 2; }
+                var value_str;
+                value_str = "" + value;
+                return value_str.length >= length ? value_str : new Array(length - value_str.length + 1).join("0") + value_str;
             };
 
-            Serialisation.prototype.deserialise = function (state) {
-                var _this = this;
-                var serialised;
+            Serialisation.prototype.indexesToFlags = function (indexes) {
+                return _.reduce(indexes, function (accumulator, index) {
+                    return accumulator + Math.pow(2, index);
+                }, 0);
+            };
+
+            Serialisation.prototype.flagsToIndexes = function (flags) {
+                var indexes;
+                var index;
+                var flag;
+                indexes = [];
+                index = 0;
+                flag = 1;
+                while (flag <= flags) {
+                    if (flags & flag) {
+                        indexes.push(index);
+                    }
+
+                    index++;
+                    flag *= 2;
+                }
+
+                return indexes;
+            };
+
+            Serialisation.prototype.serialiseRoles = function (roles) {
+                return this.lpad(this.indexesToFlags(roles), 4);
+            };
+
+            Serialisation.prototype.deserialiseRoles = function (roles) {
+                return _.map(this.flagsToIndexes(parseInt(roles, 10)), function (index) {
+                    return index;
+                });
+            };
+
+            Serialisation.prototype.serialiseTeammate = function (teammate) {
+                var elements;
+                var flags;
+
+                flags = 0 + (teammate.is_recruited() ? 1 : 0) + (teammate.is_loyal() ? 2 : 0) + (teammate.is_dead() ? 4 : 0);
+
+                elements = [
+                    this.lpad(teammate.henchman.id, 2),
+                    this.lpad(teammate.death_cause || 0, 1),
+                    this.lpad(teammate.death_stage_id || 0, 1),
+                    this.lpad(flags, 1),
+                    this.serialiseRoles(teammate.roles)
+                ];
+
+                return elements.join("");
+            };
+
+            Serialisation.prototype.deserialiseTeammate = function (teammate) {
+                var henchman_id;
+                var death_cause;
+                var death_stage_id;
+                var flags;
+                var is_recruited;
+                var is_loyal;
+                var is_dead;
+                var roles;
                 var deserialised;
 
-                serialised = JSON.parse(state);
+                henchman_id = parseInt(teammate.substr(0, 2), 10);
+                death_cause = parseInt(teammate.substr(2, 1), 10) || undefined;
+                death_stage_id = parseInt(teammate.substr(3, 1), 10) || undefined;
+                flags = parseInt(teammate.substr(4, 1), 10);
+                is_recruited = !!(flags & 1);
+                is_loyal = !!(flags & 2);
+                is_dead = !!(flags & 4);
+                roles = this.deserialiseRoles(teammate.substr(5));
+
+                deserialised = new App.ME2.Teammate(this.app.getHenchman(henchman_id), is_loyal, is_recruited, is_dead);
+                if (is_dead) {
+                    deserialised.die(death_stage_id, death_cause);
+                }
+                deserialised.roles = roles;
+
+                return deserialised;
+            };
+
+            Serialisation.prototype.serialiseNormandy = function (normandy) {
+                var elements;
+                var flags;
+
+                flags = 0 + (normandy.has_armour() ? 1 : 0) + (normandy.has_shielding() ? 2 : 0) + (normandy.has_thanix_cannon() ? 4 : 0);
+
+                elements = [
+                    this.lpad(normandy.delay(), 2),
+                    this.lpad(flags, 1)
+                ];
+
+                return elements.join("");
+            };
+
+            Serialisation.prototype.deserialiseNormandy = function (serialised) {
+                var flags;
+                var has_armour;
+                var has_shielding;
+                var has_thanix_cannon;
+                var delay;
+
+                delay = parseInt(serialised.substr(0, 2), 10);
+                flags = parseInt(serialised.substr(2), 10);
+                has_armour = !!(flags & 1);
+                has_shielding = !!(flags & 2);
+                has_thanix_cannon = !!(flags & 4);
+
+                return new App.ME2.Normandy(has_armour, has_shielding, has_thanix_cannon, delay);
+            };
+
+            Serialisation.prototype.serialise = function (state) {
+                var _this = this;
+                var elements;
+
+                elements = [
+                    this.lpad(state.stage_id, 2),
+                    this.serialiseNormandy(state.normandy),
+                    _.map(state.teammates.value(), function (teammate) {
+                        return _this.serialiseTeammate(teammate);
+                    }).join("")
+                ];
+
+                return elements.join("");
+            };
+
+            Serialisation.prototype.deserialise = function (serialised) {
+                var _this = this;
+                var deserialised;
+
                 deserialised = new App.ME2.State(this.app);
-                deserialised.stage_id = serialised.stage_id;
 
-                deserialised.normandy.delay(serialised.normandy.delay);
-                deserialised.normandy.has_armour(serialised.normandy.has_armour);
-                deserialised.normandy.has_shielding(serialised.normandy.has_shielding);
-                deserialised.normandy.has_thanix_cannon(serialised.normandy.has_thanix_cannon);
-
-                deserialised.teammates = new App.ME2.Teammates(_.map(serialised.teammates, function (serialised_teammate) {
-                    var teammate;
-                    teammate = new App.ME2.Teammate(_this.app.getHenchman(serialised_teammate.henchman_id), serialised_teammate.is_loyal, serialised_teammate.is_recruited, serialised_teammate.is_dead);
-                    teammate.death_cause = serialised_teammate.death_cause;
-                    teammate.death_stage_id = serialised_teammate.death_stage_id;
-                    teammate.roles = serialised_teammate.roles;
-                    return teammate;
+                deserialised.stage_id = parseInt(serialised.substr(0, 2), 10);
+                deserialised.normandy = this.deserialiseNormandy(serialised.substr(2, 3));
+                deserialised.teammates = new App.ME2.Teammates(_.map(serialised.substr(5).match(/.{9}/g), function (serialised_teammate) {
+                    return _this.deserialiseTeammate(serialised_teammate);
                 }));
 
                 return deserialised;

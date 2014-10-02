@@ -13,7 +13,7 @@ module App {
             export class Stager implements IStager {
                 public app: App.Application;
                 public stages: App.ME2.Stages.IStage[];
-                private freezes: string[];
+                private freezes: ISerialisationSerialised[];
                 public stage: KnockoutObservable<App.ME2.Stages.IStage>;
                 public teammates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
 
