@@ -136,7 +136,6 @@ module App {
 
                 deserialised = new App.ME2.Teammate(this.app.getHenchman(henchman_id), is_recruited, is_loyal, is_dead);
                 if (is_dead) {
-                    console.log("die", death_cause - 1);
                     deserialised.die(death_stage_id, death_cause - 1);
                 }
                 deserialised.roles = roles;
@@ -223,14 +222,10 @@ module App {
                 var new_teammates: App.ME2.Teammates;
                 new_teammates = new_state.teammates();
 
-                window["deserialised"] = new_state;
-
                 state.teammates().each((teammate: App.ME2.Teammate, index: number): void => {
                     var new_teammate: App.ME2.Teammate;
 
                     new_teammate = new_teammates.findByHenchman(teammate.henchman);
-
-                    console.log("Restoring", teammate.henchman.name, "current recruited", teammate.is_recruited(), "restoring to", new_teammate.is_recruited());
 
                     teammate.is_recruited(new_teammate.is_recruited());
                     teammate.is_loyal(new_teammate.is_loyal());
@@ -241,8 +236,6 @@ module App {
                 });
 
                 state.stage(new_state.stage());
-
-                //state.teammates(new App.ME2.Teammates(new_state.teammates().value()));
             }
         }
     }
