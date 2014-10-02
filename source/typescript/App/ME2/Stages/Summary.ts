@@ -43,27 +43,6 @@ module App {
                     this.htl_score = ko.observable<string>(undefined);
                     this.htl_candidates_count = ko.observable<number>(undefined);
                     this.htl_death_count = ko.observable<number>(undefined);
-
-                    // Only do the calculations when this stage is selected
-                    this.stager.app.state.stage.subscribe((stage: App.ME2.Stages.IStage) => {
-                        if (stage === this) {
-                            var htl_teammates: App.ME2.Teammates;
-
-                            htl_teammates = this.stager.app.state.teammates().withRole(App.ME2.TeammateRoles.HeldTheLine);
-
-                            this.defence_reporter(this.getDefenceReporter());
-                            this.shepard_lives(this.getShepardLives());
-                            this.shepard_pulled_up_by(this.getShepardCatcher());
-                            this.keep_base_advocate(this.getKeepBaseAdvocate());
-                            this.destroy_base_advocate(this.getDestroyBaseAdvocate());
-                            this.crew_survival(this.getCrewSurvival());
-
-                            this.htl_total(htl_teammates.getHoldTheLineTotal());
-                            this.htl_score(htl_teammates.getHoldTheLineScore().toFixed(2));
-                            this.htl_candidates_count(htl_teammates.length());
-                            this.htl_death_count(htl_teammates.getHoldTheLineDeathCount());
-                        }
-                    });
                 }
 
                 private getLivingTeammates (): App.ME2.Teammates {
@@ -112,6 +91,24 @@ module App {
                     } else {
                         return SummaryCrewSurvivalOptions.AllDied;
                     }
+                }
+
+                public setup (): void {
+                    var htl_teammates: App.ME2.Teammates;
+
+                    htl_teammates = this.stager.app.state.teammates().withRole(App.ME2.TeammateRoles.HeldTheLine);
+
+                    this.defence_reporter(this.getDefenceReporter());
+                    this.shepard_lives(this.getShepardLives());
+                    this.shepard_pulled_up_by(this.getShepardCatcher());
+                    this.keep_base_advocate(this.getKeepBaseAdvocate());
+                    this.destroy_base_advocate(this.getDestroyBaseAdvocate());
+                    this.crew_survival(this.getCrewSurvival());
+
+                    this.htl_total(htl_teammates.getHoldTheLineTotal());
+                    this.htl_score(htl_teammates.getHoldTheLineScore().toFixed(2));
+                    this.htl_candidates_count(htl_teammates.length());
+                    this.htl_death_count(htl_teammates.getHoldTheLineDeathCount());
                 }
             }
         }

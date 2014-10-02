@@ -19,6 +19,7 @@ module App {
             sortByDefenceReportPriority (ascending?: boolean): Teammates;
             sortByKeepBasePriority (ascending?: boolean): Teammates;
             sortByDestroyBasePriority (ascending?: boolean): Teammates;
+            sortByIsRecruited (ascending?: boolean): Teammates;
             without (...teammates: App.ME2.Teammate[]): Teammates;
             filter (iterator: Utilities.IObjectArrayIterator<App.ME2.Teammate, boolean>): Teammates;
             find (iterator: Utilities.IObjectArrayIterator<App.ME2.Teammate, boolean>): App.ME2.Teammate;
@@ -125,6 +126,12 @@ module App {
 
             public sortByDestroyBasePriority (ascending: boolean = true): Teammates {
                 return this.sortByHenchmanProperty("destroy_base_priority", ascending);
+            }
+
+            public sortByIsRecruited (ascending: boolean = true): Teammates {
+                return this.sort<number>((teammate: App.ME2.Teammate): number => {
+                    return teammate.is_recruited() ? 0 : 1;
+                });
             }
 
             public whoAdvocateKeepingTheBase (): Teammates {

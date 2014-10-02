@@ -23,29 +23,45 @@
 								<div class="col-md-8">
 									<h3>Teammates</h3>
 									<p>The game requires at least <strong>8</strong> teammates to be recruited.</p>
-									<table class="table table-striped setup-table">
+									<table class="table table-rounded table-striped setup-table table-condensed">
 										<thead>
 										<tr>
-											<th>Teammate</th>
-											<th><label><input type="checkbox" data-bind="checked: all_recruited" /> Is Recruited</label></th>
-											<th><label><input type="checkbox" data-bind="checked: all_loyal" /> Is Loyal</label></th>
+											<th width="60%"></th>
+											<th>
+												<div class="checkbox">
+													<label><input type="checkbox" data-bind="checked: all_recruited" /> Recruited</label>
+												</div>
+											</th>
+											<th>
+												<div class="checkbox">
+													<label><input type="checkbox" data-bind="checked: all_loyal" /> Loyal</label>
+												</div>
+											</th>
 										</tr>
 										</thead>
 										<tbody>
 										<!-- ko foreach: $root.state.teammates().value() -->
 										<tr>
 											<td>
-												<a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }, text: henchman.name"></a>
+												<div class="checkbox">
+													<label>
+													<a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }, text: henchman.name"></a>
+													</label>
+												</div>
 											</td>
 											<td>
-												<label>
-													<input type="checkbox" data-bind="attr: { 'disabled': (henchman.is_essential ? 'disabled' : undefined) }, checked: is_recruited" />
-												</label>
+												<div class="checkbox">
+													<label>
+														<input type="checkbox" data-bind="attr: { 'disabled': (henchman.is_essential ? 'disabled' : undefined) }, checked: is_recruited" /> &nbsp;
+													</label>
+												</div>
 											</td>
 											<td>
-												<label>
-													<input type="checkbox" data-bind="attr: { 'disabled': (is_recruited() ? undefined : 'disabled') }, checked: is_loyal" />
-												</label>
+												<div class="checkbox">
+													<label>
+														<input type="checkbox" data-bind="attr: { 'disabled': (is_recruited() ? undefined : 'disabled') }, checked: is_loyal" /> &nbsp;
+													</label>
+												</div>
 											</td>
 										</tr>
 										<!-- /ko -->
@@ -217,7 +233,7 @@
 						<!-- /ko -->
 					<!-- /ko -->
 
-					<table class="table table-striped summary-table" data-bind="visible: $root.state.stage().id !== App.ME2.Stages.StageIDs.Setup">
+					<table class="table table-rounded table-striped summary-table table-hover" data-bind="visible: $root.state.stage().id !== App.ME2.Stages.StageIDs.Setup">
 						<thead>
 							<tr>
 								<th>Teammates</th>
@@ -229,7 +245,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<!-- ko with: $root.state.teammates().value() -->
+							<!-- ko with: $root.state.teammates().sortByIsRecruited().value() -->
 								<!-- ko foreach: $data -->
 									<tr data-bind="attr: { class: (is_recruited() ? '' : 'text-warning warning') }, click: function () { $root.henchman(henchman) }">
 										<td data-bind="attr: { class: (is_dead() ? 'danger' : '') }">

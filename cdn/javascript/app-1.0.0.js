@@ -464,6 +464,13 @@ var App;
                 return this.sortByHenchmanProperty("destroy_base_priority", ascending);
             };
 
+            Teammates.prototype.sortByIsRecruited = function (ascending) {
+                if (typeof ascending === "undefined") { ascending = true; }
+                return this.sort(function (teammate) {
+                    return teammate.is_recruited() ? 0 : 1;
+                });
+            };
+
             Teammates.prototype.whoAdvocateKeepingTheBase = function () {
                 return this.filter(function (teammate) {
                     return teammate.henchman.keep_base_priority > 0;
@@ -774,6 +781,10 @@ var App;
                         new App.ME2.Stages.Summary(this)
                     ], function (stage) {
                         return stage.id;
+                    });
+
+                    this.app.state.stage.subscribe(function (stage) {
+                        stage.setup();
                     });
                 }
                 Stager.prototype.getStage = function (id) {
@@ -1161,7 +1172,6 @@ var App;
             var Summary = (function (_super) {
                 __extends(Summary, _super);
                 function Summary(stager) {
-                    var _this = this;
                     _super.call(this, stager);
                     this.id = 5 /* Summary */;
                     this.label = "Summary";
@@ -1176,26 +1186,6 @@ var App;
                     this.htl_score = ko.observable(undefined);
                     this.htl_candidates_count = ko.observable(undefined);
                     this.htl_death_count = ko.observable(undefined);
-
-                    this.stager.app.state.stage.subscribe(function (stage) {
-                        if (stage === _this) {
-                            var htl_teammates;
-
-                            htl_teammates = _this.stager.app.state.teammates().withRole(9 /* HeldTheLine */);
-
-                            _this.defence_reporter(_this.getDefenceReporter());
-                            _this.shepard_lives(_this.getShepardLives());
-                            _this.shepard_pulled_up_by(_this.getShepardCatcher());
-                            _this.keep_base_advocate(_this.getKeepBaseAdvocate());
-                            _this.destroy_base_advocate(_this.getDestroyBaseAdvocate());
-                            _this.crew_survival(_this.getCrewSurvival());
-
-                            _this.htl_total(htl_teammates.getHoldTheLineTotal());
-                            _this.htl_score(htl_teammates.getHoldTheLineScore().toFixed(2));
-                            _this.htl_candidates_count(htl_teammates.length());
-                            _this.htl_death_count(htl_teammates.getHoldTheLineDeathCount());
-                        }
-                    });
                 }
                 Summary.prototype.getLivingTeammates = function () {
                     return this.stager.app.state.teammates().whoAreAlive().whoAreRecruited();
@@ -1241,6 +1231,24 @@ var App;
                     } else {
                         return 2 /* AllDied */;
                     }
+                };
+
+                Summary.prototype.setup = function () {
+                    var htl_teammates;
+
+                    htl_teammates = this.stager.app.state.teammates().withRole(9 /* HeldTheLine */);
+
+                    this.defence_reporter(this.getDefenceReporter());
+                    this.shepard_lives(this.getShepardLives());
+                    this.shepard_pulled_up_by(this.getShepardCatcher());
+                    this.keep_base_advocate(this.getKeepBaseAdvocate());
+                    this.destroy_base_advocate(this.getDestroyBaseAdvocate());
+                    this.crew_survival(this.getCrewSurvival());
+
+                    this.htl_total(htl_teammates.getHoldTheLineTotal());
+                    this.htl_score(htl_teammates.getHoldTheLineScore().toFixed(2));
+                    this.htl_candidates_count(htl_teammates.length());
+                    this.htl_death_count(htl_teammates.getHoldTheLineDeathCount());
                 };
                 return Summary;
             })(Stages.Stage);

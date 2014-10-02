@@ -26,6 +26,10 @@ module App {
                     ], (stage: App.ME2.Stages.IStage): App.ME2.Stages.StageIDs => {
                         return stage.id;
                     });
+
+                    this.app.state.stage.subscribe((stage: App.ME2.Stages.IStage) => {
+                        stage.setup();
+                    });
                 }
 
                 public getStage (id: App.ME2.Stages.StageIDs): App.ME2.Stages.IStage {
