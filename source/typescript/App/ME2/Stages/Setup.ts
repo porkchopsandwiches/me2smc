@@ -18,11 +18,11 @@ module App {
                 public evaluate () {
 
                     // Limit teammates to those recruited
-                    this.stager.app.state.teammates = this.stager.app.state.teammates.recruited();
+                    //this.stager.app.state.teammates = this.stager.app.state.teammates.recruited();
                 }
 
                 private getTeammates (): App.ME2.Teammates {
-                    return this.stager.app.state.teammates;
+                    return this.stager.app.state.teammates();
                 }
 
                 public setup (): void {

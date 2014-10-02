@@ -31,7 +31,7 @@ module App {
                     this.getFieldValue("occulus_squadmate_2").addRole(App.ME2.TeammateRoles.OcculusSquadmate);
 
                     // Get candidates to die (that is, they were not Occulus Squadmates)
-                    dpt = this.stager.app.state.teammates.withoutRole(App.ME2.TeammateRoles.OcculusSquadmate);
+                    dpt = this.stager.app.state.teammates().withoutRole(App.ME2.TeammateRoles.OcculusSquadmate);
 
                     // Apply deaths
                     if (!this.stager.app.state.normandy.has_shielding()) {

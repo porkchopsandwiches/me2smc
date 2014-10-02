@@ -2,14 +2,15 @@
 module App {
     export module ME2 {
         export interface IState {
-            teammates: App.ME2.Teammates;
+            teammates: KnockoutObservable<App.ME2.Teammates>;
             normandy: App.ME2.Normandy;
             stage_id: App.ME2.Stages.StageIDs;
             app: App.Application;
         }
 
         export class State implements IState {
-            public teammates: App.ME2.Teammates;
+            private _teammates: App.ME2.Teammates;
+            public teammates: KnockoutObservable<App.ME2.Teammates>;
             public normandy: App.ME2.Normandy;
             public stage_id: App.ME2.Stages.StageIDs;
             public app: App.Application;
@@ -21,11 +22,13 @@ module App {
             }
 
             private bootstrapTeammates (): void {
-                this.teammates = new App.ME2.Teammates(_.chain<App.ME2.Henchman>(this.app.getHenchmen()).map<App.ME2.Teammate>((henchman: App.ME2.Henchman): App.ME2.Teammate => {
+                this._teammates = new App.ME2.Teammates(_.chain<App.ME2.Henchman>(this.app.getHenchmen()).map<App.ME2.Teammate>((henchman: App.ME2.Henchman): App.ME2.Teammate => {
                     return new App.ME2.Teammate(henchman, henchman.is_essential, false, false);
                 }).sortBy((teammate: App.ME2.Teammate) => {
                     return teammate.henchman.name;
                 }).value());
+
+                this.teammates = ko.observable<App.ME2.Teammates>(this._teammates);
             }
         }
     }

@@ -41,7 +41,7 @@ module App {
                 }
 
                 private getLivingTeammates (): App.ME2.Teammates {
-                    return this.stager.app.state.teammates.alive();
+                    return this.stager.app.state.teammates().alive();
                 }
 
                 private getShepardLives (): boolean {
@@ -61,21 +61,21 @@ module App {
                 }
 
                 private getDefenceReporter (): App.ME2.Teammate {
-                    return this.stager.app.state.teammates.withRole(App.ME2.TeammateRoles.HeldTheLine).sortByDefenceReportPriority().last();
+                    return this.stager.app.state.teammates().withRole(App.ME2.TeammateRoles.HeldTheLine).sortByDefenceReportPriority().last();
                 }
 
                 private getKeepBaseAdvocate (): App.ME2.Teammate {
-                    return this.stager.app.state.teammates.withRole(App.ME2.TeammateRoles.BossSquadmate).whoAdvocateKeepingTheBase().sortByKeepBasePriority().last();
+                    return this.stager.app.state.teammates().withRole(App.ME2.TeammateRoles.BossSquadmate).whoAdvocateKeepingTheBase().sortByKeepBasePriority().last();
                 }
 
                 private getDestroyBaseAdvocate (): App.ME2.Teammate {
-                    return this.stager.app.state.teammates.withRole(App.ME2.TeammateRoles.BossSquadmate).whoAdvocateDestroyingTheBase().sortByDestroyBasePriority().last();
+                    return this.stager.app.state.teammates().withRole(App.ME2.TeammateRoles.BossSquadmate).whoAdvocateDestroyingTheBase().sortByDestroyBasePriority().last();
                 }
 
                 private getCrewSurvival (): SummaryCrewSurvivalOptions {
 
                     // If no escort, they die regardless
-                    if (this.stager.app.state.teammates.withRole(App.ME2.TeammateRoles.LongWalkEscort).length() === 0) {
+                    if (this.stager.app.state.teammates().withRole(App.ME2.TeammateRoles.LongWalkEscort).length() === 0) {
                         return SummaryCrewSurvivalOptions.AllDied;
                     }
 

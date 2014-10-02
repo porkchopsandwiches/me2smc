@@ -162,7 +162,6 @@ module App {
                 return elements.join("");
             }
 
-
             private deserialiseNormandy (serialised: ISerialisedNormandy): App.ME2.Normandy {
                 var flags: number;
                 var has_armour: boolean;
@@ -190,53 +189,36 @@ module App {
                 elements = [
                     this.lpad(state.stage_id, 2),
                     this.serialiseNormandy(state.normandy),
-                    _.map<App.ME2.Teammate, ISerialisedTeammate>(state.teammates.value(), (teammate: App.ME2.Teammate): ISerialisedTeammate => {
+                    _.map<App.ME2.Teammate, ISerialisedTeammate>(state.teammates().value(), (teammate: App.ME2.Teammate): ISerialisedTeammate => {
                         return this.serialiseTeammate(teammate);
                     }).join("")
                 ];
 
                 return elements.join("");
-                /*
-
-                var serialised: ISerialisationSerialised;
-
-                serialised = {
-                    stage_id: state.stage_id,
-                    normandy: this.serialiseNormandy(state.normandy),
-                    teammates: _.map<App.ME2.Teammate, ISerialisedTeammate>(state.teammates.value(), (teammate: App.ME2.Teammate): ISerialisedTeammate => {
-                        return this.serialiseTeammate(teammate);
-                    })
-                };
-
-                return JSON.stringify(serialised);
-                */
             }
 
             public deserialise (serialised: ISerialisationSerialised): App.ME2.State {
-                //var serialised: ISerialisationSerialised;
                 var deserialised: App.ME2.State;
-                //var stage_id: string;
 
-                //serialised = JSON.parse(state);
                 deserialised = new App.ME2.State(this.app);
-                //deserialised.stage_id = serialised.stage_id;
                 deserialised.stage_id = parseInt(serialised.substr(0, 2), 10);
                 deserialised.normandy = this.deserialiseNormandy(serialised.substr(2, 3));
-                deserialised.teammates = new App.ME2.Teammates(_.map(serialised.substr(5).match(/.{9}/g), (serialised_teammate: ISerialisedTeammate): App.ME2.Teammate => {
+                deserialised.teammates(new App.ME2.Teammates(_.map(serialised.substr(5).match(/.{9}/g), (serialised_teammate: ISerialisedTeammate): App.ME2.Teammate => {
                     return this.deserialiseTeammate(serialised_teammate);
-                }));
-
-                /*
-                // Defrost Normandy
-                deserialised.normandy = this.deserialiseNormandy(serialised.normandy);
-
-                // Defrost teammates
-                deserialised.teammates = new App.ME2.Teammates(_.map<ISerialisedTeammate, App.ME2.Teammate>(serialised.teammates, (serialised_teammate: ISerialisedTeammate): App.ME2.Teammate => {
-                    return this.deserialiseTeammate(serialised_teammate);
-                }));
-                */
+                })));
 
                 return deserialised;
+            }
+
+            public applyStateChanges (state: App.ME2.State, serialised: ISerialisationSerialised): void {
+                var new_state = this.deserialise(serialised);
+
+                state.stage_id = new_state.stage_id;
+                state.normandy.delay(new_state.normandy.delay());
+                state.normandy.has_armour(new_state.normandy.has_armour());
+                state.normandy.has_shielding(new_state.normandy.has_shielding());
+                state.normandy.has_thanix_cannon(new_state.normandy.has_thanix_cannon());
+                state.teammates(new App.ME2.Teammates(new_state.teammates().value()));
             }
         }
     }

@@ -7,7 +7,6 @@ module App {
                 app: App.Application;
                 stages: App.ME2.Stages.IStage[];
                 stage: KnockoutObservable<App.ME2.Stages.IStage>;
-                teammates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
             }
 
             export class Stager implements IStager {
@@ -15,7 +14,6 @@ module App {
                 public stages: App.ME2.Stages.IStage[];
                 private freezes: ISerialisationSerialised[];
                 public stage: KnockoutObservable<App.ME2.Stages.IStage>;
-                public teammates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
 
                 constructor (app: App.Application) {
                     this.app = app;
@@ -33,10 +31,6 @@ module App {
                         return stage.id;
                     });
 
-                    this.teammates = ko.forcibleComputed(() => {
-                        return this.app.state.teammates.value();
-                    });
-
                     // Track changes to the stage ID in the state
                     this.stage.subscribe((stage: App.ME2.Stages.IStage) => {
                         this.app.state.stage_id = stage.id;
@@ -49,7 +43,7 @@ module App {
                     if (current_stage) {
                         this.app.state = this.app.serialisation.deserialise(this.freezes[current_stage.id - 1]);
                         this.setStage(this.stages[current_stage.id - 1]);
-                        this.teammates.evaluateImmediate();
+                        this.app.state.teammates.valueHasMutated();
                     }
                 }
 
@@ -65,7 +59,7 @@ module App {
                             this.freezes[current_stage.id] = this.app.serialisation.serialise(this.app.state);
 
                             this.stage().evaluate();
-                            this.teammates.evaluateImmediate();
+                            this.app.state.teammates.valueHasMutated();
 
                             if (current_stage.id < this.stages.length - 1) {
                                 this.setStage(this.stages[current_stage.id + 1]);

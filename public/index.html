@@ -23,7 +23,7 @@
 							</tr>
 						</thead>
 						<tbody>
-							<!-- ko foreach: $root.state.teammates.value() -->
+							<!-- ko foreach: $root.state.teammates().value() -->
 								<tr>
 									<td>
 										<a href="#view-profile" data-bind="click: function () { $root.henchman(henchman) }, text: henchman.name"></a>
@@ -209,7 +209,7 @@
 					</tr>
 				</thead>
 				<tbody>
-					<!-- ko with: stager.teammates -->
+					<!-- ko with: $root.state.teammates().value() -->
 						<!-- ko foreach: $data -->
 							<tr>
 								<td data-bind="attr: { class: (is_dead() ? 'danger' : '') }">

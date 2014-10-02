@@ -70,8 +70,8 @@ module App {
                                 var candidates: App.ME2.Teammate[];
 
                                 // Candidates are those who fulfill the field's filter, and are not in use elsewhere
-                                candidates = this.stager.app.state.teammates.filter((teammate: App.ME2.Teammate) => {
-                                    return config.filter(teammate, this.stager.app.state.teammates);
+                                candidates = this.stager.app.state.teammates().filter((teammate: App.ME2.Teammate) => {
+                                    return config.filter(teammate, this.stager.app.state.teammates());
                                 }).filter((candidate: App.ME2.Teammate): boolean => {
                                     return !_.find(this.fields, (other_field: ITeammateObservableField): boolean => {
 

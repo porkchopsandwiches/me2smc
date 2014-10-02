@@ -45,7 +45,7 @@ module App {
                         squadmate_2.die(this.id, App.ME2.TeammateDeathCauses.Boss);
                     }
 
-                    this.stager.app.state.teammates.alive().withoutRole(App.ME2.TeammateRoles.BossSquadmate).withoutRole(App.ME2.TeammateRoles.LongWalkEscort).addRole(App.ME2.TeammateRoles.HeldTheLine).whoDieHoldingTheLine().die(this.id, App.ME2.TeammateDeathCauses.HoldTheLine);
+                    this.stager.app.state.teammates().alive().withoutRole(App.ME2.TeammateRoles.BossSquadmate).withoutRole(App.ME2.TeammateRoles.LongWalkEscort).addRole(App.ME2.TeammateRoles.HeldTheLine).whoDieHoldingTheLine().die(this.id, App.ME2.TeammateDeathCauses.HoldTheLine);
                 }
             }
         }
