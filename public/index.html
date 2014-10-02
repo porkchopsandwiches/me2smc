@@ -265,19 +265,28 @@
 			</table>
 
 			<!-- ko with: $root.state.stage -->
-				<button class="btn btn-primary" data-bind="enable: id > App.ME2.Stages.StageIDs.Setup, click: function () { $root.stager.previousStage() }">Previous</button>
-				<button class="btn btn-primary" data-bind="enable: is_evaluatable, click: function () { $root.stager.nextStage() }">Next</button>
+				<div class="row">
+					<div class="col-md-2">
+						<button class="btn btn-primary btn-block" data-bind="enable: id > App.ME2.Stages.StageIDs.Setup, click: function () { $root.stager.previousStage() }">Previous</button>
+					</div>
+					<div class="col-md-2">
+						<button class="btn btn-primary btn-block" data-bind="enable: is_evaluatable, click: function () { $root.stager.nextStage() }">Next</button>
+					</div>
+					<div class="col-md-8">
+						<form role="form" class="form-horizontal">
+							<div class="input-group">
+								<span class="input-group-addon">ID</span>
+								<input class="form-control" type="text" id="serialised" data-bind="value: $root.state.serialised" />
+								<span class="input-group-btn">
+									<button class="btn btn-primary" type="button" data-bind="click: function () { $root.state.applySerialisedState($('#serialised').val()) }">Restore</button>
+								</span>
+							</div>
+						</form>
+					</div>
+				</div>
 			<!-- /ko -->
 
-			<form role="form" class="form-horizontal">
-				<div class="input-group">
-					<span class="input-group-addon">ID</span>
-					<input class="form-control" type="text" id="serialised" data-bind="value: $root.state.serialised" />
-					<span class="input-group-btn">
-						<button class="btn btn-primary" type="button" data-bind="click: function () { $root.state.applySerialisedState($('#serialised').val()) }">Restore</button>
-					</span>
-				</div>
-			</form>
+
 
 			<div class="modal fade" tabindex="-1" role="dialog" data-bind="modal: $root.henchman()">
 				<!-- ko with: $root.henchman() -->

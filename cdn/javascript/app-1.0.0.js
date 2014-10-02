@@ -1352,28 +1352,26 @@ var App;
                 return indexes;
             };
 
-            Serialisation.prototype.serialiseRoles = function (roles) {
-                return this.lpad(this.indexesToFlags(roles), 4);
-            };
-
-            Serialisation.prototype.deserialiseRoles = function (roles) {
-                return _.map(this.flagsToIndexes(parseInt(roles, 10)), function (index) {
-                    return index;
-                });
-            };
-
             Serialisation.prototype.serialiseTeammate = function (teammate) {
                 var elements;
-                var flags;
+                var roles;
 
-                flags = 0 + (teammate.is_recruited() ? 1 : 0) + (teammate.is_loyal() ? 2 : 0) + (teammate.is_dead() ? 4 : 0);
+                roles = teammate.roles.slice(0);
+                if (teammate.is_recruited()) {
+                    roles.push(10);
+                }
+                if (teammate.is_loyal()) {
+                    roles.push(11);
+                }
+                if (teammate.is_dead()) {
+                    roles.push(12);
+                }
 
                 elements = [
-                    this.lpad(teammate.henchman.id, 2),
+                    teammate.henchman.id.toString(16),
                     this.lpad(teammate.death_cause || 0, 1),
                     this.lpad(teammate.death_stage_id || 0, 1),
-                    this.lpad(flags, 1),
-                    this.serialiseRoles(teammate.roles)
+                    this.lpad(this.indexesToFlags(roles).toString(16), 4)
                 ];
 
                 return elements.join("");
@@ -1383,23 +1381,23 @@ var App;
                 var henchman_id;
                 var death_cause;
                 var death_stage_id;
-                var flags;
+
                 var is_recruited;
                 var is_loyal;
                 var is_dead;
                 var roles;
                 var deserialised;
 
-                henchman_id = parseInt(teammate.substr(0, 2), 10);
-                death_cause = parseInt(teammate.substr(2, 1), 10) || undefined;
-                death_stage_id = parseInt(teammate.substr(3, 1), 10) || undefined;
-                flags = parseInt(teammate.substr(4, 1), 10);
-                is_recruited = !!(flags & 1);
-                is_loyal = !!(flags & 2);
-                is_dead = !!(flags & 4);
-                roles = this.deserialiseRoles(teammate.substr(5));
+                henchman_id = parseInt("0x" + teammate.substr(0, 1), 16);
+                death_cause = parseInt(teammate.substr(1, 1), 10) || undefined;
+                death_stage_id = parseInt(teammate.substr(2, 1), 10) || undefined;
+                roles = this.flagsToIndexes(parseInt("0x" + teammate.substr(3), 16));
 
-                console.log("deserialising", teammate, this.app.getHenchman(henchman_id).name, is_recruited);
+                is_recruited = _.indexOf(roles, 10) >= 0;
+                is_loyal = _.indexOf(roles, 11) >= 0;
+                is_dead = _.indexOf(roles, 12) >= 0;
+
+                roles = _.without(roles, 10, 11, 12);
 
                 deserialised = new App.ME2.Teammate(this.app.getHenchman(henchman_id), is_recruited, is_loyal, is_dead);
                 if (is_dead) {
@@ -1462,7 +1460,7 @@ var App;
                 deserialised = new App.ME2.State(this.app);
                 deserialised.stage(this.app.stager.getStage(parseInt(serialised.substr(0, 2), 10)));
                 deserialised.normandy = this.deserialiseNormandy(serialised.substr(2, 3));
-                deserialised.teammates(new App.ME2.Teammates(_.map(serialised.substr(5).match(/.{9}/g), function (serialised_teammate) {
+                deserialised.teammates(new App.ME2.Teammates(_.map(serialised.substr(5).match(/.{7}/g), function (serialised_teammate) {
                     return _this.deserialiseTeammate(serialised_teammate);
                 })));
 
