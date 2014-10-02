@@ -297,14 +297,11 @@
 						</tbody>
 					</table>
 				</div>
-
-
 				<div class="panel-footer">
-
 					<!-- ko with: $root.state.stage -->
 						<div class="row">
 							<div class="col-md-2">
-								<button class="btn btn-primary btn-block" data-bind="enable: id > App.ME2.Stages.StageIDs.Setup, click: function () { $root.stager.previousStage() }">Previous</button>
+								<button class="btn btn-primary btn-block" data-bind="enable: $root.stager.can_go_back, click: function () { $root.stager.back() }">Previous</button>
 							</div>
 							<div class="col-md-2">
 								<button class="btn btn-primary btn-block" data-bind="enable: is_evaluatable, click: function () { $root.stager.nextStage() }">Next</button>
@@ -343,8 +340,6 @@
 										<p class="form-control-static" data-bind="text: App.Application.renderYesNo(!is_essential)"></p>
 									</div>
 								</div>
-
-
 								<fieldset>
 									<legend>Attributes</legend>
 									<div class="row">

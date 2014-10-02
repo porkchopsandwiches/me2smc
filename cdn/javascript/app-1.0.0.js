@@ -786,18 +786,17 @@ var App;
                     this.app.state.stage.subscribe(function (stage) {
                         stage.setup();
                     });
+
+                    this.can_go_back = ko.observable(false);
                 }
                 Stager.prototype.getStage = function (id) {
                     return this.stages[id];
                 };
 
-                Stager.prototype.previousStage = function () {
-                    var current_stage;
-                    current_stage = this.app.state.stage();
-                    if (current_stage) {
-                        this.app.state.applySerialisedState(this.freezes[current_stage.id - 1]);
-
-                        this.setStage(this.stages[current_stage.id - 1]);
+                Stager.prototype.back = function () {
+                    if (this.can_go_back()) {
+                        this.app.state.applySerialisedState(this.freezes.pop());
+                        this.can_go_back(!!this.freezes.length);
                     }
                 };
 
@@ -809,22 +808,19 @@ var App;
                     if (current_stage) {
                         if (current_stage.isEvaluatable()) {
                             this.freezes[current_stage.id] = this.app.state.serialise();
+                            this.can_go_back(true);
 
                             current_stage.evaluate();
 
                             if (current_stage.id < this.stages.length - 1) {
-                                this.setStage(this.stages[current_stage.id + 1]);
+                                this.app.state.stage(this.getStage(current_stage.id + 1));
                             }
                         } else {
                             throw new Error("Current Stage is not evaluatable.");
                         }
                     } else {
-                        this.setStage(this.stages[0]);
+                        this.app.state.stage(this.getStage(0));
                     }
-                };
-
-                Stager.prototype.setStage = function (stage) {
-                    this.app.state.stage(stage);
                 };
                 return Stager;
             })();
@@ -1314,7 +1310,7 @@ var App;
             Serialisation.prototype.lpad = function (value, length) {
                 if (typeof length === "undefined") { length = 2; }
                 var value_str;
-                value_str = "" + value;
+                value_str = value;
                 return value_str.length >= length ? value_str : new Array(length - value_str.length + 1).join("0") + value_str;
             };
 
@@ -1361,7 +1357,7 @@ var App;
                 elements = [
                     teammate.henchman.id.toString(16),
                     this.lpad((teammate.death_cause() === undefined ? 0 : teammate.death_cause() + 1).toString(16), 1),
-                    this.lpad(teammate.death_stage_id() || 0, 1),
+                    this.lpad((teammate.death_stage_id() || 0).toString(10), 1),
                     this.lpad(this.indexesToFlags(roles).toString(16), 4)
                 ];
 
@@ -1406,8 +1402,8 @@ var App;
                 flags = 0 + (normandy.has_armour() ? 1 : 0) + (normandy.has_shielding() ? 2 : 0) + (normandy.has_thanix_cannon() ? 4 : 0);
 
                 elements = [
-                    this.lpad(normandy.delay(), 2),
-                    this.lpad(flags, 1)
+                    this.lpad(normandy.delay().toString(10), 2),
+                    this.lpad(flags.toString(10), 1)
                 ];
 
                 return elements.join("");
@@ -1434,7 +1430,7 @@ var App;
                 var elements;
 
                 elements = [
-                    this.lpad(state.stage().id, 2),
+                    this.lpad(state.stage().id.toString(10), 2),
                     this.serialiseNormandy(state.normandy),
                     _.map(state.teammates().value(), function (teammate) {
                         return _this.serialiseTeammate(teammate);
@@ -1469,7 +1465,7 @@ var App;
                 var new_teammates;
                 new_teammates = new_state.teammates();
 
-                state.teammates().each(function (teammate, index) {
+                state.teammates().each(function (teammate) {
                     var new_teammate;
 
                     new_teammate = new_teammates.findByHenchman(teammate.henchman);

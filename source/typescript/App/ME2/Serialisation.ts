@@ -16,29 +16,7 @@ module App {
         }
 
         export interface ISerialisationSerialised extends String {
-            /*
-            normandy: ISerialisedNormandy;
-            stage_id: App.ME2.Stages.StageIDs;
-            teammates: ISerialisedTeammate[];
-            */
         }
-
-        /*
-        Stage
-            1 int(1)
-
-        Normandy stores:
-            3 flags
-            1 int(2)
-         */
-        /*
-        Each Teammate stores:
-            - Henchman ID int(2)
-            - 3 flags: Recruited, Loyal, Dead
-            - int(1) Death Cause
-            - int(1) Death Stage ID
-            - 10 flags for roles
-         */
 
         export class Serialisation implements ISerialisation {
             app: App.Application;
@@ -51,9 +29,9 @@ module App {
             /// Utility methods
             /// -------------------------------------------
 
-            private lpad (value: any, length: number = 2): string {
+            private lpad (value: string, length: number = 2): string {
                 var value_str: string;
-                value_str = "" + value;
+                value_str = value;
                 return value_str.length >= length ? value_str : new Array(length - value_str.length + 1).join("0") + value_str;
             }
 
@@ -105,7 +83,7 @@ module App {
                 elements = [
                     (<number> teammate.henchman.id).toString(16),
                     this.lpad((teammate.death_cause() === undefined ? 0 : teammate.death_cause() + 1).toString(16), 1),
-                    this.lpad(teammate.death_stage_id() || 0, 1),
+                    this.lpad((teammate.death_stage_id() || 0).toString(10), 1),
                     this.lpad(this.indexesToFlags(roles).toString(16), 4)
                 ];
 
@@ -155,8 +133,8 @@ module App {
                 flags = 0 + (normandy.has_armour() ? 1 : 0) + (normandy.has_shielding() ? 2 : 0) + (normandy.has_thanix_cannon() ? 4 : 0);
 
                 elements = [
-                    this.lpad(normandy.delay(), 2),
-                    this.lpad(flags, 1)
+                    this.lpad(normandy.delay().toString(10), 2),
+                    this.lpad(flags.toString(10), 1)
                 ];
 
                 return elements.join("");
@@ -187,7 +165,7 @@ module App {
                 var elements: any[];
 
                 elements = [
-                    this.lpad(state.stage().id, 2),
+                    this.lpad((<number>state.stage().id).toString(10), 2),
                     this.serialiseNormandy(state.normandy),
                     _.map<App.ME2.Teammate, ISerialisedTeammate>(state.teammates().value(), (teammate: App.ME2.Teammate): ISerialisedTeammate => {
                         return this.serialiseTeammate(teammate);
@@ -222,7 +200,7 @@ module App {
                 var new_teammates: App.ME2.Teammates;
                 new_teammates = new_state.teammates();
 
-                state.teammates().each((teammate: App.ME2.Teammate, index: number): void => {
+                state.teammates().each((teammate: App.ME2.Teammate): void => {
                     var new_teammate: App.ME2.Teammate;
 
                     new_teammate = new_teammates.findByHenchman(teammate.henchman);
