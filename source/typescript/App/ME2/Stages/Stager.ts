@@ -26,10 +26,6 @@ module App {
                     ], (stage: App.ME2.Stages.IStage): App.ME2.Stages.StageIDs => {
                         return stage.id;
                     });
-
-                    this.app.state.stage.subscribe((stage: App.ME2.Stages.IStage) => {
-                        stage.setup();
-                    }, "beforeChange");
                 }
 
                 public getStage (id: App.ME2.Stages.StageIDs): App.ME2.Stages.IStage {
@@ -72,7 +68,6 @@ module App {
                 }
 
                 private setStage (stage: App.ME2.Stages.IStage) {
-                    //stage.setup();
                     this.app.state.stage(stage);
                 }
             }

@@ -18,11 +18,8 @@ module App {
                 public evaluate () {
                 }
 
-                private getTeammates (): App.ME2.Teammates {
-                    return this.stager.app.state.teammates();
-                }
-
-                public setup (): void {
+                constructor (stager: App.ME2.Stages.Stager) {
+                    super(stager);
 
                     this.all_recruited = ko.pureComputed({
                         read: (): boolean => {
@@ -70,6 +67,10 @@ module App {
 
                         return is_evaluatable;
                     });
+                }
+
+                private getTeammates (): App.ME2.Teammates {
+                    return this.stager.app.state.teammates();
                 }
             }
         }

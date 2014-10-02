@@ -95,6 +95,44 @@ module App {
 
                         return field;
                     });
+
+                    // @todo add to above
+                    // Add subscriptions to force candidate recalculations
+                    _.each(this.fields, (field: ITeammateObservableField): void => {
+                        field.observable.subscribe((): void => {
+
+                            _.each(this.fields, (other_field: ITeammateObservableField) => {
+                                if (other_field.config.name !== field.config.name) {
+                                    other_field.candidates.evaluateImmediate();
+                                }
+                            });
+                        });
+                    });
+
+                    // Force a refresh
+                    _.each(this.fields, (field: ITeammateObservableField): void => {
+                        field.candidates.evaluateImmediate();
+                    });
+
+
+                    this.is_evaluatable = ko.forcibleComputed<boolean>(() => {
+                        //var observable: KnockoutObservable<App.ME2.Teammate>;
+                        var teammate: App.ME2.Teammate;
+                        var fields_missing: boolean;
+
+                        // Return false if there are any teammate fields with 'no teammate' values
+                        fields_missing = !!_.find(this.fields, (field: ITeammateObservableField): boolean => {
+                            if (field.config.optional) {
+                                return false;
+                            }
+
+                            teammate = field.observable();
+
+                            return teammate ? (teammate.henchman.id === undefined) : true;
+                        });
+
+                        return !fields_missing;
+                    });
                 }
 
                 public getField (name: string): ITeammateObservableField {
@@ -115,52 +153,8 @@ module App {
                     return this.getFieldObservable(name)();
                 }
 
-                // Replaces setupTeammateFields
-                public setupFields (): void {
-                    if (this.fields) {
-                        _.each(this.fields, (field: ITeammateObservableField): void => {
-                            field.observable.subscribe((): void => {
-
-                                _.each(this.fields, (other_field: ITeammateObservableField) => {
-                                    if (other_field.config.name !== field.config.name) {
-                                        other_field.candidates.evaluateImmediate();
-                                    }
-                                });
-                            });
-                        });
-
-                        _.each(this.fields, (field: ITeammateObservableField): void => {
-                            field.candidates.evaluateImmediate();
-                        });
-                    }
-                }
-
-                public linkIsEvaluatableToFields (): void {
-                    if (this.fields) {
-                        this.is_evaluatable = ko.forcibleComputed<boolean>(() => {
-                            //var observable: KnockoutObservable<App.ME2.Teammate>;
-                            var teammate: App.ME2.Teammate;
-                            var fields_missing: boolean;
-
-                            // Return false if there are any teammate fields with 'no teammate' values
-                            fields_missing = !!_.find(this.fields, (field: ITeammateObservableField): boolean => {
-                                if (field.config.optional) {
-                                    return false;
-                                }
-
-                                teammate = field.observable();
-
-                                return teammate ? (teammate.henchman.id === undefined) : true;
-                            });
-
-                            return !fields_missing;
-                        });
-                    }
-                }
-
                 public setup (): void {
-                    this.setupFields();
-                    this.linkIsEvaluatableToFields();
+                    console.log("setup being called...");
                 }
 
                 public isEvaluatable (): boolean {
