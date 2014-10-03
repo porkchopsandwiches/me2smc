@@ -272,16 +272,20 @@ var App;
         var TeammateDeathCauses = ME2.TeammateDeathCauses;
 
         (function (TeammateRoles) {
-            TeammateRoles[TeammateRoles["OcculusSquadmate"] = 0] = "OcculusSquadmate";
-            TeammateRoles[TeammateRoles["VentsSquadmate"] = 1] = "VentsSquadmate";
-            TeammateRoles[TeammateRoles["VentsVenter"] = 2] = "VentsVenter";
-            TeammateRoles[TeammateRoles["VentsLeader"] = 3] = "VentsLeader";
-            TeammateRoles[TeammateRoles["LongWalkSquadmate"] = 4] = "LongWalkSquadmate";
-            TeammateRoles[TeammateRoles["LongWalkEscort"] = 5] = "LongWalkEscort";
-            TeammateRoles[TeammateRoles["LongWalkBubbler"] = 6] = "LongWalkBubbler";
-            TeammateRoles[TeammateRoles["LongWalkLeader"] = 7] = "LongWalkLeader";
-            TeammateRoles[TeammateRoles["BossSquadmate"] = 8] = "BossSquadmate";
-            TeammateRoles[TeammateRoles["HeldTheLine"] = 9] = "HeldTheLine";
+            TeammateRoles[TeammateRoles["OcculusSquadmate1"] = 0] = "OcculusSquadmate1";
+            TeammateRoles[TeammateRoles["OcculusSquadmate2"] = 1] = "OcculusSquadmate2";
+            TeammateRoles[TeammateRoles["VentsSquadmate1"] = 2] = "VentsSquadmate1";
+            TeammateRoles[TeammateRoles["VentsSquadmate2"] = 3] = "VentsSquadmate2";
+            TeammateRoles[TeammateRoles["VentsVenter"] = 4] = "VentsVenter";
+            TeammateRoles[TeammateRoles["VentsLeader"] = 5] = "VentsLeader";
+            TeammateRoles[TeammateRoles["LongWalkSquadmate1"] = 6] = "LongWalkSquadmate1";
+            TeammateRoles[TeammateRoles["LongWalkSquadmate2"] = 7] = "LongWalkSquadmate2";
+            TeammateRoles[TeammateRoles["LongWalkEscort"] = 8] = "LongWalkEscort";
+            TeammateRoles[TeammateRoles["LongWalkBubbler"] = 9] = "LongWalkBubbler";
+            TeammateRoles[TeammateRoles["LongWalkLeader"] = 10] = "LongWalkLeader";
+            TeammateRoles[TeammateRoles["BossSquadmate1"] = 11] = "BossSquadmate1";
+            TeammateRoles[TeammateRoles["BossSquadmate2"] = 12] = "BossSquadmate2";
+            TeammateRoles[TeammateRoles["HeldTheLine"] = 13] = "HeldTheLine";
         })(ME2.TeammateRoles || (ME2.TeammateRoles = {}));
         var TeammateRoles = ME2.TeammateRoles;
 
@@ -317,7 +321,7 @@ var App;
                 return this.roles.indexOf(role) > -1;
             };
 
-            Teammate.prototype.hasAnyRole = function () {
+            Teammate.prototype.hasAnyOfTheseRoles = function () {
                 var _this = this;
                 var roles = [];
                 for (var _i = 0; _i < (arguments.length - 0); _i++) {
@@ -328,7 +332,7 @@ var App;
                 });
             };
 
-            Teammate.prototype.hasAllRoles = function () {
+            Teammate.prototype.hasAllOfTheseRoles = function () {
                 var _this = this;
                 var roles = [];
                 for (var _i = 0; _i < (arguments.length - 0); _i++) {
@@ -438,9 +442,29 @@ var App;
                 });
             };
 
+            Teammates.prototype.withAnyOfTheseRoles = function () {
+                var roles = [];
+                for (var _i = 0; _i < (arguments.length - 0); _i++) {
+                    roles[_i] = arguments[_i + 0];
+                }
+                return this.filter(function (teammate) {
+                    return teammate.hasAnyOfTheseRoles.apply(teammate, roles);
+                });
+            };
+
             Teammates.prototype.withoutRole = function (role) {
                 return this.filter(function (teammate) {
                     return !teammate.hasRole(role);
+                });
+            };
+
+            Teammates.prototype.withoutAnyOfTheseRoles = function () {
+                var roles = [];
+                for (var _i = 0; _i < (arguments.length - 0); _i++) {
+                    roles[_i] = arguments[_i + 0];
+                }
+                return this.filter(function (teammate) {
+                    return !teammate.hasAnyOfTheseRoles.apply(teammate, roles);
                 });
             };
 
@@ -895,10 +919,10 @@ var App;
                 Occulus.prototype.evaluate = function () {
                     var dpt;
 
-                    this.getFieldValue("occulus_squadmate_1").addRole(0 /* OcculusSquadmate */);
-                    this.getFieldValue("occulus_squadmate_2").addRole(0 /* OcculusSquadmate */);
+                    this.getFieldValue("occulus_squadmate_1").addRole(0 /* OcculusSquadmate1 */);
+                    this.getFieldValue("occulus_squadmate_2").addRole(1 /* OcculusSquadmate2 */);
 
-                    dpt = this.stager.app.state.teammates().whoAreRecruited().withoutRole(0 /* OcculusSquadmate */);
+                    dpt = this.stager.app.state.teammates().whoAreRecruited().withoutAnyOfTheseRoles(0 /* OcculusSquadmate1 */, 1 /* OcculusSquadmate2 */);
 
                     if (!this.stager.app.state.normandy.has_shielding()) {
                         dpt.whoAreAlive().sortByShieldingDeathPriority().last().die(this.id, 1 /* ShieldingFailure */);
@@ -957,14 +981,18 @@ var App;
                 Vents.prototype.evaluate = function () {
                     var venter;
                     var leader;
+                    var squadmate_1;
+                    var squadmate_2;
 
                     venter = this.getFieldValue("vent_venter");
                     leader = this.getFieldValue("vent_leader");
+                    squadmate_1 = this.getFieldValue("vent_squadmate_1");
+                    squadmate_2 = this.getFieldValue("vent_squadmate_2");
 
-                    this.getFieldValue("vent_squadmate_1").addRole(1 /* VentsSquadmate */);
-                    this.getFieldValue("vent_squadmate_2").addRole(1 /* VentsSquadmate */);
-                    venter.addRole(2 /* VentsVenter */);
-                    leader.addRole(3 /* VentsLeader */);
+                    squadmate_1.addRole(2 /* VentsSquadmate1 */);
+                    squadmate_2.addRole(3 /* VentsSquadmate2 */);
+                    venter.addRole(4 /* VentsVenter */);
+                    leader.addRole(5 /* VentsLeader */);
 
                     if (!venter.willBeEffectiveVentVenter()) {
                         venter.die(this.id, 3 /* VentsBadVenter */);
@@ -1037,18 +1065,18 @@ var App;
                     bubbler = this.getFieldValue("long_walk_bubbler");
                     leader = this.getFieldValue("long_walk_leader");
 
-                    squadmate_1.addRole(4 /* LongWalkSquadmate */);
-                    squadmate_2.addRole(4 /* LongWalkSquadmate */);
-                    escort.addRole(5 /* LongWalkEscort */);
-                    leader.addRole(7 /* LongWalkLeader */);
-                    bubbler.addRole(6 /* LongWalkBubbler */);
+                    squadmate_1.addRole(6 /* LongWalkSquadmate1 */);
+                    squadmate_2.addRole(7 /* LongWalkSquadmate2 */);
+                    escort.addRole(8 /* LongWalkEscort */);
+                    leader.addRole(10 /* LongWalkLeader */);
+                    bubbler.addRole(9 /* LongWalkBubbler */);
 
                     if (escort.henchman.id !== undefined && !escort.willBeEffectiveLongWalkEscort()) {
                         escort.die(this.id, 7 /* Escort */);
                     }
 
                     if (!bubbler.willBeEffectiveLongWalkBubbler()) {
-                        this.stager.app.state.teammates().withRole(4 /* LongWalkSquadmate */).sortByLongWalkDeathPriority().last().die(this.id, 5 /* LongWalkBadBubbler */);
+                        this.stager.app.state.teammates().withAnyOfTheseRoles(6 /* LongWalkSquadmate1 */, 7 /* LongWalkSquadmate2 */).sortByLongWalkDeathPriority().last().die(this.id, 5 /* LongWalkBadBubbler */);
                     }
 
                     if (!leader.willBeEffectiveLongWalkLeader()) {
@@ -1077,13 +1105,13 @@ var App;
                         {
                             name: "boss_squadmate_1",
                             filter: function (teammate) {
-                                return teammate.is_recruited() && !teammate.is_dead() && !teammate.hasRole(5 /* LongWalkEscort */);
+                                return teammate.is_recruited() && !teammate.is_dead() && !teammate.hasRole(8 /* LongWalkEscort */);
                             }
                         },
                         {
                             name: "boss_squadmate_2",
                             filter: function (teammate) {
-                                return teammate.is_recruited() && !teammate.is_dead() && !teammate.hasRole(5 /* LongWalkEscort */);
+                                return teammate.is_recruited() && !teammate.is_dead() && !teammate.hasRole(8 /* LongWalkEscort */);
                             }
                         }
                     ]);
@@ -1095,8 +1123,8 @@ var App;
                     squadmate_1 = this.getFieldValue("boss_squadmate_1");
                     squadmate_2 = this.getFieldValue("boss_squadmate_2");
 
-                    squadmate_1.addRole(8 /* BossSquadmate */);
-                    squadmate_2.addRole(8 /* BossSquadmate */);
+                    squadmate_1.addRole(11 /* BossSquadmate1 */);
+                    squadmate_2.addRole(12 /* BossSquadmate2 */);
 
                     if (!squadmate_1.willSurviveBeingBossSquadmate()) {
                         squadmate_1.die(this.id, 8 /* Boss */);
@@ -1105,7 +1133,7 @@ var App;
                         squadmate_2.die(this.id, 8 /* Boss */);
                     }
 
-                    this.stager.app.state.teammates().whoAreRecruited().whoAreAlive().withoutRole(8 /* BossSquadmate */).withoutRole(5 /* LongWalkEscort */).addRole(9 /* HeldTheLine */).whoDieHoldingTheLine().die(this.id, 9 /* HoldTheLine */);
+                    this.stager.app.state.teammates().whoAreRecruited().whoAreAlive().withoutAnyOfTheseRoles(11 /* BossSquadmate1 */, 12 /* BossSquadmate2 */, 8 /* LongWalkEscort */).addRole(13 /* HeldTheLine */).whoDieHoldingTheLine().die(this.id, 9 /* HoldTheLine */);
                 };
                 return Boss;
             })(Stages.Stage);
@@ -1230,7 +1258,7 @@ var App;
                     var score;
 
                     candidates = this.getLivingTeammates().sort(function (teammate) {
-                        score = teammate.henchman.cutscene_rescue_priority + (teammate.hasRole(8 /* BossSquadmate */) ? 100 : 0);
+                        score = teammate.henchman.cutscene_rescue_priority + (teammate.hasAnyOfTheseRoles(11 /* BossSquadmate1 */, 12 /* BossSquadmate2 */) ? 100 : 0);
                         return score;
                     });
 
@@ -1238,19 +1266,19 @@ var App;
                 };
 
                 Summary.prototype.getDefenceReporter = function () {
-                    return this.stager.app.state.teammates().withRole(9 /* HeldTheLine */).sortByDefenceReportPriority().last();
+                    return this.stager.app.state.teammates().withRole(13 /* HeldTheLine */).sortByDefenceReportPriority().last();
                 };
 
                 Summary.prototype.getKeepBaseAdvocate = function () {
-                    return this.stager.app.state.teammates().withRole(8 /* BossSquadmate */).whoAdvocateKeepingTheBase().sortByKeepBasePriority().last();
+                    return this.stager.app.state.teammates().withAnyOfTheseRoles(11 /* BossSquadmate1 */, 12 /* BossSquadmate2 */).whoAdvocateKeepingTheBase().sortByKeepBasePriority().last();
                 };
 
                 Summary.prototype.getDestroyBaseAdvocate = function () {
-                    return this.stager.app.state.teammates().withRole(8 /* BossSquadmate */).whoAdvocateDestroyingTheBase().sortByDestroyBasePriority().last();
+                    return this.stager.app.state.teammates().withAnyOfTheseRoles(11 /* BossSquadmate1 */, 12 /* BossSquadmate2 */).whoAdvocateDestroyingTheBase().sortByDestroyBasePriority().last();
                 };
 
                 Summary.prototype.getCrewSurvival = function () {
-                    if (this.stager.app.state.teammates().withRole(5 /* LongWalkEscort */).length() === 0) {
+                    if (this.stager.app.state.teammates().withRole(8 /* LongWalkEscort */).length() === 0) {
                         return 2 /* AllDied */;
                     }
 
@@ -1266,7 +1294,7 @@ var App;
                 Summary.prototype.setup = function () {
                     var htl_teammates;
 
-                    htl_teammates = this.stager.app.state.teammates().withRole(9 /* HeldTheLine */);
+                    htl_teammates = this.stager.app.state.teammates().withRole(13 /* HeldTheLine */);
 
                     this.defence_reporter(this.getDefenceReporter());
                     this.shepard_lives(this.getShepardLives());

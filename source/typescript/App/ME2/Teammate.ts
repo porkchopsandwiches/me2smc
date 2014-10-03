@@ -15,16 +15,20 @@ module App {
         }
 
         export enum TeammateRoles {
-            OcculusSquadmate,
-            VentsSquadmate,
-            VentsVenter,
-            VentsLeader,
-            LongWalkSquadmate,
-            LongWalkEscort,
-            LongWalkBubbler,
-            LongWalkLeader,
-            BossSquadmate,
-            HeldTheLine
+            OcculusSquadmate1 = 0,
+            OcculusSquadmate2 = 1,
+            VentsSquadmate1 = 2,
+            VentsSquadmate2 = 3,
+            VentsVenter = 4,
+            VentsLeader = 5,
+            LongWalkSquadmate1 = 6,
+            LongWalkSquadmate2 = 7,
+            LongWalkEscort = 8,
+            LongWalkBubbler = 9,
+            LongWalkLeader = 10,
+            BossSquadmate1 = 11,
+            BossSquadmate2 = 12,
+            HeldTheLine = 13
         }
 
         export interface ITeammate {
@@ -36,8 +40,8 @@ module App {
             death_stage_id: KnockoutObservable<App.ME2.Stages.StageIDs>;
             roles: KnockoutObservableArray<TeammateRoles>;
             hasRole (role: TeammateRoles): boolean;
-            hasAnyRole (...roles: TeammateRoles[]): boolean;
-            hasAllRoles (...roles: TeammateRoles[]): boolean;
+            hasAnyOfTheseRoles (...roles: TeammateRoles[]): boolean;
+            hasAllOfTheseRoles (...roles: TeammateRoles[]): boolean;
             addRole (role: TeammateRoles): ITeammate;
             die (stage_id: App.ME2.Stages.StageIDs, death_cause: TeammateDeathCauses): ITeammate;
             willBeEffectiveLongWalkLeader (): boolean;
@@ -86,13 +90,13 @@ module App {
                 return this.roles.indexOf(role) > -1;
             }
 
-            public hasAnyRole (...roles: TeammateRoles[]): boolean {
+            public hasAnyOfTheseRoles (...roles: TeammateRoles[]): boolean {
                 return _.some<TeammateRoles>(roles, (role: TeammateRoles): boolean => {
                     return this.hasRole(role);
                 });
             }
 
-            public hasAllRoles (...roles: TeammateRoles[]): boolean {
+            public hasAllOfTheseRoles (...roles: TeammateRoles[]): boolean {
                 return _.every<TeammateRoles>(roles, (role: TeammateRoles): boolean => {
                     return this.hasRole(role);
                 });

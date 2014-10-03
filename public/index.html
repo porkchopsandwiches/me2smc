@@ -258,12 +258,12 @@
 												<!-- /ko -->
 											</td>
 											<td data-bind="attr: { class: (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.Occulus ? 'danger' : '') }">
-												<!-- ko if: hasRole(App.ME2.TeammateRoles.OcculusSquadmate) -->
+												<!-- ko if: hasAnyOfTheseRoles(App.ME2.TeammateRoles.OcculusSquadmate1, App.ME2.TeammateRoles.OcculusSquadmate2) -->
 													<span class="glyphicon glyphicon-user"></span>
 												<!-- /ko -->
 											</td>
 											<td data-bind="attr: { class: (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.Vents ? 'danger' : '') }">
-												<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsSquadmate) -->
+												<!-- ko if: hasAnyOfTheseRoles(App.ME2.TeammateRoles.VentsSquadmate1, App.ME2.TeammateRoles.VentsSquadmate2) -->
 													<span class="glyphicon glyphicon-user"></span>
 												<!-- /ko -->
 												<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsVenter) -->
@@ -274,7 +274,7 @@
 												<!-- /ko -->
 											</td>
 											<td data-bind="attr: { class: (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.LongWalk ? 'danger' : '') }">
-												<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkSquadmate) -->
+												<!-- ko if: hasAnyOfTheseRoles(App.ME2.TeammateRoles.LongWalkSquadmate1, App.ME2.TeammateRoles.LongWalkSquadmate2) -->
 													<span class="glyphicon glyphicon-user"></span>
 												<!-- /ko -->
 												<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkBubbler) -->
@@ -288,7 +288,7 @@
 												<!-- /ko -->
 											</td>
 											<td data-bind="attr: { class: (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.Boss ? 'danger' : '') }">
-												<!-- ko if: hasRole(App.ME2.TeammateRoles.BossSquadmate) -->
+												<!-- ko if: hasAnyOfTheseRoles(App.ME2.TeammateRoles.BossSquadmate1, App.ME2.TeammateRoles.BossSquadmate2) -->
 													<span class="glyphicon glyphicon-user"></span>
 												<!-- /ko -->
 												<!-- ko if: hasRole(App.ME2.TeammateRoles.HeldTheLine) -->

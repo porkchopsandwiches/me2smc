@@ -88,9 +88,21 @@ module App {
                 });
             }
 
+            public withAnyOfTheseRoles (...roles: App.ME2.TeammateRoles[]): Teammates {
+                return this.filter((teammate: App.ME2.Teammate): boolean => {
+                    return teammate.hasAnyOfTheseRoles.apply(teammate, roles);
+                });
+            }
+
             public withoutRole (role: App.ME2.TeammateRoles): Teammates {
                 return this.filter((teammate: App.ME2.Teammate): boolean => {
                     return !teammate.hasRole(role);
+                });
+            }
+
+            public withoutAnyOfTheseRoles (...roles: App.ME2.TeammateRoles[]): Teammates {
+                return this.filter((teammate: App.ME2.Teammate): boolean => {
+                    return !teammate.hasAnyOfTheseRoles.apply(teammate, roles);
                 });
             }
 

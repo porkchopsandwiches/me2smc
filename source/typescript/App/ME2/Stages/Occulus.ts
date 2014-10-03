@@ -27,11 +27,11 @@ module App {
                 public evaluate () {
                     var dpt: App.ME2.Teammates;
 
-                    this.getFieldValue("occulus_squadmate_1").addRole(App.ME2.TeammateRoles.OcculusSquadmate);
-                    this.getFieldValue("occulus_squadmate_2").addRole(App.ME2.TeammateRoles.OcculusSquadmate);
+                    this.getFieldValue("occulus_squadmate_1").addRole(App.ME2.TeammateRoles.OcculusSquadmate1);
+                    this.getFieldValue("occulus_squadmate_2").addRole(App.ME2.TeammateRoles.OcculusSquadmate2);
 
                     // Get candidates to die (that is, they were not Occulus Squadmates)
-                    dpt = this.stager.app.state.teammates().whoAreRecruited().withoutRole(App.ME2.TeammateRoles.OcculusSquadmate);
+                    dpt = this.stager.app.state.teammates().whoAreRecruited().withoutAnyOfTheseRoles(App.ME2.TeammateRoles.OcculusSquadmate1, App.ME2.TeammateRoles.OcculusSquadmate2);
 
                     // Apply deaths
                     if (!this.stager.app.state.normandy.has_shielding()) {

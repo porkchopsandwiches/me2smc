@@ -40,12 +40,16 @@ module App {
                 public evaluate (): void {
                     var venter: App.ME2.Teammate;
                     var leader: App.ME2.Teammate;
+                    var squadmate_1: App.ME2.Teammate;
+                    var squadmate_2: App.ME2.Teammate;
 
                     venter = this.getFieldValue("vent_venter");
                     leader = this.getFieldValue("vent_leader");
+                    squadmate_1 = this.getFieldValue("vent_squadmate_1");
+                    squadmate_2 = this.getFieldValue("vent_squadmate_2");
 
-                    this.getFieldValue("vent_squadmate_1").addRole(App.ME2.TeammateRoles.VentsSquadmate);
-                    this.getFieldValue("vent_squadmate_2").addRole(App.ME2.TeammateRoles.VentsSquadmate);
+                    squadmate_1.addRole(App.ME2.TeammateRoles.VentsSquadmate1);
+                    squadmate_2.addRole(App.ME2.TeammateRoles.VentsSquadmate2);
                     venter.addRole(App.ME2.TeammateRoles.VentsVenter);
                     leader.addRole(App.ME2.TeammateRoles.VentsLeader);
 

@@ -61,8 +61,8 @@ module App {
                     bubbler = this.getFieldValue("long_walk_bubbler");
                     leader = this.getFieldValue("long_walk_leader");
 
-                    squadmate_1.addRole(App.ME2.TeammateRoles.LongWalkSquadmate);
-                    squadmate_2.addRole(App.ME2.TeammateRoles.LongWalkSquadmate);
+                    squadmate_1.addRole(App.ME2.TeammateRoles.LongWalkSquadmate1);
+                    squadmate_2.addRole(App.ME2.TeammateRoles.LongWalkSquadmate2);
                     escort.addRole(App.ME2.TeammateRoles.LongWalkEscort);
                     leader.addRole(App.ME2.TeammateRoles.LongWalkLeader);
                     bubbler.addRole(App.ME2.TeammateRoles.LongWalkBubbler);
@@ -74,7 +74,7 @@ module App {
 
                     // If bubbler is not an expert, or is not loyal, one of the squadmates dies
                     if (!bubbler.willBeEffectiveLongWalkBubbler()) {
-                        this.stager.app.state.teammates().withRole(App.ME2.TeammateRoles.LongWalkSquadmate).sortByLongWalkDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.LongWalkBadBubbler);
+                        this.stager.app.state.teammates().withAnyOfTheseRoles(App.ME2.TeammateRoles.LongWalkSquadmate1, App.ME2.TeammateRoles.LongWalkSquadmate2).sortByLongWalkDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.LongWalkBadBubbler);
                     }
 
                     // If leader is not loyal and not

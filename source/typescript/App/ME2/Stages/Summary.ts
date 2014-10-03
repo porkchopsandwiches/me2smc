@@ -58,7 +58,7 @@ module App {
                     var score: number;
 
                     candidates = this.getLivingTeammates().sort((teammate: App.ME2.Teammate): number => {
-                        score = teammate.henchman.cutscene_rescue_priority + (teammate.hasRole(App.ME2.TeammateRoles.BossSquadmate) ? 100 : 0);
+                        score = teammate.henchman.cutscene_rescue_priority + (teammate.hasAnyOfTheseRoles(App.ME2.TeammateRoles.BossSquadmate1, App.ME2.TeammateRoles.BossSquadmate2) ? 100 : 0);
                         return score;
                     });
 
@@ -70,11 +70,11 @@ module App {
                 }
 
                 private getKeepBaseAdvocate (): App.ME2.Teammate {
-                    return this.stager.app.state.teammates().withRole(App.ME2.TeammateRoles.BossSquadmate).whoAdvocateKeepingTheBase().sortByKeepBasePriority().last();
+                    return this.stager.app.state.teammates().withAnyOfTheseRoles(App.ME2.TeammateRoles.BossSquadmate1, App.ME2.TeammateRoles.BossSquadmate2).whoAdvocateKeepingTheBase().sortByKeepBasePriority().last();
                 }
 
                 private getDestroyBaseAdvocate (): App.ME2.Teammate {
-                    return this.stager.app.state.teammates().withRole(App.ME2.TeammateRoles.BossSquadmate).whoAdvocateDestroyingTheBase().sortByDestroyBasePriority().last();
+                    return this.stager.app.state.teammates().withAnyOfTheseRoles(App.ME2.TeammateRoles.BossSquadmate1, App.ME2.TeammateRoles.BossSquadmate2).whoAdvocateDestroyingTheBase().sortByDestroyBasePriority().last();
                 }
 
                 private getCrewSurvival (): SummaryCrewSurvivalOptions {
