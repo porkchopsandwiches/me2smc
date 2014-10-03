@@ -31,12 +31,6 @@ module App {
                     } else {
                         return "";
                     }
-
-                });
-
-                // When stage changes, forces a refresh on the teammates
-                this.stage.subscribe(() => {
-                    this.teammates.valueHasMutated();
                 });
             }
 

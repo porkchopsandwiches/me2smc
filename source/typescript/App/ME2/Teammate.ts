@@ -44,7 +44,8 @@ module App {
             willBeEffectiveVentVenter (): boolean;
             willBeEffectiveVentLeader (): boolean;
             getHoldTheLineScore (): number;
-            roles: TeammateRoles[];
+            //roles: TeammateRoles[];
+            roles: KnockoutObservableArray<TeammateRoles>;
         }
 
         export class Teammate implements ITeammate {
@@ -54,14 +55,15 @@ module App {
             public is_recruited: KnockoutObservable<boolean>;
             public is_loyal: KnockoutObservable<boolean>;
             public is_dead: KnockoutObservable<boolean>;
-            public roles: TeammateRoles[];
+            //public roles: TeammateRoles[];
+            public roles: KnockoutObservableArray<TeammateRoles>;
 
-            constructor (henchman: App.ME2.Henchman, is_recruited: boolean = false, is_loyal: boolean = false, is_dead: boolean = false) {
+            constructor (henchman: App.ME2.Henchman, is_recruited: boolean = false, is_loyal: boolean = false, is_dead: boolean = false, roles: TeammateRoles[] = []) {
                 this.henchman = henchman;
                 this.is_recruited = ko.observable<boolean>(is_recruited);
                 this.is_loyal = ko.observable<boolean>(is_recruited && is_loyal);
                 this.is_dead = ko.observable<boolean>(is_dead);
-                this.roles = [];
+                this.roles = ko.observableArray(roles);
 
                 // If not recruited, can't be loyal either
                 this.is_recruited.subscribe((is_recruited: boolean) => {
@@ -83,7 +85,8 @@ module App {
             }
 
             public hasRole (role: TeammateRoles): boolean {
-                return _.indexOf(this.roles, role) !== -1;
+                //return _.indexOf(this.roles(), role) !== -1;
+                return this.roles.indexOf(role) > -1;
             }
 
             public getHoldTheLineScore (): number {

@@ -48,12 +48,16 @@ body{
 
 $border-radius-rounded: 5px;
 
-.table-rounded{
-	border: 1px solid $table-border-color;
-	border-radius: $border-radius-large;
-	border-collapse: separate;
-	border-spacing: 0px;
+@media (min-width: $screen-sm-min) {
+	.table-rounded{
+		border: 1px solid $table-border-color;
+		border-radius: $border-radius-large;
+		border-collapse: separate;
+		border-spacing: 0px;
+	}
 }
+
+
 
 .panel-footer{
 	padding-top: 0;

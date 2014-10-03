@@ -286,16 +286,17 @@ var App;
         var TeammateRoles = ME2.TeammateRoles;
 
         var Teammate = (function () {
-            function Teammate(henchman, is_recruited, is_loyal, is_dead) {
+            function Teammate(henchman, is_recruited, is_loyal, is_dead, roles) {
                 if (typeof is_recruited === "undefined") { is_recruited = false; }
                 if (typeof is_loyal === "undefined") { is_loyal = false; }
                 if (typeof is_dead === "undefined") { is_dead = false; }
+                if (typeof roles === "undefined") { roles = []; }
                 var _this = this;
                 this.henchman = henchman;
                 this.is_recruited = ko.observable(is_recruited);
                 this.is_loyal = ko.observable(is_recruited && is_loyal);
                 this.is_dead = ko.observable(is_dead);
-                this.roles = [];
+                this.roles = ko.observableArray(roles);
 
                 this.is_recruited.subscribe(function (is_recruited) {
                     if (!is_recruited && _this.is_loyal()) {
@@ -314,7 +315,7 @@ var App;
             };
 
             Teammate.prototype.hasRole = function (role) {
-                return _.indexOf(this.roles, role) !== -1;
+                return this.roles.indexOf(role) > -1;
             };
 
             Teammate.prototype.getHoldTheLineScore = function () {
@@ -787,9 +788,22 @@ var App;
                     });
 
                     this.can_go_back = ko.observable(false);
+
+                    this.app.state.stage(this.getStage(0));
+
+                    this.initial_freeze = this.app.state.serialise();
                 }
                 Stager.prototype.getStage = function (id) {
                     return this.stages[id];
+                };
+
+                Stager.prototype.freeze = function () {
+                    this.freezes.push(this.app.state.serialise());
+                    this.can_go_back(true);
+                };
+
+                Stager.prototype.reset = function () {
+                    this.app.state.applySerialisedState(this.initial_freeze);
                 };
 
                 Stager.prototype.back = function () {
@@ -799,30 +813,19 @@ var App;
                     }
                 };
 
-                Stager.prototype.firstStage = function () {
-                    this.app.state.stage(this.getStage(0));
-                };
-
-                Stager.prototype.nextStage = function () {
+                Stager.prototype.next = function () {
                     var current_stage;
 
                     current_stage = this.app.state.stage();
 
-                    if (current_stage) {
-                        if (current_stage.isEvaluatable()) {
-                            this.freezes[current_stage.id] = this.app.state.serialise();
-                            this.can_go_back(true);
+                    if (current_stage.isEvaluatable()) {
+                        this.freeze();
 
-                            current_stage.evaluate();
+                        current_stage.evaluate();
 
-                            if (current_stage.id < this.stages.length - 1) {
-                                this.app.state.stage(this.getStage(current_stage.id + 1));
-                            }
-                        } else {
-                            throw new Error("Current Stage is not evaluatable.");
+                        if (current_stage.id < this.stages.length - 1) {
+                            this.app.state.stage(this.getStage(current_stage.id + 1));
                         }
-                    } else {
-                        this.firstStage();
                     }
                 };
                 return Stager;
@@ -1275,10 +1278,6 @@ var App;
                         return "";
                     }
                 });
-
-                this.stage.subscribe(function () {
-                    _this.teammates.valueHasMutated();
-                });
             }
             State.prototype.bootstrapTeammates = function () {
                 this._teammates = new App.ME2.Teammates(_.chain(this.app.getHenchmen()).map(function (henchman) {
@@ -1409,11 +1408,10 @@ var App;
 
                 roles = _.without(roles, 10, 11, 12);
 
-                deserialised = new App.ME2.Teammate(this.app.getHenchman(henchman_id), is_recruited, is_loyal, is_dead);
+                deserialised = new App.ME2.Teammate(this.app.getHenchman(henchman_id), is_recruited, is_loyal, is_dead, roles);
                 if (is_dead) {
                     deserialised.die(death_stage_id, death_cause - 1);
                 }
-                deserialised.roles = roles;
 
                 return deserialised;
             };
@@ -1502,7 +1500,11 @@ var App;
                     teammate.is_recruited(new_teammate.is_recruited());
                     teammate.is_loyal(new_teammate.is_loyal());
                     teammate.is_dead(new_teammate.is_dead());
-                    teammate.roles = new_teammate.roles;
+                    teammate.roles.removeAll();
+                    _.each(new_teammate.roles(), function (role) {
+                        teammate.addRole(role);
+                    });
+
                     teammate.death_cause = new_teammate.death_cause;
                     teammate.death_stage_id = new_teammate.death_stage_id;
                 });
@@ -1583,13 +1585,11 @@ var App;
             this.serialisation = new App.ME2.Serialisation(this);
             this.henchman = ko.observable(undefined);
             this.state = new App.ME2.State(this);
-            this.stager = new App.ME2.Stages.Stager(this);
             this.share = ko.observable(undefined);
+            this.stager = new App.ME2.Stages.Stager(this);
 
             if (window.location.search.length > 2) {
                 this.state.applySerialisedState(window.location.search.substr(1));
-            } else {
-                this.stager.firstStage();
             }
         }
         Application.prototype.getHenchmen = function () {

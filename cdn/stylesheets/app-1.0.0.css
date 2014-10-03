@@ -1,4 +1,4 @@
-/**//*! me2smc 2014-10-03 10:35 */
+/**//*! me2smc 2014-10-03 13:33 */
 
 /*! normalize.css v3.0.1 | MIT License | git.io/normalize */
 html {
@@ -5685,12 +5685,12 @@ body {
 .rank-popover-list {
   width: 15em; }
 
-.table-rounded {
-  border: 1px solid #dddddd;
-  border-radius: 6px;
-  border-collapse: separate;
-  border-spacing: 0px; }
-
+@media (min-width: 768px) {
+  .table-rounded {
+    border: 1px solid #dddddd;
+    border-radius: 6px;
+    border-collapse: separate;
+    border-spacing: 0px; } }
 .panel-footer {
   padding-top: 0;
   padding-bottom: 0; }

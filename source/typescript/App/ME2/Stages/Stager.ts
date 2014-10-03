@@ -11,6 +11,7 @@ module App {
                 public app: App.Application;
                 private stages: App.ME2.Stages.IStage[];
                 private freezes: ISerialisationSerialised[];
+                private initial_freeze: ISerialisationSerialised;
                 public can_go_back: KnockoutObservable<boolean>;
 
                 constructor (app: App.Application) {
@@ -33,10 +34,25 @@ module App {
                     });
 
                     this.can_go_back = ko.observable<boolean>(false);
+
+                    // Apply the first stage
+                    this.app.state.stage(this.getStage(0));
+
+                    // Freeze an initial state for resetting
+                    this.initial_freeze = this.app.state.serialise();
                 }
 
                 public getStage (id: App.ME2.Stages.StageIDs): App.ME2.Stages.IStage {
                     return this.stages[id];
+                }
+
+                private freeze () {
+                    this.freezes.push(this.app.state.serialise());
+                    this.can_go_back(true);
+                }
+
+                public reset () {
+                    this.app.state.applySerialisedState(this.initial_freeze);
                 }
 
                 public back () {
@@ -46,32 +62,21 @@ module App {
                     }
                 }
 
-                public firstStage () {
-                    this.app.state.stage(this.getStage(0));
-                }
-
-                public nextStage () {
+                public next () {
                     var current_stage: App.ME2.Stages.IStage;
 
                     current_stage = this.app.state.stage();
 
-                    if (current_stage) {
-                        if (current_stage.isEvaluatable()) {
+                    if (current_stage.isEvaluatable()) {
 
-                            // Freeze the current state
-                            this.freezes[current_stage.id] = this.app.state.serialise();
-                            this.can_go_back(true);
+                        // Freeze the current state
+                        this.freeze();
 
-                            current_stage.evaluate();
+                        current_stage.evaluate();
 
-                            if (current_stage.id < this.stages.length - 1) {
-                                this.app.state.stage(this.getStage(current_stage.id + 1));
-                            }
-                        } else {
-                            throw new Error("Current Stage is not evaluatable.");
+                        if (current_stage.id < this.stages.length - 1) {
+                            this.app.state.stage(this.getStage(current_stage.id + 1));
                         }
-                    } else {
-                        this.firstStage();
                     }
                 }
             }

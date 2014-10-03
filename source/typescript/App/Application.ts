@@ -31,14 +31,12 @@ module App {
             this.serialisation = new App.ME2.Serialisation(this);
             this.henchman = ko.observable<App.ME2.Henchman>(undefined);
             this.state = new App.ME2.State(this);
-            this.stager = new App.ME2.Stages.Stager(this);
             this.share = ko.observable<string>(undefined);
+            this.stager = new App.ME2.Stages.Stager(this);
 
             // If there is a request for a specific state
             if (window.location.search.length > 2) {
                 this.state.applySerialisedState(window.location.search.substr(1));
-            } else {
-                this.stager.firstStage();
             }
         }
 

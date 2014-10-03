@@ -137,11 +137,10 @@ module App {
 
                 roles = _.without(roles, 10, 11, 12);
 
-                deserialised = new App.ME2.Teammate(this.app.getHenchman(henchman_id), is_recruited, is_loyal, is_dead);
+                deserialised = new App.ME2.Teammate(this.app.getHenchman(henchman_id), is_recruited, is_loyal, is_dead, roles);
                 if (is_dead) {
                     deserialised.die(death_stage_id, death_cause - 1);
                 }
-                deserialised.roles = roles;
 
                 return deserialised;
             }
@@ -239,7 +238,12 @@ module App {
                     teammate.is_recruited(new_teammate.is_recruited());
                     teammate.is_loyal(new_teammate.is_loyal());
                     teammate.is_dead(new_teammate.is_dead());
-                    teammate.roles = new_teammate.roles;
+                    teammate.roles.removeAll();
+                    _.each(new_teammate.roles(), (role: App.ME2.TeammateRoles): void => {
+                        teammate.addRole(role);
+                    })
+
+                    //teammate.roles = new_teammate.roles;
                     teammate.death_cause = new_teammate.death_cause;
                     teammate.death_stage_id = new_teammate.death_stage_id;
                 });
