@@ -293,7 +293,7 @@ var App;
                 var _this = this;
                 this.henchman = henchman;
                 this.is_recruited = ko.observable(is_recruited);
-                this.is_loyal = ko.observable(is_loyal);
+                this.is_loyal = ko.observable(is_recruited && is_loyal);
                 this.is_dead = ko.observable(is_dead);
                 this.roles = [];
 
@@ -799,6 +799,10 @@ var App;
                     }
                 };
 
+                Stager.prototype.firstStage = function () {
+                    this.app.state.stage(this.getStage(0));
+                };
+
                 Stager.prototype.nextStage = function () {
                     var current_stage;
 
@@ -818,7 +822,7 @@ var App;
                             throw new Error("Current Stage is not evaluatable.");
                         }
                     } else {
-                        this.app.state.stage(this.getStage(0));
+                        this.firstStage();
                     }
                 };
                 return Stager;
@@ -1302,6 +1306,24 @@ var App;
 var App;
 (function (App) {
     (function (ME2) {
+        var SerialisedElements;
+        (function (SerialisedElements) {
+            SerialisedElements[SerialisedElements["All"] = 0] = "All";
+            SerialisedElements[SerialisedElements["StageID"] = 1] = "StageID";
+            SerialisedElements[SerialisedElements["NormandyDelay"] = 2] = "NormandyDelay";
+            SerialisedElements[SerialisedElements["NormandyFlags"] = 3] = "NormandyFlags";
+            SerialisedElements[SerialisedElements["Teammates"] = 4] = "Teammates";
+        })(SerialisedElements || (SerialisedElements = {}));
+
+        var SerialisedTeammateElements;
+        (function (SerialisedTeammateElements) {
+            SerialisedTeammateElements[SerialisedTeammateElements["All"] = 0] = "All";
+            SerialisedTeammateElements[SerialisedTeammateElements["HenchmanID"] = 1] = "HenchmanID";
+            SerialisedTeammateElements[SerialisedTeammateElements["DeathCause"] = 2] = "DeathCause";
+            SerialisedTeammateElements[SerialisedTeammateElements["DeathStageID"] = 3] = "DeathStageID";
+            SerialisedTeammateElements[SerialisedTeammateElements["Roles"] = 4] = "Roles";
+        })(SerialisedTeammateElements || (SerialisedTeammateElements = {}));
+
         var Serialisation = (function () {
             function Serialisation(app) {
                 this.app = app;
@@ -1356,28 +1378,30 @@ var App;
                 elements = [
                     teammate.henchman.id.toString(16),
                     this.lpad((teammate.death_cause() === undefined ? 0 : teammate.death_cause() + 1).toString(16), 1),
-                    this.lpad((teammate.death_stage_id() || 0).toString(10), 1),
+                    this.lpad((teammate.death_stage_id() || 0).toString(16), 1),
                     this.lpad(this.indexesToFlags(roles).toString(16), 4)
                 ];
 
                 return elements.join("");
             };
 
-            Serialisation.prototype.deserialiseTeammate = function (teammate) {
+            Serialisation.prototype.deserialiseTeammate = function (serialised) {
                 var henchman_id;
                 var death_cause;
                 var death_stage_id;
-
                 var is_recruited;
                 var is_loyal;
                 var is_dead;
                 var roles;
                 var deserialised;
+                var matches;
 
-                henchman_id = parseInt("0x" + teammate.substr(0, 1), 16);
-                death_cause = parseInt("0x" + teammate.substr(1, 1), 16);
-                death_stage_id = parseInt(teammate.substr(2, 1), 10) || undefined;
-                roles = this.flagsToIndexes(parseInt("0x" + teammate.substr(3), 16));
+                matches = serialised.match(App.ME2.Serialisation.TeammateRegex);
+
+                henchman_id = parseInt("0x" + matches[1 /* HenchmanID */], 16);
+                death_cause = parseInt("0x" + matches[2 /* DeathCause */], 16);
+                death_stage_id = parseInt("0x" + matches[3 /* DeathStageID */], 16) || undefined;
+                roles = this.flagsToIndexes(parseInt("0x" + matches[4 /* Roles */], 16));
 
                 is_recruited = _.indexOf(roles, 10) >= 0;
                 is_loyal = _.indexOf(roles, 11) >= 0;
@@ -1408,15 +1432,15 @@ var App;
                 return elements.join("");
             };
 
-            Serialisation.prototype.deserialiseNormandy = function (serialised) {
+            Serialisation.prototype.deserialiseNormandyElements = function (serialised_delay, serialised_flags) {
                 var flags;
                 var has_armour;
                 var has_shielding;
                 var has_thanix_cannon;
                 var delay;
 
-                delay = parseInt(serialised.substr(0, 2), 10);
-                flags = parseInt(serialised.substr(2), 10);
+                delay = parseInt(serialised_delay, 10);
+                flags = parseInt(serialised_flags, 10);
                 has_armour = !!(flags & 1);
                 has_shielding = !!(flags & 2);
                 has_thanix_cannon = !!(flags & 4);
@@ -1429,7 +1453,7 @@ var App;
                 var elements;
 
                 elements = [
-                    this.lpad(state.stage().id.toString(10), 2),
+                    this.lpad(state.stage().id.toString(16), 1),
                     this.serialiseNormandy(state.normandy),
                     _.map(state.teammates().value(), function (teammate) {
                         return _this.serialiseTeammate(teammate);
@@ -1442,15 +1466,21 @@ var App;
             Serialisation.prototype.deserialise = function (serialised) {
                 var _this = this;
                 var deserialised;
+                var matches;
 
-                deserialised = new App.ME2.State(this.app);
-                deserialised.stage(this.app.stager.getStage(parseInt(serialised.substr(0, 2), 10)));
-                deserialised.normandy = this.deserialiseNormandy(serialised.substr(2, 3));
-                deserialised.teammates(new App.ME2.Teammates(_.map(serialised.substr(5).match(/.{7}/g), function (serialised_teammate) {
-                    return _this.deserialiseTeammate(serialised_teammate);
-                })));
+                matches = serialised.match(App.ME2.Serialisation.SerialisedRegex);
+                if (matches) {
+                    deserialised = new App.ME2.State(this.app);
+                    deserialised.stage(this.app.stager.getStage(parseInt("0x" + matches[1 /* StageID */], 16)));
+                    deserialised.normandy = this.deserialiseNormandyElements(matches[2 /* NormandyDelay */], matches[3 /* NormandyFlags */]);
+                    deserialised.teammates(new App.ME2.Teammates(_.map(matches[4 /* Teammates */].match(App.ME2.Serialisation.TeammatesRegex), function (serialised_teammate) {
+                        return _this.deserialiseTeammate(serialised_teammate);
+                    })));
 
-                return deserialised;
+                    return deserialised;
+                } else {
+                    throw new Error("Serialised data was malformed.");
+                }
             };
 
             Serialisation.prototype.applySerialisedState = function (state, serialised) {
@@ -1479,6 +1509,10 @@ var App;
 
                 state.stage(new_state.stage());
             };
+            Serialisation.TeammateRegex = /^([0-9a-f]{1})([0-9a-f]{1})([0-9a-f]{1})([0-9a-f]{4})$/;
+            Serialisation.TeammatesRegex = /[0-9a-f]{7}/g;
+
+            Serialisation.SerialisedRegex = /^([0-9a-f]{1})([0-9]{2})([0-9]{1})((?:[0-9a-f]{2}[0-9]{1}[0-9a-f]{4}){12})$/;
             return Serialisation;
         })();
         ME2.Serialisation = Serialisation;
@@ -1550,7 +1584,13 @@ var App;
             this.henchman = ko.observable(undefined);
             this.state = new App.ME2.State(this);
             this.stager = new App.ME2.Stages.Stager(this);
-            this.stager.nextStage();
+            this.share = ko.observable(undefined);
+
+            if (window.location.search.length > 2) {
+                this.state.applySerialisedState(window.location.search.substr(1));
+            } else {
+                this.stager.firstStage();
+            }
         }
         Application.prototype.getHenchmen = function () {
             return this.henchmen;

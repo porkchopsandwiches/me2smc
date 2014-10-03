@@ -290,6 +290,9 @@
 											<!-- ko if: hasRole(App.ME2.TeammateRoles.BossSquadmate) -->
 												<span class="glyphicon glyphicon-user"></span>
 											<!-- /ko -->
+											<!-- ko if: hasRole(App.ME2.TeammateRoles.HeldTheLine) -->
+												<span class="glyphicon glyphicon-flash"></span>
+											<!-- /ko -->
 										</td>
 									</tr>
 								<!-- /ko -->
@@ -300,19 +303,22 @@
 				<div class="panel-footer">
 					<!-- ko with: $root.state.stage -->
 						<div class="row">
-							<div class="col-md-2">
-								<button class="btn btn-primary btn-block" data-bind="enable: $root.stager.can_go_back, click: function () { $root.stager.back() }">Previous</button>
+							<div class="col-xs-6">
+								<button class="btn btn-default btn-block" data-bind="enable: $root.stager.can_go_back, click: function () { $root.stager.back() }">Previous</button>
 							</div>
-							<div class="col-md-2">
-								<button class="btn btn-primary btn-block" data-bind="enable: is_evaluatable, click: function () { $root.stager.nextStage() }">Next</button>
+							<div class="col-xs-6">
+								<button class="" data-bind="enable: is_evaluatable, attr: { 'class': (is_evaluatable() ? 'btn btn-success btn-block' : 'btn btn-default btn-block') }, click: function () { $root.stager.nextStage() }">Next</button>
 							</div>
-							<div class="col-md-8">
+						</div>
+						<div class="row">
+							<div class="col-sm-12">
 								<form role="form" class="form-horizontal">
 									<div class="input-group">
 										<span class="input-group-addon">State</span>
 										<input class="form-control" type="text" id="serialised" data-bind="value: $root.state.serialised" />
 										<span class="input-group-btn">
-											<button class="btn btn-primary" type="button" data-bind="click: function () { $root.state.applySerialisedState($('#serialised').val()) }">Restore</button>
+											<button class="btn btn-warning" type="button" data-bind="click: function () { $root.state.applySerialisedState($('#serialised').val()) }">Restore</button>
+											<button class="btn btn-primary" type="button" data-bind="click: function () { $root.share($('#serialised').val()) }">Share</button>
 										</span>
 									</div>
 								</form>
@@ -323,6 +329,29 @@
 			</div>
 		</div>
 
+		<div class="modal fade" tabindex="-2" role="dialog" data-bind="modal: $root.share()">
+			<!-- ko with: $root.share() -->
+				<div class="modal-dialog">
+					<div class="modal-content">
+						<div class="modal-header">
+							<button type="button" class="close" data-dismiss="modal">&times;</button>
+							<h4 class="modal-title">Share URL</h4>
+						</div>
+						<div class="modal-body">
+							<p>Share current state:</p>
+							<form role="form">
+								<div class="form-group">
+									<input type="text" class="form-control" data-bind="attr: {value: 'http://' + window.location.hostname + window.location.pathname + '?' + $data }" />
+								</div>
+							</form>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-primary" data-bind="click: function () { $root.share(undefined); }">Close</button>
+						</div>
+					</div>
+				</div>
+			<!-- /ko -->
+		</div>
 
 		<div class="modal fade" tabindex="-1" role="dialog" data-bind="modal: $root.henchman()">
 			<!-- ko with: $root.henchman() -->

@@ -6,6 +6,7 @@ module App {
         private henchmen: App.ME2.Henchman[];
         public stager: App.ME2.Stages.Stager;
         public henchman: KnockoutObservable<App.ME2.Henchman>;
+        public share: KnockoutObservable<string>;
         public state: App.ME2.State;
         public serialisation: App.ME2.Serialisation;
 
@@ -28,10 +29,17 @@ module App {
             ];
 
             this.serialisation = new App.ME2.Serialisation(this);
-            this.henchman = ko.observable(undefined);
+            this.henchman = ko.observable<App.ME2.Henchman>(undefined);
             this.state = new App.ME2.State(this);
             this.stager = new App.ME2.Stages.Stager(this);
-            this.stager.nextStage();
+            this.share = ko.observable<string>(undefined);
+
+            // If there is a request for a specific state
+            if (window.location.search.length > 2) {
+                this.state.applySerialisedState(window.location.search.substr(1));
+            } else {
+                this.stager.firstStage();
+            }
         }
 
         public getHenchmen (): App.ME2.Henchman[] {

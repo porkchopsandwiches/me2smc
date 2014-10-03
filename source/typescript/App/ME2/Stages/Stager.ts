@@ -46,6 +46,10 @@ module App {
                     }
                 }
 
+                public firstStage () {
+                    this.app.state.stage(this.getStage(0));
+                }
+
                 public nextStage () {
                     var current_stage: App.ME2.Stages.IStage;
 
@@ -67,7 +71,7 @@ module App {
                             throw new Error("Current Stage is not evaluatable.");
                         }
                     } else {
-                        this.app.state.stage(this.getStage(0));
+                        this.firstStage();
                     }
                 }
             }

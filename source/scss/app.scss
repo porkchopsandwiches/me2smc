@@ -54,3 +54,12 @@ $border-radius-rounded: 5px;
 	border-collapse: separate;
 	border-spacing: 0px;
 }
+
+.panel-footer{
+	padding-top: 0;
+	padding-bottom: 0;
+
+	.row > *{
+		padding: $panel-heading-padding;
+	}
+}

@@ -18,12 +18,35 @@ module App {
         export interface ISerialisationSerialised extends String {
         }
 
+        enum SerialisedElements {
+            All = 0,
+            StageID = 1,
+            NormandyDelay = 2,
+            NormandyFlags = 3,
+            Teammates = 4
+        }
+
+        enum SerialisedTeammateElements {
+            All = 0,
+            HenchmanID = 1,
+            DeathCause = 2,
+            DeathStageID = 3,
+            Roles = 4
+        }
+
         export class Serialisation implements ISerialisation {
             app: App.Application;
 
             constructor (app: App.Application) {
                 this.app = app;
             }
+
+            // Captures Henchman ID (1), Death Cause (1), Death Stage ID (1), Roles (4)
+            static TeammateRegex: RegExp = /^([0-9a-f]{1})([0-9a-f]{1})([0-9a-f]{1})([0-9a-f]{4})$/;
+            static TeammatesRegex: RegExp = /[0-9a-f]{7}/g;
+
+            // Captures: StageID (1), Normandy Delay (2), Normandy Flags (1) ((Teammate Stuff) x 12)
+            static SerialisedRegex: RegExp = /^([0-9a-f]{1})([0-9]{2})([0-9]{1})((?:[0-9a-f]{2}[0-9]{1}[0-9a-f]{4}){12})$/;
 
             /// -------------------------------------------
             /// Utility methods
@@ -83,28 +106,30 @@ module App {
                 elements = [
                     (<number> teammate.henchman.id).toString(16),
                     this.lpad((teammate.death_cause() === undefined ? 0 : teammate.death_cause() + 1).toString(16), 1),
-                    this.lpad((teammate.death_stage_id() || 0).toString(10), 1),
+                    this.lpad((teammate.death_stage_id() || 0).toString(16), 1),
                     this.lpad(this.indexesToFlags(roles).toString(16), 4)
                 ];
 
                 return elements.join("");
             }
 
-            private deserialiseTeammate (teammate: ISerialisedTeammate): App.ME2.Teammate {
+            private deserialiseTeammate (serialised: ISerialisedTeammate): App.ME2.Teammate {
                 var henchman_id: number;
                 var death_cause: App.ME2.TeammateDeathCauses;
                 var death_stage_id: App.ME2.Stages.StageIDs;
-                //var flags: number;
                 var is_recruited: boolean;
                 var is_loyal: boolean;
                 var is_dead: boolean;
                 var roles: App.ME2.TeammateRoles[];
                 var deserialised: App.ME2.Teammate;
+                var matches: string[];
 
-                henchman_id         = parseInt("0x" + teammate.substr(0, 1), 16);
-                death_cause         = parseInt("0x" + teammate.substr(1, 1), 16);
-                death_stage_id      = parseInt(teammate.substr(2, 1), 10) || undefined;
-                roles               = this.flagsToIndexes(parseInt("0x" + teammate.substr(3), 16));
+                matches = serialised.match(App.ME2.Serialisation.TeammateRegex);
+
+                henchman_id         = parseInt("0x" + matches[SerialisedTeammateElements.HenchmanID], 16);
+                death_cause         = parseInt("0x" + matches[SerialisedTeammateElements.DeathCause], 16);
+                death_stage_id      = parseInt("0x" + matches[SerialisedTeammateElements.DeathStageID], 16) || undefined;
+                roles               = this.flagsToIndexes(parseInt("0x" + matches[SerialisedTeammateElements.Roles], 16));
 
                 is_recruited = _.indexOf(roles, 10) >= 0;
                 is_loyal = _.indexOf(roles, 11) >= 0;
@@ -125,7 +150,6 @@ module App {
             /// Normandy
             /// -------------------------------------------
 
-            // Length: 3
             private serialiseNormandy (normandy: App.ME2.Normandy): ISerialisedNormandy {
                 var elements: string[];
                 var flags: number;
@@ -140,15 +164,15 @@ module App {
                 return elements.join("");
             }
 
-            private deserialiseNormandy (serialised: ISerialisedNormandy): App.ME2.Normandy {
+            private deserialiseNormandyElements (serialised_delay: string, serialised_flags: string): App.ME2.Normandy {
                 var flags: number;
                 var has_armour: boolean;
                 var has_shielding: boolean;
                 var has_thanix_cannon: boolean;
                 var delay: number;
 
-                delay               = parseInt(serialised.substr(0, 2), 10);
-                flags               = parseInt(serialised.substr(2), 10);
+                delay               = parseInt(serialised_delay, 10);
+                flags               = parseInt(serialised_flags, 10);
                 has_armour          = !!(flags & 1);
                 has_shielding       = !!(flags & 2);
                 has_thanix_cannon   = !!(flags & 4);
@@ -165,7 +189,7 @@ module App {
                 var elements: any[];
 
                 elements = [
-                    this.lpad((<number>state.stage().id).toString(10), 2),
+                    this.lpad((<number>state.stage().id).toString(16), 1),
                     this.serialiseNormandy(state.normandy),
                     _.map<App.ME2.Teammate, ISerialisedTeammate>(state.teammates().value(), (teammate: App.ME2.Teammate): ISerialisedTeammate => {
                         return this.serialiseTeammate(teammate);
@@ -177,15 +201,22 @@ module App {
 
             public deserialise (serialised: ISerialisationSerialised): App.ME2.State {
                 var deserialised: App.ME2.State;
+                var matches: string[];
 
-                deserialised = new App.ME2.State(this.app);
-                deserialised.stage(this.app.stager.getStage(parseInt(serialised.substr(0, 2), 10)));
-                deserialised.normandy = this.deserialiseNormandy(serialised.substr(2, 3));
-                deserialised.teammates(new App.ME2.Teammates(_.map(serialised.substr(5).match(/.{7}/g), (serialised_teammate: ISerialisedTeammate): App.ME2.Teammate => {
-                    return this.deserialiseTeammate(serialised_teammate);
-                })));
+                matches = serialised.match(App.ME2.Serialisation.SerialisedRegex);
+                if (matches) {
 
-                return deserialised;
+                    deserialised = new App.ME2.State(this.app);
+                    deserialised.stage(this.app.stager.getStage(parseInt("0x" + matches[SerialisedElements.StageID], 16)));
+                    deserialised.normandy = this.deserialiseNormandyElements(matches[SerialisedElements.NormandyDelay], matches[SerialisedElements.NormandyFlags]);
+                    deserialised.teammates(new App.ME2.Teammates(_.map(matches[SerialisedElements.Teammates].match(App.ME2.Serialisation.TeammatesRegex), (serialised_teammate: ISerialisedTeammate): App.ME2.Teammate => {
+                        return this.deserialiseTeammate(serialised_teammate);
+                    })));
+
+                    return deserialised;
+                } else {
+                    throw new Error("Serialised data was malformed.");
+                }
             }
 
             public applySerialisedState (state: App.ME2.State, serialised: ISerialisationSerialised): void {

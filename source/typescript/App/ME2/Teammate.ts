@@ -56,16 +56,10 @@ module App {
             public is_dead: KnockoutObservable<boolean>;
             public roles: TeammateRoles[];
 
-            constructor (
-                henchman: App.ME2.Henchman,
-                is_recruited: boolean = false,
-                is_loyal: boolean = false,
-                is_dead: boolean = false
-            ) {
-                //this.death_cause = null;
+            constructor (henchman: App.ME2.Henchman, is_recruited: boolean = false, is_loyal: boolean = false, is_dead: boolean = false) {
                 this.henchman = henchman;
                 this.is_recruited = ko.observable<boolean>(is_recruited);
-                this.is_loyal = ko.observable<boolean>(is_loyal);
+                this.is_loyal = ko.observable<boolean>(is_recruited && is_loyal);
                 this.is_dead = ko.observable<boolean>(is_dead);
                 this.roles = [];
 
