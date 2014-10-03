@@ -317,6 +317,11 @@ var App;
                 return this;
             };
 
+            Teammate.prototype.removeRole = function (role) {
+                this.roles.remove(role);
+                return this;
+            };
+
             Teammate.prototype.hasRole = function (role) {
                 return this.roles.indexOf(role) > -1;
             };
@@ -432,6 +437,13 @@ var App;
             Teammates.prototype.addRole = function (role) {
                 this.each(function (teammate) {
                     teammate.addRole(role);
+                });
+                return this;
+            };
+
+            Teammates.prototype.removeRole = function (role) {
+                this.each(function (teammate) {
+                    teammate.removeRole(role);
                 });
                 return this;
             };
@@ -751,13 +763,23 @@ var App;
                     });
 
                     _.each(this.fields, function (field) {
-                        field.observable.subscribe(function () {
+                        field.observable.subscribe(function (teammate) {
+                            if (field.config.role !== undefined) {
+                                teammate.addRole(field.config.role);
+                            }
+
                             _.each(_this.fields, function (other_field) {
                                 if (other_field.config.name !== field.config.name) {
                                     other_field.candidates.evaluateImmediate();
                                 }
                             });
                         });
+
+                        field.observable.subscribe(function (teammate) {
+                            if (field.config.role !== undefined && teammate && teammate.henchman.id !== undefined) {
+                                teammate.removeRole(field.config.role);
+                            }
+                        }, null, "beforeChange");
                     });
 
                     _.each(this.fields, function (field) {
@@ -908,19 +930,18 @@ var App;
                     this.configureFields([
                         {
                             name: "occulus_squadmate_1",
-                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter,
+                            role: 0 /* OcculusSquadmate1 */
                         },
                         {
                             name: "occulus_squadmate_2",
-                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter,
+                            role: 1 /* OcculusSquadmate2 */
                         }
                     ]);
                 }
                 Occulus.prototype.evaluate = function () {
                     var dpt;
-
-                    this.getFieldValue("occulus_squadmate_1").addRole(0 /* OcculusSquadmate1 */);
-                    this.getFieldValue("occulus_squadmate_2").addRole(1 /* OcculusSquadmate2 */);
 
                     dpt = this.stager.app.state.teammates().whoAreRecruited().withoutAnyOfTheseRoles(0 /* OcculusSquadmate1 */, 1 /* OcculusSquadmate2 */);
 
@@ -958,41 +979,36 @@ var App;
                     this.configureFields([
                         {
                             name: "vent_squadmate_1",
-                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter,
+                            role: 2 /* VentsSquadmate1 */
                         },
                         {
                             name: "vent_squadmate_2",
-                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter,
+                            role: 3 /* VentsSquadmate2 */
                         },
                         {
                             name: "vent_venter",
                             filter: function (teammate) {
                                 return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_vent_candidate;
-                            }
+                            },
+                            role: 4 /* VentsVenter */
                         },
                         {
                             name: "vent_leader",
                             filter: function (teammate) {
                                 return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_leader_candidate;
-                            }
+                            },
+                            role: 5 /* VentsLeader */
                         }
                     ]);
                 }
                 Vents.prototype.evaluate = function () {
                     var venter;
                     var leader;
-                    var squadmate_1;
-                    var squadmate_2;
 
                     venter = this.getFieldValue("vent_venter");
                     leader = this.getFieldValue("vent_leader");
-                    squadmate_1 = this.getFieldValue("vent_squadmate_1");
-                    squadmate_2 = this.getFieldValue("vent_squadmate_2");
-
-                    squadmate_1.addRole(2 /* VentsSquadmate1 */);
-                    squadmate_2.addRole(3 /* VentsSquadmate2 */);
-                    venter.addRole(4 /* VentsVenter */);
-                    leader.addRole(5 /* VentsLeader */);
 
                     if (!venter.willBeEffectiveVentVenter()) {
                         venter.die(this.id, 3 /* VentsBadVenter */);
@@ -1023,13 +1039,15 @@ var App;
                             name: "long_walk_bubbler",
                             filter: function (teammate) {
                                 return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_bubble_candidate;
-                            }
+                            },
+                            role: 9 /* LongWalkBubbler */
                         },
                         {
                             name: "long_walk_leader",
                             filter: function (teammate) {
                                 return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_leader_candidate;
-                            }
+                            },
+                            role: 10 /* LongWalkLeader */
                         },
                         {
                             name: "long_walk_escort",
@@ -1040,36 +1058,29 @@ var App;
 
                                 return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_escort_candidate;
                             },
-                            optional: true
+                            optional: true,
+                            role: 8 /* LongWalkEscort */
                         },
                         {
                             name: "long_walk_squadmate_1",
-                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter,
+                            role: 6 /* LongWalkSquadmate1 */
                         },
                         {
                             name: "long_walk_squadmate_2",
-                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter,
+                            role: 7 /* LongWalkSquadmate2 */
                         }
                     ]);
                 }
                 LongWalk.prototype.evaluate = function () {
-                    var squadmate_1;
-                    var squadmate_2;
                     var escort;
                     var bubbler;
                     var leader;
 
-                    squadmate_1 = this.getFieldValue("long_walk_squadmate_1");
-                    squadmate_2 = this.getFieldValue("long_walk_squadmate_2");
                     escort = this.getFieldValue("long_walk_escort");
                     bubbler = this.getFieldValue("long_walk_bubbler");
                     leader = this.getFieldValue("long_walk_leader");
-
-                    squadmate_1.addRole(6 /* LongWalkSquadmate1 */);
-                    squadmate_2.addRole(7 /* LongWalkSquadmate2 */);
-                    escort.addRole(8 /* LongWalkEscort */);
-                    leader.addRole(10 /* LongWalkLeader */);
-                    bubbler.addRole(9 /* LongWalkBubbler */);
 
                     if (escort.henchman.id !== undefined && !escort.willBeEffectiveLongWalkEscort()) {
                         escort.die(this.id, 7 /* Escort */);
@@ -1098,6 +1109,7 @@ var App;
             var Boss = (function (_super) {
                 __extends(Boss, _super);
                 function Boss(stager) {
+                    var _this = this;
                     _super.call(this, stager);
                     this.id = 4 /* Boss */;
                     this.label = "Boss";
@@ -1106,15 +1118,25 @@ var App;
                             name: "boss_squadmate_1",
                             filter: function (teammate) {
                                 return teammate.is_recruited() && !teammate.is_dead() && !teammate.hasRole(8 /* LongWalkEscort */);
-                            }
+                            },
+                            role: 11 /* BossSquadmate1 */
                         },
                         {
                             name: "boss_squadmate_2",
                             filter: function (teammate) {
                                 return teammate.is_recruited() && !teammate.is_dead() && !teammate.hasRole(8 /* LongWalkEscort */);
-                            }
+                            },
+                            role: 12 /* BossSquadmate2 */
                         }
                     ]);
+
+                    this.getFieldObservable("boss_squadmate_1").subscribe(function () {
+                        _this.stager.app.state.teammates().whoAreAlive().whoAreRecruited().removeRole(13 /* HeldTheLine */).withoutAnyOfTheseRoles(11 /* BossSquadmate1 */, 12 /* BossSquadmate2 */, 8 /* LongWalkEscort */).addRole(13 /* HeldTheLine */);
+                    });
+
+                    this.getFieldObservable("boss_squadmate_2").subscribe(function () {
+                        _this.stager.app.state.teammates().whoAreAlive().whoAreRecruited().removeRole(13 /* HeldTheLine */).withoutAnyOfTheseRoles(11 /* BossSquadmate1 */, 12 /* BossSquadmate2 */, 8 /* LongWalkEscort */).addRole(13 /* HeldTheLine */);
+                    });
                 }
                 Boss.prototype.evaluate = function () {
                     var squadmate_1;
@@ -1123,9 +1145,6 @@ var App;
                     squadmate_1 = this.getFieldValue("boss_squadmate_1");
                     squadmate_2 = this.getFieldValue("boss_squadmate_2");
 
-                    squadmate_1.addRole(11 /* BossSquadmate1 */);
-                    squadmate_2.addRole(12 /* BossSquadmate2 */);
-
                     if (!squadmate_1.willSurviveBeingBossSquadmate()) {
                         squadmate_1.die(this.id, 8 /* Boss */);
                     }
@@ -1133,7 +1152,7 @@ var App;
                         squadmate_2.die(this.id, 8 /* Boss */);
                     }
 
-                    this.stager.app.state.teammates().whoAreRecruited().whoAreAlive().withoutAnyOfTheseRoles(11 /* BossSquadmate1 */, 12 /* BossSquadmate2 */, 8 /* LongWalkEscort */).addRole(13 /* HeldTheLine */).whoDieHoldingTheLine().die(this.id, 9 /* HoldTheLine */);
+                    this.stager.app.state.teammates().withRole(13 /* HeldTheLine */).whoDieHoldingTheLine().die(this.id, 9 /* HoldTheLine */);
                 };
                 return Boss;
             })(Stages.Stage);
@@ -1752,6 +1771,23 @@ var App;
                     return "All Survived";
                 default:
                     return App.ME2.Stages.SummaryCrewSurvivalOptions[crew_survival];
+            }
+        };
+
+        Application.renderHTLScore = function (score) {
+            switch (score) {
+                case 0:
+                    return "0";
+                case 1:
+                    return "➊";
+                case 2:
+                    return "➋";
+                case 3:
+                    return "➌";
+                case 4:
+                    return "➍";
+                default:
+                    return score.toString(10);
             }
         };
 

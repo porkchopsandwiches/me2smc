@@ -15,13 +15,15 @@ module App {
                             name: "long_walk_bubbler",
                             filter: (teammate: App.ME2.Teammate): boolean => {
                                 return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_bubble_candidate;
-                            }
+                            },
+                            role: App.ME2.TeammateRoles.LongWalkBubbler
                         },
                         {
                             name: "long_walk_leader",
                             filter: (teammate: App.ME2.Teammate): boolean => {
                                 return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_leader_candidate;
-                            }
+                            },
+                            role: App.ME2.TeammateRoles.LongWalkLeader
                         },
                         {
                             name: "long_walk_escort",
@@ -34,38 +36,30 @@ module App {
 
                                 return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_escort_candidate;
                             },
-                            optional: true
+                            optional: true,
+                            role: App.ME2.TeammateRoles.LongWalkEscort
                         },
                         {
                             name: "long_walk_squadmate_1",
-                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter,
+                            role: App.ME2.TeammateRoles.LongWalkSquadmate1
                         },
                         {
                             name: "long_walk_squadmate_2",
-                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter,
+                            role: App.ME2.TeammateRoles.LongWalkSquadmate2
                         }
                     ]);
                 }
 
                 public evaluate (): void {
-
-                    var squadmate_1: App.ME2.Teammate;
-                    var squadmate_2: App.ME2.Teammate;
                     var escort: App.ME2.Teammate;
                     var bubbler: App.ME2.Teammate;
                     var leader: App.ME2.Teammate;
 
-                    squadmate_1 = this.getFieldValue("long_walk_squadmate_1");
-                    squadmate_2 = this.getFieldValue("long_walk_squadmate_2");
                     escort = this.getFieldValue("long_walk_escort");
                     bubbler = this.getFieldValue("long_walk_bubbler");
                     leader = this.getFieldValue("long_walk_leader");
-
-                    squadmate_1.addRole(App.ME2.TeammateRoles.LongWalkSquadmate1);
-                    squadmate_2.addRole(App.ME2.TeammateRoles.LongWalkSquadmate2);
-                    escort.addRole(App.ME2.TeammateRoles.LongWalkEscort);
-                    leader.addRole(App.ME2.TeammateRoles.LongWalkLeader);
-                    bubbler.addRole(App.ME2.TeammateRoles.LongWalkBubbler);
 
                     // If escort is not loyal, they will die
                     if (escort.henchman.id !== undefined && !escort.willBeEffectiveLongWalkEscort()) {

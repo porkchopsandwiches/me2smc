@@ -141,6 +141,24 @@ module App {
             }
         }
 
+        static renderHTLScore (score: number): string {
+            switch (score) {
+                case 0:
+                    return "0";
+                case 1:
+                    return "➊";
+                case 2:
+                    return "➋";
+                case 3:
+                    return "➌";
+                case 4:
+                    return "➍";
+                default:
+                    return score.toString(10);
+            }
+
+        }
+
         static showArmourDeathRankPopover (henchman: App.ME2.Henchman, event?: Event): void {
             return Application.showRankPopover($(event.target), "Armour Deaths", henchman, henchman.getHenchmenSortedByArmourDeathPriority())
         }

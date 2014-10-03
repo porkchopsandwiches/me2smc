@@ -86,6 +86,11 @@ module App {
                 return this;
             }
 
+            public removeRole (role: TeammateRoles): Teammate {
+                this.roles.remove(role);
+                return this;
+            }
+
             public hasRole (role: TeammateRoles): boolean {
                 return this.roles.indexOf(role) > -1;
             }

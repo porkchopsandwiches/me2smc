@@ -82,6 +82,13 @@ module App {
                 return this;
             }
 
+            public removeRole (role: App.ME2.TeammateRoles): Teammates {
+                this.each((teammate: App.ME2.Teammate): void => {
+                    teammate.removeRole(role);
+                });
+                return this;
+            }
+
             public withRole (role: App.ME2.TeammateRoles): Teammates {
                 return this.filter((teammate: App.ME2.Teammate): boolean => {
                     return teammate.hasRole(role);

@@ -15,20 +15,19 @@ module App {
                     this.configureFields([
                         {
                             name: "occulus_squadmate_1",
-                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter,
+                            role: App.ME2.TeammateRoles.OcculusSquadmate1
                         },
                         {
                             name: "occulus_squadmate_2",
-                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter
+                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter,
+                            role: App.ME2.TeammateRoles.OcculusSquadmate2
                         }
                     ]);
                 }
 
                 public evaluate () {
                     var dpt: App.ME2.Teammates;
-
-                    this.getFieldValue("occulus_squadmate_1").addRole(App.ME2.TeammateRoles.OcculusSquadmate1);
-                    this.getFieldValue("occulus_squadmate_2").addRole(App.ME2.TeammateRoles.OcculusSquadmate2);
 
                     // Get candidates to die (that is, they were not Occulus Squadmates)
                     dpt = this.stager.app.state.teammates().whoAreRecruited().withoutAnyOfTheseRoles(App.ME2.TeammateRoles.OcculusSquadmate1, App.ME2.TeammateRoles.OcculusSquadmate2);

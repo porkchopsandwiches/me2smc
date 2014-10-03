@@ -20,6 +20,7 @@ module App {
                 name: string;
                 filter: ITeammateFieldFilter;
                 optional?: boolean;
+                role?: App.ME2.TeammateRoles;
             }
 
             export interface ITeammateObservableField {
@@ -99,7 +100,10 @@ module App {
                     // @todo add to above
                     // Add subscriptions to force candidate recalculations
                     _.each(this.fields, (field: ITeammateObservableField): void => {
-                        field.observable.subscribe((): void => {
+                        field.observable.subscribe((teammate: App.ME2.Teammate): void => {
+                            if (field.config.role !== undefined) {
+                                teammate.addRole(field.config.role);
+                            }
 
                             _.each(this.fields, (other_field: ITeammateObservableField) => {
                                 if (other_field.config.name !== field.config.name) {
@@ -107,6 +111,12 @@ module App {
                                 }
                             });
                         });
+
+                        field.observable.subscribe((teammate: App.ME2.Teammate) => {
+                            if (field.config.role !== undefined && teammate && teammate.henchman.id !== undefined) {
+                                teammate.removeRole(field.config.role);
+                            }
+                        }, null, "beforeChange");
                     });
 
                     // Force a refresh
