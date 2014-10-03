@@ -7,12 +7,18 @@ module App {
             delay: KnockoutComputed<number>;
         }
 
+        export enum NormandyDelayOptions {
+            None = 0,
+            Few = 1,
+            Many = 2
+        }
+
         export class Normandy implements INormandy {
             public has_armour: KnockoutObservable<boolean>;
             public has_shielding: KnockoutObservable<boolean>;
             public has_thanix_cannon: KnockoutObservable<boolean>;
             public delay: KnockoutComputed<number>;
-            private _delay: KnockoutObservable<number>;
+            private _delay: KnockoutObservable<NormandyDelayOptions>;
 
             constructor (
                 has_armor: boolean = false,
@@ -33,7 +39,7 @@ module App {
                         var delay: number;
                         delay = parseInt("" + value, 10);
 
-                        if (!_.isNaN(delay)) {
+                        if (!_.isNaN(delay) && delay >= NormandyDelayOptions.None && delay <= NormandyDelayOptions.Many) {
                             this._delay(delay);
                         }
                     }

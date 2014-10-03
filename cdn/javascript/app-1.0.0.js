@@ -297,15 +297,14 @@ var App;
                 this.is_loyal = ko.observable(is_recruited && is_loyal);
                 this.is_dead = ko.observable(is_dead);
                 this.roles = ko.observableArray(roles);
+                this.death_cause = ko.observable(undefined);
+                this.death_stage_id = ko.observable(undefined);
 
                 this.is_recruited.subscribe(function (is_recruited) {
                     if (!is_recruited && _this.is_loyal()) {
                         _this.is_loyal(false);
                     }
                 });
-
-                this.death_cause = ko.observable(undefined);
-                this.death_stage_id = ko.observable(undefined);
             }
             Teammate.prototype.addRole = function (role) {
                 if (!this.hasRole(role)) {
@@ -316,6 +315,28 @@ var App;
 
             Teammate.prototype.hasRole = function (role) {
                 return this.roles.indexOf(role) > -1;
+            };
+
+            Teammate.prototype.hasAnyRole = function () {
+                var _this = this;
+                var roles = [];
+                for (var _i = 0; _i < (arguments.length - 0); _i++) {
+                    roles[_i] = arguments[_i + 0];
+                }
+                return _.some(roles, function (role) {
+                    return _this.hasRole(role);
+                });
+            };
+
+            Teammate.prototype.hasAllRoles = function () {
+                var _this = this;
+                var roles = [];
+                for (var _i = 0; _i < (arguments.length - 0); _i++) {
+                    roles[_i] = arguments[_i + 0];
+                }
+                return _.every(roles, function (role) {
+                    return _this.hasRole(role);
+                });
             };
 
             Teammate.prototype.getHoldTheLineScore = function () {
@@ -607,6 +628,13 @@ var App;
 var App;
 (function (App) {
     (function (ME2) {
+        (function (NormandyDelayOptions) {
+            NormandyDelayOptions[NormandyDelayOptions["None"] = 0] = "None";
+            NormandyDelayOptions[NormandyDelayOptions["Few"] = 1] = "Few";
+            NormandyDelayOptions[NormandyDelayOptions["Many"] = 2] = "Many";
+        })(ME2.NormandyDelayOptions || (ME2.NormandyDelayOptions = {}));
+        var NormandyDelayOptions = ME2.NormandyDelayOptions;
+
         var Normandy = (function () {
             function Normandy(has_armor, has_shielding, has_thanix_cannon, delay) {
                 if (typeof has_armor === "undefined") { has_armor = false; }
@@ -627,7 +655,7 @@ var App;
                         var delay;
                         delay = parseInt("" + value, 10);
 
-                        if (!_.isNaN(delay)) {
+                        if (!_.isNaN(delay) && delay >= 0 /* None */ && delay <= 2 /* Many */) {
                             _this._delay(delay);
                         }
                     }
@@ -1226,9 +1254,9 @@ var App;
                         return 2 /* AllDied */;
                     }
 
-                    if (this.stager.app.state.normandy.delay() === 0) {
+                    if (this.stager.app.state.normandy.delay() === 0 /* None */) {
                         return 0 /* AllSurvived */;
-                    } else if (this.stager.app.state.normandy.delay() <= 3) {
+                    } else if (this.stager.app.state.normandy.delay() === 1 /* Few */) {
                         return 1 /* HalfSurvived */;
                     } else {
                         return 2 /* AllDied */;
@@ -1359,19 +1387,25 @@ var App;
                 return indexes;
             };
 
+            Serialisation.prototype.getRoleCount = function () {
+                return _.keys(App.ME2.TeammateRoles).length / 2;
+            };
+
             Serialisation.prototype.serialiseTeammate = function (teammate) {
                 var elements;
                 var roles;
+                var role_offset;
+                role_offset = this.getRoleCount();
 
                 roles = teammate.roles.slice(0);
                 if (teammate.is_recruited()) {
-                    roles.push(10);
+                    roles.push(role_offset);
                 }
                 if (teammate.is_loyal()) {
-                    roles.push(11);
+                    roles.push(role_offset + 1);
                 }
                 if (teammate.is_dead()) {
-                    roles.push(12);
+                    roles.push(role_offset + 2);
                 }
 
                 elements = [
@@ -1394,6 +1428,7 @@ var App;
                 var roles;
                 var deserialised;
                 var matches;
+                var role_offset;
 
                 matches = serialised.match(App.ME2.Serialisation.TeammateRegex);
 
@@ -1401,12 +1436,13 @@ var App;
                 death_cause = parseInt("0x" + matches[2 /* DeathCause */], 16);
                 death_stage_id = parseInt("0x" + matches[3 /* DeathStageID */], 16) || undefined;
                 roles = this.flagsToIndexes(parseInt("0x" + matches[4 /* Roles */], 16));
+                role_offset = this.getRoleCount();
 
-                is_recruited = _.indexOf(roles, 10) >= 0;
-                is_loyal = _.indexOf(roles, 11) >= 0;
-                is_dead = _.indexOf(roles, 12) >= 0;
+                is_recruited = _.indexOf(roles, role_offset) >= 0;
+                is_loyal = _.indexOf(roles, role_offset + 1) >= 0;
+                is_dead = _.indexOf(roles, role_offset + 2) >= 0;
 
-                roles = _.without(roles, 10, 11, 12);
+                roles = _.without(roles, role_offset, role_offset + 1, role_offset + 2);
 
                 deserialised = new App.ME2.Teammate(this.app.getHenchman(henchman_id), is_recruited, is_loyal, is_dead, roles);
                 if (is_dead) {
@@ -1602,33 +1638,6 @@ var App;
             });
         };
 
-        Application.formatTeammateRole = function (role) {
-            switch (role) {
-                case 0 /* OcculusSquadmate */:
-                    return "Occulus Squadmate";
-                case 3 /* VentsLeader */:
-                    return "Vents Leader";
-                case 2 /* VentsVenter */:
-                    return "Vents Tech Expert";
-                case 1 /* VentsSquadmate */:
-                    return "Vents Squadmate";
-                case 6 /* LongWalkBubbler */:
-                    return "Long Walk Biotic Expert";
-                case 5 /* LongWalkEscort */:
-                    return "Escort";
-                case 7 /* LongWalkLeader */:
-                    return "Long Walk Leader";
-                case 4 /* LongWalkSquadmate */:
-                    return "Long Walk Squadmate";
-                case 8 /* BossSquadmate */:
-                    return "Boss Squadmate";
-                case 9 /* HeldTheLine */:
-                    return "Held the line";
-            }
-
-            return App.ME2.TeammateRoles[role];
-        };
-
         Application.renderYesNo = function (value) {
             return value ? "Yes" : "No";
         };
@@ -1752,6 +1761,27 @@ var App;
 
         Application.showCutsceneRescueRankPopover = function (henchman, event) {
             return Application.showRankPopover($(event.target), "Catchs Shepard", henchman, henchman.getHenchmenSortedByCutsceneRescuePriority());
+        };
+
+        Application.getDelayCandidates = function () {
+            return [
+                0 /* None */,
+                1 /* Few */,
+                2 /* Many */
+            ];
+        };
+
+        Application.renderDelayValue = function (value) {
+            switch (value) {
+                case 0 /* None */:
+                    return "None";
+                case 1 /* Few */:
+                    return "1-3";
+                case 2 /* Many */:
+                    return "More than 3";
+                default:
+                    return "" + value;
+            }
         };
 
         Application.showRankPopover = function ($target, title, henchman, list) {

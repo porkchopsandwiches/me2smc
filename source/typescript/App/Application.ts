@@ -53,33 +53,6 @@ module App {
         //static ideal_symbol = "✓";
         static ideal_symbol = "✭";
 
-        static formatTeammateRole (role: App.ME2.TeammateRoles): string {
-            switch (role) {
-                case App.ME2.TeammateRoles.OcculusSquadmate:
-                    return "Occulus Squadmate";
-                case App.ME2.TeammateRoles.VentsLeader:
-                    return "Vents Leader";
-                case App.ME2.TeammateRoles.VentsVenter:
-                    return "Vents Tech Expert";
-                case App.ME2.TeammateRoles.VentsSquadmate:
-                    return "Vents Squadmate";
-                case App.ME2.TeammateRoles.LongWalkBubbler:
-                    return "Long Walk Biotic Expert";
-                case App.ME2.TeammateRoles.LongWalkEscort:
-                    return "Escort";
-                case App.ME2.TeammateRoles.LongWalkLeader:
-                    return "Long Walk Leader";
-                case App.ME2.TeammateRoles.LongWalkSquadmate:
-                    return "Long Walk Squadmate";
-                case App.ME2.TeammateRoles.BossSquadmate:
-                    return "Boss Squadmate";
-                case App.ME2.TeammateRoles.HeldTheLine:
-                    return "Held the line";
-            }
-
-            return App.ME2.TeammateRoles[role];
-        }
-
         static renderYesNo (value: boolean): string {
             return value ? "Yes" : "No";
         }
@@ -202,6 +175,27 @@ module App {
 
         static showCutsceneRescueRankPopover (henchman: App.ME2.Henchman, event?: Event): void {
             return Application.showRankPopover($(event.target), "Catchs Shepard", henchman, henchman.getHenchmenSortedByCutsceneRescuePriority())
+        }
+
+        static getDelayCandidates (): number[] {
+            return [
+                App.ME2.NormandyDelayOptions.None,
+                App.ME2.NormandyDelayOptions.Few,
+                App.ME2.NormandyDelayOptions.Many
+            ];
+        }
+
+        static renderDelayValue (value: App.ME2.NormandyDelayOptions): string {
+            switch (value) {
+                case App.ME2.NormandyDelayOptions.None:
+                    return "None";
+                case App.ME2.NormandyDelayOptions.Few:
+                    return "1-3";
+                case App.ME2.NormandyDelayOptions.Many:
+                    return "More than 3";
+                default:
+                    return "" + value;
+            }
         }
 
         static showRankPopover ($target: JQuery, title: string, henchman: App.ME2.Henchman, list: App.ME2.Henchman[]): void {

@@ -34,7 +34,10 @@ module App {
             is_dead: KnockoutObservable<boolean>;
             death_cause: KnockoutObservable<TeammateDeathCauses>;
             death_stage_id: KnockoutObservable<App.ME2.Stages.StageIDs>;
+            roles: KnockoutObservableArray<TeammateRoles>;
             hasRole (role: TeammateRoles): boolean;
+            hasAnyRole (...roles: TeammateRoles[]): boolean;
+            hasAllRoles (...roles: TeammateRoles[]): boolean;
             addRole (role: TeammateRoles): ITeammate;
             die (stage_id: App.ME2.Stages.StageIDs, death_cause: TeammateDeathCauses): ITeammate;
             willBeEffectiveLongWalkLeader (): boolean;
@@ -44,8 +47,6 @@ module App {
             willBeEffectiveVentVenter (): boolean;
             willBeEffectiveVentLeader (): boolean;
             getHoldTheLineScore (): number;
-            //roles: TeammateRoles[];
-            roles: KnockoutObservableArray<TeammateRoles>;
         }
 
         export class Teammate implements ITeammate {
@@ -55,7 +56,6 @@ module App {
             public is_recruited: KnockoutObservable<boolean>;
             public is_loyal: KnockoutObservable<boolean>;
             public is_dead: KnockoutObservable<boolean>;
-            //public roles: TeammateRoles[];
             public roles: KnockoutObservableArray<TeammateRoles>;
 
             constructor (henchman: App.ME2.Henchman, is_recruited: boolean = false, is_loyal: boolean = false, is_dead: boolean = false, roles: TeammateRoles[] = []) {
@@ -64,6 +64,8 @@ module App {
                 this.is_loyal = ko.observable<boolean>(is_recruited && is_loyal);
                 this.is_dead = ko.observable<boolean>(is_dead);
                 this.roles = ko.observableArray(roles);
+                this.death_cause = ko.observable<TeammateDeathCauses>(undefined);
+                this.death_stage_id = ko.observable<App.ME2.Stages.StageIDs>(undefined);
 
                 // If not recruited, can't be loyal either
                 this.is_recruited.subscribe((is_recruited: boolean) => {
@@ -71,10 +73,6 @@ module App {
                         this.is_loyal(false);
                     }
                 });
-
-                this.death_cause = ko.observable<TeammateDeathCauses>(undefined);
-                this.death_stage_id = ko.observable<App.ME2.Stages.StageIDs>(undefined);
-
             }
 
             public addRole (role: TeammateRoles): Teammate {
@@ -85,8 +83,19 @@ module App {
             }
 
             public hasRole (role: TeammateRoles): boolean {
-                //return _.indexOf(this.roles(), role) !== -1;
                 return this.roles.indexOf(role) > -1;
+            }
+
+            public hasAnyRole (...roles: TeammateRoles[]): boolean {
+                return _.some<TeammateRoles>(roles, (role: TeammateRoles): boolean => {
+                    return this.hasRole(role);
+                });
+            }
+
+            public hasAllRoles (...roles: TeammateRoles[]): boolean {
+                return _.every<TeammateRoles>(roles, (role: TeammateRoles): boolean => {
+                    return this.hasRole(role);
+                });
             }
 
             public getHoldTheLineScore (): number {
@@ -94,7 +103,7 @@ module App {
             }
 
             public willBeEffectiveLongWalkLeader (): boolean {
-                return this.henchman.is_leader && (this.is_loyal() || this.henchman.is_super_leader);
+                return this.henchman.is_leader && (this.is_loyal() || this.henchman.is_super_leader); // 'Super leader' (i.e. Miranda) will be effective even if not loyal
             }
 
             public willBeEffectiveLongWalkEscort (): boolean {

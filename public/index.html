@@ -84,8 +84,8 @@
 											</div>
 										</div>
 										<div class="form-group">
-											<label><span data-placement="right" data-toggle="tooltip" data-html="true" title="How many missions were undertaken between the crew being abducted and the Omega 4 relay being accessed.">Mission Delay</span></label>
-											<input class="form-control" type="number" min="0" max="20" data-bind="value: $root.state.normandy.delay" />
+											<label for="normandy-delay"><span data-placement="right" data-toggle="tooltip" data-html="true" title="How many missions were undertaken between the crew being abducted and the Omega 4 relay being accessed.">Mission Delay</span></label>
+											<select class="form-control" id="normandy-delay" data-bind="options: App.Application.getDelayCandidates(), optionsText: App.Application.renderDelayValue, value: $root.state.normandy.delay"></select>
 										</div>
 									</form>
 								</div>

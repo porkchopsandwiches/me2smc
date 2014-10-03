@@ -84,9 +84,9 @@ module App {
                         return SummaryCrewSurvivalOptions.AllDied;
                     }
 
-                    if (this.stager.app.state.normandy.delay() === 0) {
+                    if (this.stager.app.state.normandy.delay() === App.ME2.NormandyDelayOptions.None) {
                         return SummaryCrewSurvivalOptions.AllSurvived;
-                    } else if (this.stager.app.state.normandy.delay() <= 3) {
+                    } else if (this.stager.app.state.normandy.delay() === App.ME2.NormandyDelayOptions.Few) {
                         return SummaryCrewSurvivalOptions.HalfSurvived;
                     } else {
                         return SummaryCrewSurvivalOptions.AllDied;

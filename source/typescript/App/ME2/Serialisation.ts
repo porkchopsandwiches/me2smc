@@ -87,20 +87,26 @@ module App {
             /// Teammates
             /// -------------------------------------------
 
+            private getRoleCount (): number {
+                return _.keys(App.ME2.TeammateRoles).length / 2;
+            }
+
             // Length 7
             private serialiseTeammate (teammate: App.ME2.Teammate): ISerialisedTeammate {
                 var elements: string[];
                 var roles: number[];
+                var role_offset: number;
+                role_offset = this.getRoleCount();
 
                 roles = teammate.roles.slice(0);
                 if (teammate.is_recruited()) {
-                    roles.push(10);
+                    roles.push(role_offset);
                 }
                 if (teammate.is_loyal()) {
-                    roles.push(11);
+                    roles.push(role_offset + 1);
                 }
                 if (teammate.is_dead()) {
-                    roles.push(12);
+                    roles.push(role_offset + 2);
                 }
 
                 elements = [
@@ -123,6 +129,8 @@ module App {
                 var roles: App.ME2.TeammateRoles[];
                 var deserialised: App.ME2.Teammate;
                 var matches: string[];
+                var role_offset: number;
+
 
                 matches = serialised.match(App.ME2.Serialisation.TeammateRegex);
 
@@ -130,12 +138,13 @@ module App {
                 death_cause         = parseInt("0x" + matches[SerialisedTeammateElements.DeathCause], 16);
                 death_stage_id      = parseInt("0x" + matches[SerialisedTeammateElements.DeathStageID], 16) || undefined;
                 roles               = this.flagsToIndexes(parseInt("0x" + matches[SerialisedTeammateElements.Roles], 16));
+                role_offset         = this.getRoleCount();
 
-                is_recruited = _.indexOf(roles, 10) >= 0;
-                is_loyal = _.indexOf(roles, 11) >= 0;
-                is_dead = _.indexOf(roles, 12) >= 0;
+                is_recruited = _.indexOf(roles, role_offset) >= 0;
+                is_loyal = _.indexOf(roles, role_offset + 1) >= 0;
+                is_dead = _.indexOf(roles, role_offset + 2) >= 0;
 
-                roles = _.without(roles, 10, 11, 12);
+                roles = _.without(roles, role_offset, role_offset + 1, role_offset + 2);
 
                 deserialised = new App.ME2.Teammate(this.app.getHenchman(henchman_id), is_recruited, is_loyal, is_dead, roles);
                 if (is_dead) {
