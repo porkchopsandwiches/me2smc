@@ -72,7 +72,7 @@ module App {
                         // Freeze the current state
                         this.freeze();
 
-                        current_stage.evaluate();
+                        current_stage.evaluateAndApply();
 
                         if (current_stage.id < this.stages.length - 1) {
                             this.app.state.stage(this.getStage(current_stage.id + 1));

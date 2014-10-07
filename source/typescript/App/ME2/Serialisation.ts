@@ -41,12 +41,12 @@ module App {
                 this.app = app;
             }
 
-            // Captures Henchman ID (1), Death Cause (1), Death Stage ID (1), Roles (4)
-            static TeammateRegex: RegExp = /^([0-9a-f]{1})([0-9a-f]{1})([0-9a-f]{1})([0-9a-f]{4})$/;
-            static TeammatesRegex: RegExp = /[0-9a-f]{7}/g;
+            // Captures Henchman ID (1), Death Cause (1), Death Stage ID (1), Roles (5)
+            static TeammateRegex: RegExp = /^([0-9a-f]{1})([0-9a-f]{1})([0-9a-f]{1})([0-9a-f]{5})$/;
+            static TeammatesRegex: RegExp = /[0-9a-f]{8}/g;
 
             // Captures: StageID (1), Normandy Delay (2), Normandy Flags (1) ((Teammate Stuff) x 12)
-            static SerialisedRegex: RegExp = /^([0-9a-f]{1})([0-9]{2})([0-9]{1})((?:[0-9a-f]{2}[0-9]{1}[0-9a-f]{4}){12})$/;
+            static SerialisedRegex: RegExp = /^([0-9a-f]{1})([0-9]{2})([0-9]{1})((?:[0-9a-f]{2}[0-9]{1}[0-9a-f]{5}){12})$/;
 
             /// -------------------------------------------
             /// Utility methods
@@ -91,29 +91,29 @@ module App {
                 return _.keys(App.ME2.TeammateRoles).length / 2;
             }
 
-            // Length 7
+            // Length 8
             private serialiseTeammate (teammate: App.ME2.Teammate): ISerialisedTeammate {
                 var elements: string[];
                 var roles: number[];
                 var role_offset: number;
                 role_offset = this.getRoleCount();
 
-                roles = teammate.roles.slice(0);
+                roles = teammate.roles().slice(0);
                 if (teammate.is_recruited()) {
-                    roles.push(role_offset);
-                }
-                if (teammate.is_loyal()) {
                     roles.push(role_offset + 1);
                 }
-                if (teammate.is_dead()) {
+                if (teammate.is_loyal()) {
                     roles.push(role_offset + 2);
+                }
+                if (teammate.is_dead()) {
+                    roles.push(role_offset + 3);
                 }
 
                 elements = [
-                    (<number> teammate.henchman.id).toString(16),
+                    this.lpad((<number> teammate.henchman.id).toString(16), 1),
                     this.lpad((teammate.death_cause() === undefined ? 0 : teammate.death_cause() + 1).toString(16), 1),
                     this.lpad((teammate.death_stage_id() || 0).toString(16), 1),
-                    this.lpad(this.indexesToFlags(roles).toString(16), 4)
+                    this.lpad(this.indexesToFlags(roles).toString(16), 5)
                 ];
 
                 return elements.join("");
@@ -140,11 +140,11 @@ module App {
                 roles               = this.flagsToIndexes(parseInt("0x" + matches[SerialisedTeammateElements.Roles], 16));
                 role_offset         = this.getRoleCount();
 
-                is_recruited = _.indexOf(roles, role_offset) >= 0;
-                is_loyal = _.indexOf(roles, role_offset + 1) >= 0;
-                is_dead = _.indexOf(roles, role_offset + 2) >= 0;
+                is_recruited = _.indexOf(roles, role_offset + 1) >= 0;
+                is_loyal = _.indexOf(roles, role_offset + 2) >= 0;
+                is_dead = _.indexOf(roles, role_offset + 3) >= 0;
 
-                roles = _.without(roles, role_offset, role_offset + 1, role_offset + 2);
+                roles = _.without(roles, role_offset + 1, role_offset + 2, role_offset + 3);
 
                 deserialised = new App.ME2.Teammate(this.app.getHenchman(henchman_id), is_recruited, is_loyal, is_dead, roles);
                 if (is_dead) {

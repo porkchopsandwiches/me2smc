@@ -170,18 +170,22 @@
 						<!-- ko if: id == App.ME2.Stages.StageIDs.Boss -->
 							<form role="form">
 								<div class="row">
-									<div class="col-sm-6">
-										<div class="form-group">
-											<label for="boss-squadmate-1">Squadmate #1</label>
-											<select class="form-control" id="boss-squadmate-1" data-bind="options: getFieldCandidates('boss_squadmate_1'), optionsText: App.Application.renderTeammateNameBossSquadmate, value: getFieldObservable('boss_squadmate_1')"></select>
+									<!-- ko with: getField('boss_squadmate_1') -->
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="boss-squadmate-1">Squadmate #1</label>
+												<select class="form-control" id="boss-squadmate-2" data-bind="options: candidates, optionsText: App.Application.renderTeammateNameBossSquadmate, value: observable"></select>
+											</div>
 										</div>
-									</div>
-									<div class="col-sm-6">
-										<div class="form-group">
-											<label for="boss-squadmate-2">Squadmate #2</label>
-											<select class="form-control" id="boss-squadmate-2" data-bind="options: getFieldCandidates('boss_squadmate_2'), optionsText: App.Application.renderTeammateNameBossSquadmate, value: getFieldObservable('boss_squadmate_2')"></select>
+									<!-- /ko -->
+									<!-- ko with: getField('boss_squadmate_2') -->
+										<div class="col-sm-6">
+											<div class="form-group">
+												<label for="boss-squadmate-2">Squadmate #2</label>
+												<select class="form-control" id="boss-squadmate-2" data-bind="options: candidates, optionsText: App.Application.renderTeammateNameBossSquadmate, value: observable"></select>
+											</div>
 										</div>
-									</div>
+									<!-- /ko -->
 								</div>
 							</form>
 						<!-- /ko -->
@@ -248,23 +252,34 @@
 							<tbody>
 								<!-- ko with: $root.state.teammates().sortByIsRecruited().value() -->
 									<!-- ko foreach: $data -->
-										<tr data-bind="attr: { class: (is_recruited() ? '' : 'text-warning warning') }, click: function () { $root.henchman(henchman) }">
-											<td data-bind="attr: { class: (is_dead() ? 'danger' : '') }">
+										<tr data-bind="css: {'text-info info': !is_recruited() }, click: function () { $root.henchman(henchman) }">
+											<td data-bind="css: { 'danger text-danger': is_dead(), 'warning text-warning': $root.predictedToBeDead($data) }">
 												<span data-bind="text: henchman.name"></span> <!-- ko if: is_loyal() --><span class="glyphicon glyphicon-heart"></span><!-- /ko -->
 											</td>
-											<td data-bind="attr: { class: (is_dead() ? 'danger hidden-xs' : 'hidden-xs') }">
+											<td data-bind="css: { 'hidden-xs': true, 'danger text-danger': is_dead(), 'warning text-warning': $root.predictedToBeDead($data) }">
 												<!-- ko if: is_dead() -->
 													<span data-bind="text: App.Application.renderTeammateDeathCause(death_cause())"></span>
 												<!-- /ko -->
-											</td>
-											<td data-bind="attr: { class: (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.Occulus ? 'danger' : '') }">
-												<!-- ko if: hasAnyOfTheseRoles(App.ME2.TeammateRoles.OcculusSquadmate1, App.ME2.TeammateRoles.OcculusSquadmate2) -->
-													<span class="glyphicon glyphicon-user"></span>
+												<!-- ko if: $root.predictedToBeDead($data) -->
+													<!-- ko with: $root.state.stage().evaluate().find($data) -->
+														<span data-bind="text: App.Application.renderTeammateDeathCause($data.death_cause)"></span>
+													<!-- /ko -->
 												<!-- /ko -->
 											</td>
-											<td data-bind="attr: { class: (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.Vents ? 'danger' : '') }">
-												<!-- ko if: hasAnyOfTheseRoles(App.ME2.TeammateRoles.VentsSquadmate1, App.ME2.TeammateRoles.VentsSquadmate2) -->
-													<span class="glyphicon glyphicon-user"></span>
+											<td data-bind="css: { 'danger': (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.Occulus) }">
+												<!-- ko if: hasRole(App.ME2.TeammateRoles.OcculusSquadmate1) -->
+													<span class="glyphicon glyphicon-user"></span><sup>1</sup>
+												<!-- /ko -->
+												<!-- ko if: hasRole(App.ME2.TeammateRoles.OcculusSquadmate2) -->
+													<span class="glyphicon glyphicon-user"></span><sup>2</sup>
+												<!-- /ko -->
+											</td>
+											<td data-bind="css: { 'danger': (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.Vents) }">
+												<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsSquadmate1) -->
+												<span class="glyphicon glyphicon-user"></span><sup>1</sup>
+												<!-- /ko -->
+												<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsSquadmate2) -->
+												<span class="glyphicon glyphicon-user"></span><sup>2</sup>
 												<!-- /ko -->
 												<!-- ko if: hasRole(App.ME2.TeammateRoles.VentsVenter) -->
 													<span class="glyphicon glyphicon-star"></span>
@@ -273,9 +288,12 @@
 													<span class="glyphicon glyphicon-fire"></span>
 												<!-- /ko -->
 											</td>
-											<td data-bind="attr: { class: (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.LongWalk ? 'danger' : '') }">
-												<!-- ko if: hasAnyOfTheseRoles(App.ME2.TeammateRoles.LongWalkSquadmate1, App.ME2.TeammateRoles.LongWalkSquadmate2) -->
-													<span class="glyphicon glyphicon-user"></span>
+											<td data-bind="css: { 'danger': (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.LongWalk) }">
+												<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkSquadmate1) -->
+												<span class="glyphicon glyphicon-user"></span><sup>1</sup>
+												<!-- /ko -->
+												<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkSquadmate2) -->
+												<span class="glyphicon glyphicon-user"></span><sup>2</sup>
 												<!-- /ko -->
 												<!-- ko if: hasRole(App.ME2.TeammateRoles.LongWalkBubbler) -->
 													<span class="glyphicon glyphicon-star"></span>
@@ -287,9 +305,12 @@
 													<span class="glyphicon glyphicon-heart-empty"></span>
 												<!-- /ko -->
 											</td>
-											<td data-bind="attr: { class: (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.Boss ? 'danger' : '') }">
-												<!-- ko if: hasAnyOfTheseRoles(App.ME2.TeammateRoles.BossSquadmate1, App.ME2.TeammateRoles.BossSquadmate2) -->
-													<span class="glyphicon glyphicon-user"></span>
+											<td data-bind="css: { 'danger': (is_dead() && death_stage_id() === App.ME2.Stages.StageIDs.Boss) }">
+												<!-- ko if: hasRole(App.ME2.TeammateRoles.BossSquadmate1) -->
+													<span class="glyphicon glyphicon-user"></span><sup>1</sup>
+												<!-- /ko -->
+												<!-- ko if: hasRole(App.ME2.TeammateRoles.BossSquadmate2) -->
+													<span class="glyphicon glyphicon-user"></span><sup>2</sup>
 												<!-- /ko -->
 												<!-- ko if: hasRole(App.ME2.TeammateRoles.HeldTheLine) -->
 													<span class="glyphicon glyphicon-flash"></span>
@@ -517,7 +538,7 @@
 		<script src="../bower_components/knockoutjs/dist/knockout.js"></script>
 		<script src="../bower_components/lodash/dist/lodash.compat.js"></script>
 		<script src="../cdn/vendor/bootstrap/bootstrap.js"></script>
-		<script src="../cdn/javascript/app-1.0.0.js"></script>
+		<script src="../cdn/javascript/app-1.0.0.js?"></script>
 		<script>
 			$(function () {
 

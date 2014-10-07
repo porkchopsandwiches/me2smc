@@ -30,7 +30,8 @@ module App {
             }
 
             export interface IStage {
-                evaluate (): void;
+                evaluate (): App.ME2.TeammateDeathList;
+                evaluateAndApply (): void;
                 setup (): void;
                 isEvaluatable (): boolean;
                 stager: App.ME2.Stages.Stager;
@@ -57,7 +58,13 @@ module App {
                     this.stager = stager;
                 }
 
-                public evaluate (): void {}
+                public evaluate (): App.ME2.TeammateDeathList {
+                    return new App.ME2.TeammateDeathList();
+                }
+
+                public evaluateAndApply (): void {
+                    this.evaluate().apply();
+                }
 
                 // Replaces bootstrapTeammatefields
                 public configureFields (configs: ITeammateFieldConfig[]): void {
@@ -94,12 +101,6 @@ module App {
                             })
                         };
 
-                        return field;
-                    });
-
-                    // @todo add to above
-                    // Add subscriptions to force candidate recalculations
-                    _.each(this.fields, (field: ITeammateObservableField): void => {
                         field.observable.subscribe((teammate: App.ME2.Teammate): void => {
                             if (field.config.role !== undefined) {
                                 teammate.addRole(field.config.role);
@@ -117,6 +118,8 @@ module App {
                                 teammate.removeRole(field.config.role);
                             }
                         }, null, "beforeChange");
+
+                        return field;
                     });
 
                     // Force a refresh
@@ -143,6 +146,10 @@ module App {
 
                         return !fields_missing;
                     });
+
+                    this.is_evaluatable.subscribe((is_evaluatable) => {
+                        console.log("Is evaluatable updated to", is_evaluatable);
+                    });
                 }
 
                 public getField (name: string): ITeammateObservableField {
@@ -164,6 +171,21 @@ module App {
                 }
 
                 public setup (): void {
+                    // Attempt to apply the current values for each field
+                    _.each(this.fields, (field: ITeammateObservableField): void => {
+                        var state_teammate: App.ME2.Teammate;
+                        var selector_teammate: App.ME2.Teammate;
+
+                        // Get teammate with the role this field is attached to
+                        state_teammate = this.stager.app.state.teammates().withRole(field.config.role).first();
+                        selector_teammate = field.observable();
+
+                        if (state_teammate) {
+                            if (selector_teammate === undefined || selector_teammate.henchman.id !== state_teammate.henchman.id) {
+                                field.observable(state_teammate);
+                            }
+                        }
+                    });
                 }
 
                 public isEvaluatable (): boolean {

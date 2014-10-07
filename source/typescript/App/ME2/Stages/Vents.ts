@@ -41,18 +41,33 @@ module App {
                     ]);
                 }
 
-                public evaluate (): void {
+                public evaluate (): App.ME2.TeammateDeathList {
                     var venter: App.ME2.Teammate;
                     var leader: App.ME2.Teammate;
+                    var death_list: App.ME2.TeammateDeathList;
+
+                    death_list = new App.ME2.TeammateDeathList();
 
                     venter = this.getFieldValue("vent_venter");
                     leader = this.getFieldValue("vent_leader");
 
                     if (!venter.willBeEffectiveVentVenter()) {
-                        venter.die(this.id, App.ME2.TeammateDeathCauses.VentsBadVenter);
+                        //venter.die(this.id, App.ME2.TeammateDeathCauses.VentsBadVenter);
+                        death_list.add({
+                            teammate: venter,
+                            death_stage_id: this.id,
+                            death_cause: App.ME2.TeammateDeathCauses.VentsBadVenter
+                        });
                     } else if (!leader.willBeEffectiveVentLeader()) {
-                        venter.die(this.id, App.ME2.TeammateDeathCauses.VentsBadLeader);
+                        //venter.die(this.id, App.ME2.TeammateDeathCauses.VentsBadLeader);
+                        death_list.add({
+                            teammate: venter,
+                            death_stage_id: this.id,
+                            death_cause: App.ME2.TeammateDeathCauses.VentsBadLeader
+                        });
                     }
+
+                    return death_list;
                 }
             }
         }

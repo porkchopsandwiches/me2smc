@@ -26,24 +26,45 @@ module App {
                     ]);
                 }
 
-                public evaluate () {
+                public evaluate (): App.ME2.TeammateDeathList {
                     var dpt: App.ME2.Teammates;
+                    var death_list: App.ME2.TeammateDeathList;
+
+                    death_list = new App.ME2.TeammateDeathList;
 
                     // Get candidates to die (that is, they were not Occulus Squadmates)
                     dpt = this.stager.app.state.teammates().whoAreRecruited().withoutAnyOfTheseRoles(App.ME2.TeammateRoles.OcculusSquadmate1, App.ME2.TeammateRoles.OcculusSquadmate2);
 
                     // Apply deaths
                     if (!this.stager.app.state.normandy.has_shielding()) {
-                        dpt.whoAreAlive().sortByShieldingDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.ShieldingFailure);
+                        death_list.add({
+                            teammate: dpt.whoAreAlive().sortByShieldingDeathPriority().last(),
+                            death_cause: App.ME2.TeammateDeathCauses.ShieldingFailure,
+                            death_stage_id: this.id
+                        });
+
+                        //dpt.whoAreAlive().sortByShieldingDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.ShieldingFailure);
                     }
 
                     if (!this.stager.app.state.normandy.has_armour()) {
-                        dpt.whoAreAlive().sortByArmourDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.ArmourFailure);
+                        //dpt.whoAreAlive().sortByArmourDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.ArmourFailure);
+                        death_list.add({
+                            teammate: dpt.whoAreAlive().sortByArmourDeathPriority().last(),
+                            death_cause: App.ME2.TeammateDeathCauses.ArmourFailure,
+                            death_stage_id: this.id
+                        });
                     }
 
                     if (!this.stager.app.state.normandy.has_thanix_cannon()) {
-                        dpt.whoAreAlive().sortByCannonDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.CannonFailure);
+                        //dpt.whoAreAlive().sortByCannonDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.CannonFailure);
+                        death_list.add({
+                            teammate: dpt.whoAreAlive().sortByCannonDeathPriority().last(),
+                            death_cause: App.ME2.TeammateDeathCauses.CannonFailure,
+                            death_stage_id: this.id
+                        });
                     }
+
+                    return death_list;
                 }
             }
         }

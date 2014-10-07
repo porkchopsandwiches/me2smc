@@ -93,6 +93,10 @@ module App {
                     }
                 }
 
+                public evaluate (): App.ME2.TeammateDeathList {
+                    return new App.ME2.TeammateDeathList();
+                }
+
                 public setup (): void {
                     var htl_teammates: App.ME2.Teammates;
 

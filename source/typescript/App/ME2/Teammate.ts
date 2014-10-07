@@ -79,15 +79,21 @@ module App {
                 });
             }
 
+            // Only does anything is the Teammate is still alive
             public addRole (role: TeammateRoles): Teammate {
                 if (!this.hasRole(role)) {
-                    this.roles.push(role);
+                    if (!this.is_dead()) {
+                        this.roles.push(role);
+                    }
                 }
                 return this;
             }
 
+            // Only does anything is the Teammate is still alive
             public removeRole (role: TeammateRoles): Teammate {
-                this.roles.remove(role);
+                if (!this.is_dead()) {
+                    this.roles.remove(role);
+                }
                 return this;
             }
 

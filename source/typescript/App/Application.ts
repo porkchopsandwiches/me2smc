@@ -50,6 +50,14 @@ module App {
             });
         }
 
+        public predictedToBeDead (teammate: App.ME2.Teammate): boolean {
+            if (this.state.stage().is_evaluatable()) {
+                return !!this.state.stage().evaluate().find(teammate);
+            }
+
+            return false;
+        }
+
         //static ideal_symbol = "✓";
         static ideal_symbol = "✭";
 
@@ -215,6 +223,8 @@ module App {
                     return "" + value;
             }
         }
+
+
 
         static showRankPopover ($target: JQuery, title: string, henchman: App.ME2.Henchman, list: App.ME2.Henchman[]): void {
             var $content: JQuery;

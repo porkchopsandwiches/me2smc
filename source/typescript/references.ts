@@ -19,4 +19,5 @@
 ///<reference path="App/Application.ts" />
 ///<reference path="App/ME2/State.ts" />
 ///<reference path="App/ME2/Serialisation.ts" />
+///<reference path="App/ME2/TeammateDeathList.ts" />
 ///<reference path="./Knockout/Bindings/Modal.ts" />

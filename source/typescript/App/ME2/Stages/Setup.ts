@@ -15,9 +15,6 @@ module App {
                 public all_loyal: KnockoutComputed<boolean>;
                 public is_evaluatable: KnockoutComputed<boolean>;
 
-                public evaluate () {
-                }
-
                 constructor (stager: App.ME2.Stages.Stager) {
                     super(stager);
 
@@ -67,6 +64,10 @@ module App {
 
                         return is_evaluatable;
                     });
+                }
+
+                public evaluate (): App.ME2.TeammateDeathList {
+                    return new App.ME2.TeammateDeathList();
                 }
 
                 private getTeammates (): App.ME2.Teammates {
