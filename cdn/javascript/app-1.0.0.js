@@ -739,54 +739,11 @@ var App;
 
                 Stage.prototype.configureFields = function (configs) {
                     var _this = this;
+                    this.fields = [];
                     this.fields = _.map(configs, function (config) {
-                        var field;
-
-                        field = {
-                            config: config,
-                            observable: ko.observable(undefined),
-                            candidates: ko.forcibleComputed(function () {
-                                var candidates;
-
-                                candidates = _this.stager.app.state.teammates().filter(function (teammate) {
-                                    return config.filter(teammate, _this.stager.app.state.teammates());
-                                }).filter(function (candidate) {
-                                    return !_.find(_this.fields, function (other_field) {
-                                        if (other_field.config.name !== config.name && other_field.observable) {
-                                            if (other_field.observable() === candidate) {
-                                                return true;
-                                            }
-                                        }
-
-                                        return false;
-                                    });
-                                }).value();
-
-                                candidates.unshift(App.ME2.Stages.Stage.no_teammate);
-
-                                return candidates;
-                            })
-                        };
-
-                        field.observable.subscribe(function (teammate) {
-                            if (field.config.role !== undefined) {
-                                teammate.addRole(field.config.role);
-                            }
-
-                            _.each(_this.fields, function (other_field) {
-                                if (other_field.config.name !== field.config.name) {
-                                    other_field.candidates.evaluateImmediate();
-                                }
-                            });
-                        });
-
-                        field.observable.subscribe(function (teammate) {
-                            if (field.config.role !== undefined && teammate && teammate.henchman.id !== undefined) {
-                                teammate.removeRole(field.config.role);
-                            }
-                        }, null, "beforeChange");
-
-                        return field;
+                        return new ME2.TeammateField(_this.stager.app.state, function () {
+                            return _this.fields;
+                        }, config);
                     });
 
                     _.each(this.fields, function (field) {
@@ -808,10 +765,6 @@ var App;
                         });
 
                         return !fields_missing;
-                    });
-
-                    this.is_evaluatable.subscribe(function (is_evaluatable) {
-                        console.log("Is evaluatable updated to", is_evaluatable);
                     });
                 };
 
@@ -1510,20 +1463,20 @@ var App;
             function Serialisation(app) {
                 this.app = app;
             }
-            Serialisation.prototype.lpad = function (value, length) {
+            Serialisation.lpad = function (value, length) {
                 if (typeof length === "undefined") { length = 2; }
                 var value_str;
                 value_str = value;
                 return value_str.length >= length ? value_str : new Array(length - value_str.length + 1).join("0") + value_str;
             };
 
-            Serialisation.prototype.indexesToFlags = function (indexes) {
+            Serialisation.indexesToFlags = function (indexes) {
                 return _.reduce(indexes, function (accumulator, index) {
                     return accumulator + Math.pow(2, index);
                 }, 0);
             };
 
-            Serialisation.prototype.flagsToIndexes = function (flags) {
+            Serialisation.flagsToIndexes = function (flags) {
                 var indexes;
                 var index;
                 var flag;
@@ -1542,7 +1495,7 @@ var App;
                 return indexes;
             };
 
-            Serialisation.prototype.getRoleCount = function () {
+            Serialisation.getRoleCount = function () {
                 return _.keys(App.ME2.TeammateRoles).length / 2;
             };
 
@@ -1550,7 +1503,7 @@ var App;
                 var elements;
                 var roles;
                 var role_offset;
-                role_offset = this.getRoleCount();
+                role_offset = Serialisation.getRoleCount();
 
                 roles = teammate.roles().slice(0);
                 if (teammate.is_recruited()) {
@@ -1564,10 +1517,10 @@ var App;
                 }
 
                 elements = [
-                    this.lpad(teammate.henchman.id.toString(16), 1),
-                    this.lpad((teammate.death_cause() === undefined ? 0 : teammate.death_cause() + 1).toString(16), 1),
-                    this.lpad((teammate.death_stage_id() || 0).toString(16), 1),
-                    this.lpad(this.indexesToFlags(roles).toString(16), 5)
+                    Serialisation.lpad(teammate.henchman.id.toString(16), 1),
+                    Serialisation.lpad((teammate.death_cause() === undefined ? 0 : teammate.death_cause() + 1).toString(16), 1),
+                    Serialisation.lpad((teammate.death_stage_id() || 0).toString(16), 1),
+                    Serialisation.lpad(Serialisation.indexesToFlags(roles).toString(16), 5)
                 ];
 
                 return elements.join("");
@@ -1590,8 +1543,8 @@ var App;
                 henchman_id = parseInt("0x" + matches[1 /* HenchmanID */], 16);
                 death_cause = parseInt("0x" + matches[2 /* DeathCause */], 16);
                 death_stage_id = parseInt("0x" + matches[3 /* DeathStageID */], 16) || undefined;
-                roles = this.flagsToIndexes(parseInt("0x" + matches[4 /* Roles */], 16));
-                role_offset = this.getRoleCount();
+                roles = Serialisation.flagsToIndexes(parseInt("0x" + matches[4 /* Roles */], 16));
+                role_offset = Serialisation.getRoleCount();
 
                 is_recruited = _.indexOf(roles, role_offset + 1) >= 0;
                 is_loyal = _.indexOf(roles, role_offset + 2) >= 0;
@@ -1614,8 +1567,8 @@ var App;
                 flags = 0 + (normandy.has_armour() ? 1 : 0) + (normandy.has_shielding() ? 2 : 0) + (normandy.has_thanix_cannon() ? 4 : 0);
 
                 elements = [
-                    this.lpad(normandy.delay().toString(10), 2),
-                    this.lpad(flags.toString(10), 1)
+                    Serialisation.lpad(normandy.delay().toString(10), 2),
+                    Serialisation.lpad(flags.toString(10), 1)
                 ];
 
                 return elements.join("");
@@ -1642,7 +1595,7 @@ var App;
                 var elements;
 
                 elements = [
-                    this.lpad(state.stage().id.toString(16), 1),
+                    Serialisation.lpad(state.stage().id.toString(16), 1),
                     this.serialiseNormandy(state.normandy),
                     _.map(state.teammates().value(), function (teammate) {
                         return _this.serialiseTeammate(teammate);
@@ -1702,10 +1655,10 @@ var App;
 
                 state.stage(new_state.stage());
             };
-            Serialisation.TeammateRegex = /^([0-9a-f]{1})([0-9a-f]{1})([0-9a-f]{1})([0-9a-f]{5})$/;
+            Serialisation.TeammateRegex = /^([0-9a-f])([0-9a-f])([0-9a-f])([0-9a-f]{5})$/;
             Serialisation.TeammatesRegex = /[0-9a-f]{8}/g;
 
-            Serialisation.SerialisedRegex = /^([0-9a-f]{1})([0-9]{2})([0-9]{1})((?:[0-9a-f]{2}[0-9]{1}[0-9a-f]{5}){12})$/;
+            Serialisation.SerialisedRegex = /^([0-9a-f])([\d]{2})([\d])((?:[0-9a-f]{2}[0-9a-f][0-9a-f]{5}){12})$/;
             return Serialisation;
         })();
         ME2.Serialisation = Serialisation;
@@ -2022,5 +1975,60 @@ var App;
         return Application;
     })();
     App.Application = Application;
+})(App || (App = {}));
+var App;
+(function (App) {
+    (function (ME2) {
+        var TeammateField = (function () {
+            function TeammateField(state, siblings, config) {
+                this.config = config;
+
+                this.observable = ko.observable(undefined);
+
+                this.candidates = ko.forcibleComputed(function () {
+                    var candidates;
+
+                    candidates = state.teammates().filter(function (teammate) {
+                        return config.filter(teammate, state.teammates());
+                    }).filter(function (candidate) {
+                        return !_.find(siblings(), function (other_field) {
+                            if (other_field.config.name !== config.name && other_field.observable) {
+                                if (other_field.observable() === candidate) {
+                                    return true;
+                                }
+                            }
+
+                            return false;
+                        });
+                    }).value();
+
+                    candidates.unshift(App.ME2.Stages.Stage.no_teammate);
+
+                    return candidates;
+                });
+
+                this.observable.subscribe(function (teammate) {
+                    if (config.role !== undefined && teammate && teammate.henchman.id !== undefined) {
+                        teammate.removeRole(config.role);
+                    }
+                }, null, "beforeChange");
+
+                this.observable.subscribe(function (teammate) {
+                    if (config.role !== undefined) {
+                        teammate.addRole(config.role);
+                    }
+
+                    _.each(siblings(), function (other_field) {
+                        if (other_field.config.name !== config.name) {
+                            other_field.candidates.evaluateImmediate();
+                        }
+                    });
+                });
+            }
+            return TeammateField;
+        })();
+        ME2.TeammateField = TeammateField;
+    })(App.ME2 || (App.ME2 = {}));
+    var ME2 = App.ME2;
 })(App || (App = {}));
 //# sourceMappingURL=app-1.0.0.js.map

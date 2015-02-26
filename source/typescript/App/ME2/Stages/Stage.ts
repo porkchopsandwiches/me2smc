@@ -12,28 +12,14 @@ module App {
                 Summary
             }
 
-            export interface ITeammateFieldFilter {
-                (teammate: App.ME2.Teammate, teammates: App.ME2.Teammates): boolean;
-            }
-
-            export interface ITeammateFieldConfig {
-                name: string;
-                filter: ITeammateFieldFilter;
-                optional?: boolean;
-                role?: App.ME2.TeammateRoles;
-            }
-
-            export interface ITeammateObservableField {
-                config: ITeammateFieldConfig;
-                observable: KnockoutObservable<App.ME2.Teammate>;
-                candidates: KnockoutForcibleComputed<App.ME2.Teammate[]>;
-            }
-
             export interface IStage {
                 evaluate (): App.ME2.TeammateDeathList;
                 evaluateAndApply (): void;
                 setup (): void;
                 isEvaluatable (): boolean;
+                getFieldObservable (name: string): KnockoutObservable<App.ME2.Teammate>;
+                getFieldCandidates (name: string): KnockoutForcibleComputed<App.ME2.Teammate[]>;
+                getFieldValue (name: string): App.ME2.Teammate;
                 stager: App.ME2.Stages.Stager;
                 id: App.ME2.Stages.StageIDs;
                 label: string;
@@ -45,7 +31,7 @@ module App {
                 public id: App.ME2.Stages.StageIDs;
                 public label: string;
                 public is_evaluatable: KnockoutObservable<boolean>;
-                private fields: ITeammateObservableField[];
+                private fields: App.ME2.ITeammateField[];
 
                 // Generic filter only requires the teammate be alive
                 static genericTeammateFieldFilter (teammate: App.ME2.Teammate): boolean {
@@ -68,73 +54,22 @@ module App {
 
                 // Replaces bootstrapTeammatefields
                 public configureFields (configs: ITeammateFieldConfig[]): void {
-                    this.fields = _.map<ITeammateFieldConfig, ITeammateObservableField>(configs, (config: ITeammateFieldConfig): ITeammateObservableField => {
-                        var field: ITeammateObservableField;
-
-                        field = {
-                            config:     config,
-                            observable: ko.observable(undefined),
-                            candidates: ko.forcibleComputed((): App.ME2.Teammate[] => {
-                                var candidates: App.ME2.Teammate[];
-
-                                // Candidates are those who fulfill the field's filter, and are not in use elsewhere
-                                candidates = this.stager.app.state.teammates().filter((teammate: App.ME2.Teammate) => {
-                                    return config.filter(teammate, this.stager.app.state.teammates());
-                                }).filter((candidate: App.ME2.Teammate): boolean => {
-                                    return !_.find(this.fields, (other_field: ITeammateObservableField): boolean => {
-
-                                        // If not looking at self, and alternative has been instantiated
-                                        if (other_field.config.name !== config.name && other_field.observable) {
-                                            if (other_field.observable() === candidate) {
-                                                return true;
-                                            }
-                                        }
-
-                                        return false;
-                                    });
-                                }).value();
-
-                                // Add a numpty candidate
-                                candidates.unshift(App.ME2.Stages.Stage.no_teammate);
-
-                                return candidates;
-                            })
-                        };
-
-                        field.observable.subscribe((teammate: App.ME2.Teammate): void => {
-                            if (field.config.role !== undefined) {
-                                teammate.addRole(field.config.role);
-                            }
-
-                            _.each(this.fields, (other_field: ITeammateObservableField) => {
-                                if (other_field.config.name !== field.config.name) {
-                                    other_field.candidates.evaluateImmediate();
-                                }
-                            });
-                        });
-
-                        field.observable.subscribe((teammate: App.ME2.Teammate) => {
-                            if (field.config.role !== undefined && teammate && teammate.henchman.id !== undefined) {
-                                teammate.removeRole(field.config.role);
-                            }
-                        }, null, "beforeChange");
-
-                        return field;
+                    this.fields = [];
+                    this.fields = _.map<ITeammateFieldConfig, ITeammateField>(configs, (config: ITeammateFieldConfig): ITeammateField => {
+                        return new TeammateField(this.stager.app.state, (): ITeammateField[] => { return this.fields; }, config);
                     });
 
                     // Force a refresh
-                    _.each(this.fields, (field: ITeammateObservableField): void => {
+                    _.each(this.fields, (field: ITeammateField): void => {
                         field.candidates.evaluateImmediate();
                     });
 
-
                     this.is_evaluatable = ko.forcibleComputed<boolean>(() => {
-                        //var observable: KnockoutObservable<App.ME2.Teammate>;
                         var teammate: App.ME2.Teammate;
                         var fields_missing: boolean;
 
                         // Return false if there are any teammate fields with 'no teammate' values
-                        fields_missing = !!_.find(this.fields, (field: ITeammateObservableField): boolean => {
+                        fields_missing = !!_.find(this.fields, (field: ITeammateField): boolean => {
                             if (field.config.optional) {
                                 return false;
                             }
@@ -146,14 +81,10 @@ module App {
 
                         return !fields_missing;
                     });
-
-                    this.is_evaluatable.subscribe((is_evaluatable) => {
-                        console.log("Is evaluatable updated to", is_evaluatable);
-                    });
                 }
 
-                public getField (name: string): ITeammateObservableField {
-                    return _.find<ITeammateObservableField>(this.fields, (field: ITeammateObservableField): boolean => {
+                public getField (name: string): ITeammateField {
+                    return _.find<ITeammateField>(this.fields, (field: ITeammateField): boolean => {
                         return field.config.name === name;
                     });
                 }
@@ -172,7 +103,7 @@ module App {
 
                 public setup (): void {
                     // Attempt to apply the current values for each field
-                    _.each(this.fields, (field: ITeammateObservableField): void => {
+                    _.each(this.fields, (field: ITeammateField): void => {
                         var state_teammate: App.ME2.Teammate;
                         var selector_teammate: App.ME2.Teammate;
 
