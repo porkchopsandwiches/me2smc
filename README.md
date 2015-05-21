@@ -1,4 +1,1 @@
-me2smc
-======
-
-ME2 SMC
+# Mass Effect 2 Suicide Mission Calculator
