@@ -1,0 +1,58 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "sourceMap": true,
+        "moduleResolution": "node",
+        "isolatedModules": false,
+        "jsx": "react",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "declaration": false,
+        "noImplicitAny": true,
+        "removeComments": true,
+        "noLib": false,
+        "preserveConstEnums": true,
+        "suppressImplicitAnyIndexErrors": true,
+        "watch": true,
+        "outDir": "./source/javascript"
+    },
+    "compileOnSave": false,
+    "buildOnSave": false,
+    "filesGlob": [
+        "source/typescript/**/*.ts",
+        "source/typescript/**/*.tsx",
+        "typings/browser.d.ts"
+    ],
+    "files": [
+        "source/typescript/app.ts",
+        "source/typescript/App/Application.ts",
+        "source/typescript/App/constants.ts",
+        "source/typescript/App/ME2/Henchman.ts",
+        "source/typescript/App/ME2/Normandy.ts",
+        "source/typescript/App/ME2/Serialisation.ts",
+        "source/typescript/App/ME2/Stages/Boss.ts",
+        "source/typescript/App/ME2/Stages/LongWalk.ts",
+        "source/typescript/App/ME2/Stages/Occulus.ts",
+        "source/typescript/App/ME2/Stages/Setup.ts",
+        "source/typescript/App/ME2/Stages/Stage.ts",
+        "source/typescript/App/ME2/Stages/Stager.ts",
+        "source/typescript/App/ME2/Stages/Summary.ts",
+        "source/typescript/App/ME2/Stages/Vents.ts",
+        "source/typescript/App/ME2/State.ts",
+        "source/typescript/App/ME2/Teammate.ts",
+        "source/typescript/App/ME2/TeammateDeathList.ts",
+        "source/typescript/App/ME2/TeammateField.ts",
+        "source/typescript/App/ME2/Teammates.ts",
+        "source/typescript/extensions.d.ts",
+        "source/typescript/extensions.ts",
+        "source/typescript/Knockout/Bindings/Modal.ts",
+        "source/typescript/Knockout/ForcibleComputed.ts",
+        "source/typescript/Utilities/ObjectArray.ts",
+        "typings/browser.d.ts"
+    ],
+    "exclude": [],
+    "atom": {
+        "rewriteTsconfig": true
+    }
+}

@@ -1,128 +1,99 @@
-///<reference path="../../../references.ts" />
-module App {
-    export module ME2 {
-        export module Stages {
+import { Teammate } from "../Teammate";
+import { Stager } from "./Stager";
+import { StageIDs } from "../../constants";
+import { ITeammateFieldConfig, TeammateField } from "../TeammateField";
+import { TeammateDeathList } from "../TeammateDeathList";
+import { Henchman } from "../Henchman";
 
-            export enum StageIDs {
-                Setup,
-                Occulus,
-                Vents,
-                LongWalk,
-                Boss,
-                Summary
-            }
+export abstract class Stage {
+    public static no_teammate: Teammate = new Teammate(new Henchman(undefined, undefined, "— None —"));
 
-            export interface IStage {
-                evaluate (): App.ME2.TeammateDeathList;
-                evaluateAndApply (): void;
-                setup (): void;
-                isEvaluatable (): boolean;
-                getFieldObservable (name: string): KnockoutObservable<App.ME2.Teammate>;
-                getFieldCandidates (name: string): KnockoutForcibleComputed<App.ME2.Teammate[]>;
-                getFieldValue (name: string): App.ME2.Teammate;
-                stager: App.ME2.Stages.Stager;
-                id: App.ME2.Stages.StageIDs;
-                label: string;
-                is_evaluatable: KnockoutObservable<boolean>;
-            }
+    public stager: Stager;
+    public id: StageIDs;
+    public label: string;
+    public is_evaluatable: KnockoutObservable<boolean>;
+    private fields: TeammateField[];
 
-            export class Stage implements IStage {
-                public stager: App.ME2.Stages.Stager;
-                public id: App.ME2.Stages.StageIDs;
-                public label: string;
-                public is_evaluatable: KnockoutObservable<boolean>;
-                private fields: App.ME2.ITeammateField[];
+    // Generic filter only requires the teammate be alive
+    public static genericTeammateFieldFilter (teammate: Teammate): boolean {
+        return teammate.is_recruited() && !teammate.is_dead();
+    }
 
-                // Generic filter only requires the teammate be alive
-                static genericTeammateFieldFilter (teammate: App.ME2.Teammate): boolean {
-                    return teammate.is_recruited() && !teammate.is_dead();
+    constructor (stager: Stager) {
+        this.stager = stager;
+    }
+
+    public evaluate (): TeammateDeathList {
+        return new TeammateDeathList();
+    }
+
+    public evaluateAndApply (): void {
+        this.evaluate().apply();
+    }
+
+    // Replaces bootstrapTeammatefields
+    public configureFields (configs: ITeammateFieldConfig[]): void {
+        this.fields = [];
+        this.fields = _.map<ITeammateFieldConfig, TeammateField>(configs, (config: ITeammateFieldConfig): TeammateField => {
+            return new TeammateField(this.stager.app.state, (): TeammateField[] => { return this.fields; }, config);
+        });
+
+        // Force a refresh
+        _.each(this.fields, (field: TeammateField): void => {
+            field.candidates.evaluateImmediate();
+        });
+
+        this.is_evaluatable = ko.forcibleComputed<boolean>(() => {
+            // Return false if there are any teammate fields with 'no teammate' values
+            const fields_missing = !!_.find(this.fields, (field: TeammateField): boolean => {
+                if (field.config.optional) {
+                    return false;
                 }
 
-                static no_teammate: App.ME2.Teammate = new App.ME2.Teammate(new App.ME2.Henchman(undefined, undefined, "— None —"));
+                const teammate = field.observable();
 
-                constructor (stager: App.ME2.Stages.Stager) {
-                    this.stager = stager;
-                }
+                return teammate ? (teammate.henchman.id === undefined) : true;
+            });
 
-                public evaluate (): App.ME2.TeammateDeathList {
-                    return new App.ME2.TeammateDeathList();
-                }
+            return !fields_missing;
+        });
+    }
 
-                public evaluateAndApply (): void {
-                    this.evaluate().apply();
-                }
+    public getField (name: string): TeammateField {
+        return _.find<TeammateField>(this.fields, (field: TeammateField): boolean => {
+            return field.config.name === name;
+        });
+    }
 
-                // Replaces bootstrapTeammatefields
-                public configureFields (configs: ITeammateFieldConfig[]): void {
-                    this.fields = [];
-                    this.fields = _.map<ITeammateFieldConfig, ITeammateField>(configs, (config: ITeammateFieldConfig): ITeammateField => {
-                        return new TeammateField(this.stager.app.state, (): ITeammateField[] => { return this.fields; }, config);
-                    });
+    public getFieldObservable (name: string): KnockoutObservable<Teammate> {
+        return this.getField(name).observable;
+    }
 
-                    // Force a refresh
-                    _.each(this.fields, (field: ITeammateField): void => {
-                        field.candidates.evaluateImmediate();
-                    });
+    public getFieldCandidates (name: string): KnockoutForcibleComputed<Teammate[]> {
+        return this.getField(name).candidates;
+    }
 
-                    this.is_evaluatable = ko.forcibleComputed<boolean>(() => {
-                        var teammate: App.ME2.Teammate;
-                        var fields_missing: boolean;
+    public getFieldValue (name: string): Teammate {
+        return this.getFieldObservable(name)();
+    }
 
-                        // Return false if there are any teammate fields with 'no teammate' values
-                        fields_missing = !!_.find(this.fields, (field: ITeammateField): boolean => {
-                            if (field.config.optional) {
-                                return false;
-                            }
+    public setup (): void {
+        // Attempt to apply the current values for each field
+        _.each(this.fields, (field: TeammateField): void => {
 
-                            teammate = field.observable();
+            // Get teammate with the role this field is attached to
+            const state_teammate = this.stager.app.state.teammates().withRole(field.config.role).first();
+            const selector_teammate = field.observable();
 
-                            return teammate ? (teammate.henchman.id === undefined) : true;
-                        });
-
-                        return !fields_missing;
-                    });
-                }
-
-                public getField (name: string): ITeammateField {
-                    return _.find<ITeammateField>(this.fields, (field: ITeammateField): boolean => {
-                        return field.config.name === name;
-                    });
-                }
-
-                public getFieldObservable (name: string): KnockoutObservable<App.ME2.Teammate> {
-                    return this.getField(name).observable;
-                }
-
-                public getFieldCandidates (name: string): KnockoutForcibleComputed<App.ME2.Teammate[]> {
-                    return this.getField(name).candidates;
-                }
-
-                public getFieldValue (name: string): App.ME2.Teammate {
-                    return this.getFieldObservable(name)();
-                }
-
-                public setup (): void {
-                    // Attempt to apply the current values for each field
-                    _.each(this.fields, (field: ITeammateField): void => {
-                        var state_teammate: App.ME2.Teammate;
-                        var selector_teammate: App.ME2.Teammate;
-
-                        // Get teammate with the role this field is attached to
-                        state_teammate = this.stager.app.state.teammates().withRole(field.config.role).first();
-                        selector_teammate = field.observable();
-
-                        if (state_teammate) {
-                            if (selector_teammate === undefined || selector_teammate.henchman.id !== state_teammate.henchman.id) {
-                                field.observable(state_teammate);
-                            }
-                        }
-                    });
-                }
-
-                public isEvaluatable (): boolean {
-                    return this.is_evaluatable();
+            if (state_teammate) {
+                if (selector_teammate === undefined || selector_teammate.henchman.id !== state_teammate.henchman.id) {
+                    field.observable(state_teammate);
                 }
             }
-        }
+        });
+    }
+
+    public isEvaluatable (): boolean {
+        return this.is_evaluatable();
     }
 }

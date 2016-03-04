@@ -1,53 +1,27 @@
-///<reference path="../../references.ts" />
-module Knockout {
-    export module Bindings {
+export const name: string = "modal";
 
-        export interface IModalHandler {
-            (element: HTMLElement, value_accessor: KnockoutObservable<any>): void;
-        }
+void(((): void => {
+    ko.bindingHandlers[name] = {
+        init: (element: HTMLElement, value_accessor: KnockoutObservable<any>, all_bindings_accessor: KnockoutAllBindingsAccessor, data: any, context: any): any => {
+            const $element = $(element);
 
-        export interface IModal {
-            init: IModalHandler;
-            update: IModalHandler;
-        }
+            $element.modal({
+                show: false
+            });
 
-        export class Modal implements IModal {
+            ko.utils.domNodeDisposal.addDisposeCallback(element, () => {
+                $element.modal("destroy");
+            });
+        },
+        update: (element: HTMLElement, value_accessor: KnockoutObservable<any>, all_bindings_accessor: KnockoutAllBindingsAccessor, data: any, context: any): void => {
+            const value = value_accessor();
+            const $element = $(element);
 
-            public init: IModalHandler;
-            public update: IModalHandler;
-
-            constructor () {
-                function init (element: HTMLElement, value_accessor: KnockoutObservable<any>): void {
-                    var $element: JQuery;
-                    $element = $(element);
-
-                    $element.modal({
-                        show: false
-                    });
-
-                    ko.utils.domNodeDisposal.addDisposeCallback(element, () => {
-                        $element.modal("destroy");
-                    });
-                }
-
-                function update (element: HTMLElement, value_accessor: KnockoutObservable<any>): void {
-                    var value: any;
-                    var $element: JQuery;
-                    value = value_accessor();
-                    $element = $(element);
-
-                    if (value) {
-                        $element.modal("show");
-                    } else {
-                        $element.modal("hide");
-                    }
-                }
-
-                this.init = init;
-                this.update = update;
+            if (value) {
+                $element.modal("show");
+            } else {
+                $element.modal("hide");
             }
         }
-    }
-}
-
-ko.bindingHandlers["modal"] = new Knockout.Bindings.Modal();
+    };
+})());

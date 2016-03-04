@@ -1,120 +1,109 @@
-///<reference path="../../../references.ts" />
-module App {
-    export module ME2 {
-        export module Stages {
-            export interface ISummary {
-                shepard_lives: KnockoutObservable<boolean>;
-                shepard_pulled_up_by: KnockoutObservable<App.ME2.Teammate>;
-                defence_reporter: KnockoutObservable<App.ME2.Teammate>;
-                keep_base_advocate: KnockoutObservable<App.ME2.Teammate>;
-                destroy_base_advocate: KnockoutObservable<App.ME2.Teammate>;
-            }
+import { Stage } from "./Stage";
+import { Stager } from "./Stager";
+import { StageIDs, TeammateRoles, SummaryCrewSurvivalOptions, NormandyDelayOptions } from "../../constants";
+import { Teammate } from "../Teammate";
+import { Teammates } from "../Teammates";
+import { TeammateDeathList } from "../TeammateDeathList";
 
-            export enum SummaryCrewSurvivalOptions {
-                AllSurvived,
-                HalfSurvived,
-                AllDied
-            }
+export interface ISummary {
+    shepard_lives: KnockoutObservable<boolean>;
+    shepard_pulled_up_by: KnockoutObservable<Teammate>;
+    defence_reporter: KnockoutObservable<Teammate>;
+    keep_base_advocate: KnockoutObservable<Teammate>;
+    destroy_base_advocate: KnockoutObservable<Teammate>;
+}
 
-            export class Summary extends Stage implements ISummary {
-                public id: StageIDs = App.ME2.Stages.StageIDs.Summary;
-                public label: string = "Summary";
-                public shepard_lives: KnockoutObservable<boolean>;
-                public shepard_pulled_up_by: KnockoutObservable<App.ME2.Teammate>;
-                public defence_reporter: KnockoutObservable<App.ME2.Teammate>;
-                public keep_base_advocate: KnockoutObservable<App.ME2.Teammate>;
-                public destroy_base_advocate: KnockoutObservable<App.ME2.Teammate>;
-                public crew_survival: KnockoutObservable<SummaryCrewSurvivalOptions>;
-                public htl_total: KnockoutObservable<number>;
-                public htl_score: KnockoutObservable<string>;
-                public htl_candidates_count: KnockoutObservable<number>;
-                public htl_death_count: KnockoutObservable<number>;
+export class Summary extends Stage implements ISummary {
+    public id: StageIDs = StageIDs.Summary;
+    public label: string = "Summary";
+    public shepard_lives: KnockoutObservable<boolean>;
+    public shepard_pulled_up_by: KnockoutObservable<Teammate>;
+    public defence_reporter: KnockoutObservable<Teammate>;
+    public keep_base_advocate: KnockoutObservable<Teammate>;
+    public destroy_base_advocate: KnockoutObservable<Teammate>;
+    public crew_survival: KnockoutObservable<SummaryCrewSurvivalOptions>;
+    public htl_total: KnockoutObservable<number>;
+    public htl_score: KnockoutObservable<string>;
+    public htl_candidates_count: KnockoutObservable<number>;
+    public htl_death_count: KnockoutObservable<number>;
 
-                constructor (stager: App.ME2.Stages.Stager) {
-                    super(stager);
-                    this.shepard_lives = ko.observable(undefined);
-                    this.shepard_pulled_up_by = ko.observable(undefined);
-                    this.defence_reporter = ko.observable(undefined);
-                    this.keep_base_advocate = ko.observable(undefined);
-                    this.destroy_base_advocate = ko.observable(undefined);
-                    this.crew_survival = ko.observable(undefined);
-                    this.is_evaluatable = ko.observable(false);
-                    this.htl_total = ko.observable<number>(undefined);
-                    this.htl_score = ko.observable<string>(undefined);
-                    this.htl_candidates_count = ko.observable<number>(undefined);
-                    this.htl_death_count = ko.observable<number>(undefined);
-                }
+    constructor (stager: Stager) {
+        super(stager);
+        this.shepard_lives = ko.observable(undefined);
+        this.shepard_pulled_up_by = ko.observable(undefined);
+        this.defence_reporter = ko.observable(undefined);
+        this.keep_base_advocate = ko.observable(undefined);
+        this.destroy_base_advocate = ko.observable(undefined);
+        this.crew_survival = ko.observable(undefined);
+        this.is_evaluatable = ko.observable(false);
+        this.htl_total = ko.observable<number>(undefined);
+        this.htl_score = ko.observable<string>(undefined);
+        this.htl_candidates_count = ko.observable<number>(undefined);
+        this.htl_death_count = ko.observable<number>(undefined);
+    }
 
-                private getLivingTeammates (): App.ME2.Teammates {
-                    return this.stager.app.state.teammates().whoAreAlive().whoAreRecruited();
-                }
+    public evaluate (): TeammateDeathList {
+        return new TeammateDeathList();
+    }
 
-                private getShepardLives (): boolean {
-                    return this.getLivingTeammates().length() > 1;
-                }
+    public setup (): void {
+        const htl_teammates = this.stager.app.state.teammates().withRole(TeammateRoles.HeldTheLine);
 
-                private getShepardCatcher (): App.ME2.Teammate {
-                    var candidates: App.ME2.Teammates;
-                    var score: number;
+        this.defence_reporter(this.getDefenceReporter());
+        this.shepard_lives(this.getShepardLives());
+        this.shepard_pulled_up_by(this.getShepardCatcher());
+        this.keep_base_advocate(this.getKeepBaseAdvocate());
+        this.destroy_base_advocate(this.getDestroyBaseAdvocate());
+        this.crew_survival(this.getCrewSurvival());
 
-                    candidates = this.getLivingTeammates().sort((teammate: App.ME2.Teammate): number => {
-                        score = teammate.henchman.cutscene_rescue_priority + (teammate.hasAnyOfTheseRoles(App.ME2.TeammateRoles.BossSquadmate1, App.ME2.TeammateRoles.BossSquadmate2) ? 100 : 0);
-                        return score;
-                    });
+        this.htl_total(htl_teammates.getHoldTheLineTotal());
+        this.htl_score(htl_teammates.getHoldTheLineScore().toFixed(2));
+        this.htl_candidates_count(htl_teammates.length());
+        this.htl_death_count(htl_teammates.getHoldTheLineDeathCount());
+    }
 
-                    return candidates.length() > 1 ? candidates.last() : undefined;
-                }
+    private getLivingTeammates (): Teammates {
+        return this.stager.app.state.teammates().whoAreAlive().whoAreRecruited();
+    }
 
-                private getDefenceReporter (): App.ME2.Teammate {
-                    return this.stager.app.state.teammates().withRole(App.ME2.TeammateRoles.HeldTheLine).sortByDefenceReportPriority().last();
-                }
+    private getShepardLives (): boolean {
+        return this.getLivingTeammates().length() > 1;
+    }
 
-                private getKeepBaseAdvocate (): App.ME2.Teammate {
-                    return this.stager.app.state.teammates().withAnyOfTheseRoles(App.ME2.TeammateRoles.BossSquadmate1, App.ME2.TeammateRoles.BossSquadmate2).whoAdvocateKeepingTheBase().sortByKeepBasePriority().last();
-                }
+    private getShepardCatcher (): Teammate {
+        const candidates = this.getLivingTeammates().sort((teammate: Teammate): number => {
+            let score = teammate.henchman.cutscene_rescue_priority + (teammate.hasAnyOfTheseRoles(TeammateRoles.BossSquadmate1, TeammateRoles.BossSquadmate2) ? 100 : 0);
+            return score;
+        });
 
-                private getDestroyBaseAdvocate (): App.ME2.Teammate {
-                    return this.stager.app.state.teammates().withAnyOfTheseRoles(App.ME2.TeammateRoles.BossSquadmate1, App.ME2.TeammateRoles.BossSquadmate2).whoAdvocateDestroyingTheBase().sortByDestroyBasePriority().last();
-                }
+        return candidates.length() > 1 ? candidates.last() : undefined;
+    }
 
-                private getCrewSurvival (): SummaryCrewSurvivalOptions {
+    private getDefenceReporter (): Teammate {
+        return this.stager.app.state.teammates().withRole(TeammateRoles.HeldTheLine).sortByDefenceReportPriority().last();
+    }
 
-                    // If no escort, they die regardless
-                    if (this.stager.app.state.teammates().withRole(App.ME2.TeammateRoles.LongWalkEscort).length() === 0) {
-                        return SummaryCrewSurvivalOptions.AllDied;
-                    }
+    private getKeepBaseAdvocate (): Teammate {
+        return this.stager.app.state.teammates().withAnyOfTheseRoles(TeammateRoles.BossSquadmate1, TeammateRoles.BossSquadmate2).whoAdvocateKeepingTheBase().sortByKeepBasePriority().last();
+    }
 
-                    if (this.stager.app.state.normandy.delay() === App.ME2.NormandyDelayOptions.None) {
-                        return SummaryCrewSurvivalOptions.AllSurvived;
-                    } else if (this.stager.app.state.normandy.delay() === App.ME2.NormandyDelayOptions.Few) {
-                        return SummaryCrewSurvivalOptions.HalfSurvived;
-                    } else {
-                        return SummaryCrewSurvivalOptions.AllDied;
-                    }
-                }
+    private getDestroyBaseAdvocate (): Teammate {
+        return this.stager.app.state.teammates().withAnyOfTheseRoles(TeammateRoles.BossSquadmate1, TeammateRoles.BossSquadmate2).whoAdvocateDestroyingTheBase().sortByDestroyBasePriority().last();
+    }
 
-                public evaluate (): App.ME2.TeammateDeathList {
-                    return new App.ME2.TeammateDeathList();
-                }
+    private getCrewSurvival (): SummaryCrewSurvivalOptions {
 
-                public setup (): void {
-                    var htl_teammates: App.ME2.Teammates;
+        // If no escort, they die regardless
+        if (this.stager.app.state.teammates().withRole(TeammateRoles.LongWalkEscort).length() === 0) {
+            return SummaryCrewSurvivalOptions.AllDied;
+        }
 
-                    htl_teammates = this.stager.app.state.teammates().withRole(App.ME2.TeammateRoles.HeldTheLine);
-
-                    this.defence_reporter(this.getDefenceReporter());
-                    this.shepard_lives(this.getShepardLives());
-                    this.shepard_pulled_up_by(this.getShepardCatcher());
-                    this.keep_base_advocate(this.getKeepBaseAdvocate());
-                    this.destroy_base_advocate(this.getDestroyBaseAdvocate());
-                    this.crew_survival(this.getCrewSurvival());
-
-                    this.htl_total(htl_teammates.getHoldTheLineTotal());
-                    this.htl_score(htl_teammates.getHoldTheLineScore().toFixed(2));
-                    this.htl_candidates_count(htl_teammates.length());
-                    this.htl_death_count(htl_teammates.getHoldTheLineDeathCount());
-                }
-            }
+        if (this.stager.app.state.normandy.delay() === NormandyDelayOptions.None) {
+            return SummaryCrewSurvivalOptions.AllSurvived;
+        } else if (this.stager.app.state.normandy.delay() === NormandyDelayOptions.Few) {
+            return SummaryCrewSurvivalOptions.HalfSurvived;
+        } else {
+            return SummaryCrewSurvivalOptions.AllDied;
         }
     }
 }

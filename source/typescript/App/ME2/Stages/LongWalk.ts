@@ -1,101 +1,96 @@
-///<reference path="../../../references.ts" />
-module App {
-    export module ME2 {
-        export module Stages {
-            export interface ILongWalk {}
+import { Stage } from "./Stage";
+import { Stager } from "./Stager";
+import { StageIDs, TeammateRoles, TeammateDeathCauses } from "../../constants";
+import { Teammate } from "../Teammate";
+import { Teammates } from "../Teammates";
+import { TeammateDeathList } from "../TeammateDeathList";
 
-            export class LongWalk extends Stage implements ILongWalk {
-                public id: StageIDs = App.ME2.Stages.StageIDs.LongWalk;
-                public label: string = "Long Walk";
+export interface ILongWalk {}
 
-                constructor (stager: App.ME2.Stages.Stager) {
-                    super(stager);
-                    this.configureFields([
-                        {
-                            name: "long_walk_bubbler",
-                            filter: (teammate: App.ME2.Teammate): boolean => {
-                                return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_bubble_candidate;
-                            },
-                            role: App.ME2.TeammateRoles.LongWalkBubbler
-                        },
-                        {
-                            name: "long_walk_leader",
-                            filter: (teammate: App.ME2.Teammate): boolean => {
-                                return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_leader_candidate;
-                            },
-                            role: App.ME2.TeammateRoles.LongWalkLeader
-                        },
-                        {
-                            name: "long_walk_escort",
-                            filter: (teammate: App.ME2.Teammate, teammates: App.ME2.Teammates): boolean => {
+export class LongWalk extends Stage implements ILongWalk {
+    public id: StageIDs = StageIDs.LongWalk;
+    public label: string = "Long Walk";
 
-                                // If there are only 4 living teammates, no one can be escort
-                                if (teammates.whoAreAlive().length() <= 4) {
-                                    return false;
-                                }
+    constructor (stager: Stager) {
+        super(stager);
+        this.configureFields([
+            {
+                name: "long_walk_bubbler",
+                filter: (teammate: Teammate): boolean => {
+                    return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_bubble_candidate;
+                },
+                role: TeammateRoles.LongWalkBubbler
+            },
+            {
+                name: "long_walk_leader",
+                filter: (teammate: Teammate): boolean => {
+                    return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_leader_candidate;
+                },
+                role: TeammateRoles.LongWalkLeader
+            },
+            {
+                name: "long_walk_escort",
+                filter: (teammate: Teammate, teammates: Teammates): boolean => {
 
-                                return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_escort_candidate;
-                            },
-                            optional: true,
-                            role: App.ME2.TeammateRoles.LongWalkEscort
-                        },
-                        {
-                            name: "long_walk_squadmate_1",
-                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter,
-                            role: App.ME2.TeammateRoles.LongWalkSquadmate1
-                        },
-                        {
-                            name: "long_walk_squadmate_2",
-                            filter: App.ME2.Stages.Stage.genericTeammateFieldFilter,
-                            role: App.ME2.TeammateRoles.LongWalkSquadmate2
-                        }
-                    ]);
-                }
-
-                public evaluate (): App.ME2.TeammateDeathList {
-                    var escort: App.ME2.Teammate;
-                    var bubbler: App.ME2.Teammate;
-                    var leader: App.ME2.Teammate;
-                    var death_list: App.ME2.TeammateDeathList;
-
-                    death_list = new App.ME2.TeammateDeathList();
-                    escort = this.getFieldValue("long_walk_escort");
-                    bubbler = this.getFieldValue("long_walk_bubbler");
-                    leader = this.getFieldValue("long_walk_leader");
-
-                    // If escort is not loyal, they will die
-                    if (escort.henchman.id !== undefined && !escort.willBeEffectiveLongWalkEscort()) {
-                        //escort.die(this.id, App.ME2.TeammateDeathCauses.Escort);
-                        death_list.add({
-                            teammate: escort,
-                            death_stage_id: this.id,
-                            death_cause: App.ME2.TeammateDeathCauses.Escort
-                        });
+                    // If there are only 4 living teammates, no one can be escort
+                    if (teammates.whoAreAlive().length() <= 4) {
+                        return false;
                     }
 
-                    // If bubbler is not an expert, or is not loyal, one of the squadmates dies
-                    if (!bubbler.willBeEffectiveLongWalkBubbler()) {
-                        //this.stager.app.state.teammates().withAnyOfTheseRoles(App.ME2.TeammateRoles.LongWalkSquadmate1, App.ME2.TeammateRoles.LongWalkSquadmate2).sortByLongWalkDeathPriority().last().die(this.id, App.ME2.TeammateDeathCauses.LongWalkBadBubbler);
-                        death_list.add({
-                            teammate: this.stager.app.state.teammates().withAnyOfTheseRoles(App.ME2.TeammateRoles.LongWalkSquadmate1, App.ME2.TeammateRoles.LongWalkSquadmate2).sortByLongWalkDeathPriority().last(),
-                            death_stage_id: this.id,
-                            death_cause: App.ME2.TeammateDeathCauses.LongWalkBadBubbler
-                        });
-                    }
-
-                    // If leader is not loyal and not
-                    if (!leader.willBeEffectiveLongWalkLeader()) {
-                        //leader.die(this.id, App.ME2.TeammateDeathCauses.LongWalkBadLeader);
-                        death_list.add({
-                            teammate: leader,
-                            death_stage_id: this.id,
-                            death_cause: App.ME2.TeammateDeathCauses.LongWalkBadLeader
-                        });
-                    }
-
-                    return death_list;
-                }
+                    return teammate.is_recruited() && !teammate.is_dead() && teammate.henchman.is_escort_candidate;
+                },
+                optional: true,
+                role: TeammateRoles.LongWalkEscort
+            },
+            {
+                name: "long_walk_squadmate_1",
+                filter: Stage.genericTeammateFieldFilter,
+                role: TeammateRoles.LongWalkSquadmate1
+            },
+            {
+                name: "long_walk_squadmate_2",
+                filter: Stage.genericTeammateFieldFilter,
+                role: TeammateRoles.LongWalkSquadmate2
             }
+        ]);
+    }
+
+    public evaluate (): TeammateDeathList {
+        const death_list = new TeammateDeathList();
+        const escort = this.getFieldValue("long_walk_escort");
+        const bubbler = this.getFieldValue("long_walk_bubbler");
+        const leader = this.getFieldValue("long_walk_leader");
+
+        // If escort is not loyal, they will die
+        if (escort.henchman.id !== undefined && !escort.willBeEffectiveLongWalkEscort()) {
+            //escort.die(this.id, TeammateDeathCauses.Escort);
+            death_list.add({
+                teammate: escort,
+                death_stage_id: this.id,
+                death_cause: TeammateDeathCauses.Escort
+            });
         }
+
+        // If bubbler is not an expert, or is not loyal, one of the squadmates dies
+        if (!bubbler.willBeEffectiveLongWalkBubbler()) {
+            //this.stager.app.state.teammates().withAnyOfTheseRoles(TeammateRoles.LongWalkSquadmate1, TeammateRoles.LongWalkSquadmate2).sortByLongWalkDeathPriority().last().die(this.id, TeammateDeathCauses.LongWalkBadBubbler);
+            death_list.add({
+                teammate: this.stager.app.state.teammates().withAnyOfTheseRoles(TeammateRoles.LongWalkSquadmate1, TeammateRoles.LongWalkSquadmate2).sortByLongWalkDeathPriority().last(),
+                death_stage_id: this.id,
+                death_cause: TeammateDeathCauses.LongWalkBadBubbler
+            });
+        }
+
+        // If leader is not loyal and not
+        if (!leader.willBeEffectiveLongWalkLeader()) {
+            //leader.die(this.id, TeammateDeathCauses.LongWalkBadLeader);
+            death_list.add({
+                teammate: leader,
+                death_stage_id: this.id,
+                death_cause: TeammateDeathCauses.LongWalkBadLeader
+            });
+        }
+
+        return death_list;
     }
 }

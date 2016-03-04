@@ -1,10 +1,33 @@
 {
-	"name": "me2smc",
-	"version": "1.0.0",
-	"devDependencies": {
-		"grunt": "~0.4",
-		"grunt-contrib-uglify": "~0.5",
-		"grunt-contrib-sass": "~0.8",
-		"grunt-typescript": "~0.3"
-	}
+  "name": "me2smc",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {},
+  "repository": {
+    "type": "git",
+    "url": "TBD"
+  },
+  "author": "",
+  "license": "ISC",
+  "private": true,
+  "homepage": "TBD",
+  "devDependencies": {
+    "bower": "*",
+    "css-loader": "*",
+    "extract-text-webpack-plugin": "*",
+    "node-sass": "*",
+    "sass-loader": "*",
+    "style-loader": "*",
+    "ts-loader": "*",
+    "typings": "*",
+    "tslint": "*",
+    "tslint-loader": "*",
+    "typescript": "*",
+    "webpack": "*",
+    "resolve-url-loader": "*",
+	"file-loader": "*"
+  },
+  "dependencies": {
+  }
 }
