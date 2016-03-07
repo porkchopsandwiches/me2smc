@@ -3,6 +3,7 @@ import { Stager } from "./ME2/Stages/Stager";
 import { State } from "./ME2/State";
 import { Serialisation } from "./ME2/Serialisation";
 import { Teammate } from "./ME2/Teammate";
+import { Logic } from "./ME2/Logic";
 import { SummaryCrewSurvivalOptions, HenchmanIDs, TeammateDeathCauses, NormandyDelayOptions } from "./constants";
 
 export class Application {
@@ -13,6 +14,7 @@ export class Application {
     public state: State;
     public serialisation: Serialisation;
     private henchmen: Henchman[];
+    private logic: Logic;
 
     public static renderYesNo (value: boolean): string {
         return value ? "Yes" : "No";
@@ -200,7 +202,7 @@ export class Application {
 
     constructor () {
         this.henchmen = [
-            //                          ID                             Name                    Ess     HTL     HTLD    AD      SD      CD      LWD     CRP     DRP     KBP         DPB     Tech    Biotic      Leader      SLd     EC      VC      BC      LC
+            //                  ID                     Name                    Ess     HTL     HTLD    AD      SD      CD      LWD     CRP     DRP     KBP         DPB     Tech    Biotic      Leader      SLd     EC      VC      BC      LC
             new Henchman(this,  HenchmanIDs.Garrus,    "Garrus Vakarian",      true,   3,      5,      0,      8,      11,     10,     2,      11,     8,          0,      false,  false,      true,       false,  true,   true,   false,  true),
             new Henchman(this,  HenchmanIDs.Grunt,     "Grunt",                false,  3,      0,      0,      6,      9,      8,      4,      9,      12,         0,      false,  false,      false,      false,  true,   false,  false,  true),
             new Henchman(this,  HenchmanIDs.Jack,      "Jack",                 true,   0,      8,      12,     5,      8,      11,     1,      12,     0,          8,      false,  true,       false,      false,  true,   false,  true,   true),
@@ -226,6 +228,8 @@ export class Application {
         if (window.location.search.length > 2) {
             this.state.applySerialisedState(window.location.search.substr(1));
         }
+
+        this.logic = new Logic(this);
     }
 
     public getHenchmen (): Henchman[] {

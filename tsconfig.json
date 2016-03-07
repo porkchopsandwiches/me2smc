@@ -29,6 +29,7 @@
         "source/typescript/App/Application.ts",
         "source/typescript/App/constants.ts",
         "source/typescript/App/ME2/Henchman.ts",
+        "source/typescript/App/ME2/Logic.ts",
         "source/typescript/App/ME2/Normandy.ts",
         "source/typescript/App/ME2/Serialisation.ts",
         "source/typescript/App/ME2/Stages/Boss.ts",
@@ -47,6 +48,8 @@
         "source/typescript/extensions.d.ts",
         "source/typescript/extensions.ts",
         "source/typescript/Knockout/Bindings/Modal.ts",
+        "source/typescript/Knockout/Components/PickTeammate.ts",
+        "source/typescript/Knockout/Components/TeammateList.ts",
         "source/typescript/Knockout/ForcibleComputed.ts",
         "source/typescript/Utilities/ObjectArray.ts",
         "typings/browser.d.ts"
