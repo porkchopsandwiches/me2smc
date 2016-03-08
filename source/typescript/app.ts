@@ -9,6 +9,9 @@ import { name as RoleStatic } from "./Knockout/Components/RoleStatic";
 import { name as DeathRoleStatic } from "./Knockout/Components/DeathRoleStatic";
 import { name as ObservableToggle } from "./Knockout/Components/ObservableToggle";
 import { name as TeammateName } from "./Knockout/Components/TeammateName";
+import { name as TeammateRow } from "./Knockout/Components/TeammateRow";
+import { name as YesNo } from "./Knockout/Components/YesNo";
+import { name as PriorityRank } from "./Knockout/Components/PriorityRank";
 import { Application } from "./App/Application";
 import { StageIDs, TeammateRoles } from "./App/constants";
 import * as Constants from "./App/constants";
@@ -27,6 +30,9 @@ void([
     DeathRoleStatic,
     ObservableToggle,
     TeammateName,
+    TeammateRow,
+    YesNo,
+    PriorityRank,
     Constants
 ].join(","));
 

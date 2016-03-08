@@ -17,6 +17,9 @@
 	<body>
 		<div id="app" class="container">
 			<div class="panel panel-default">
+				<div class="panel-heading">
+			    	<h3 class="panel-title">Mass Effect 2 Suicide Mission Calculator</h3>
+			  	</div>
 				<div class="panel-body" data-bind="with: logic">
 					<table class="table table-rounded table-striped setup-table table-condensed">
 						<thead>
@@ -64,208 +67,11 @@
 						</thead>
 						<tbody>
 						<!-- ko foreach: {data: pool, as: 'teammate'} -->
-							<tr data-bind="css: {'text-muted': !is_recruited() }">
-								<td>
-									<a href="#view-profile" data-bind="click: function () { }">
-										<span data-bind="text: teammate.name"></span>
-									</a>
-								</td>
-								<td>
-									<!-- ko component: { name: 'observable-toggle', params: {
-										observable: teammate.is_recruited,
-										icon: "ok",
-										supertext: ""
-									} } --><!-- /ko -->
-								</td>
-								<td>
-									<span data-bind="if: teammate.is_recruited">
-									<!-- ko component: { name: 'observable-toggle', params: {
-										observable: teammate.is_loyal,
-										icon: "heart",
-										supertext: ""
-									} } --><!-- /ko -->
-									</span>
-								</td>
-								<td>
-									<span data-bind="if: teammate.is_loyal">
-									<!-- ko component: { name: 'observable-toggle', params: {
-										observable: teammate.is_upgraded,
-										icon: "circle-arrow-up",
-										supertext: ""
-									} } --><!-- /ko -->
-									</span>
-								</td>
-								<td>
-									<!-- ko component: { name: 'role-toggle', params: {
-										teammate: teammate,
-										observable: $root.logic.approach_squadmate_1,
-										pool: $root.logic.approach_squadmate_pool_1,
-										role: Role.ApproachSquadmate1,
-										icon: "user",
-										supertext: "1"
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'role-toggle', params: {
-										teammate: teammate,
-										observable: $root.logic.approach_squadmate_2,
-										pool: $root.logic.approach_squadmate_pool_2,
-										role: Role.ApproachSquadmate2,
-										icon: "user",
-										supertext: "2"
-									} } --><!-- /ko -->
-								</td>
-								<td>
-									<!-- ko component: { name: 'role-toggle', params: {
-										teammate: teammate,
-										observable: $root.logic.vents_specialist,
-										pool: $root.logic.vents_specialist_pool,
-										role: Role.VentsSpecialist,
-										icon: "star",
-										supertext: ""
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'role-toggle', params: {
-										teammate: teammate,
-										observable: $root.logic.vents_fireteam_leader,
-										pool: $root.logic.vents_fireteam_leader_pool,
-										role: Role.VentsFireteamLeader,
-										icon: "fire",
-										supertext: ""
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'role-toggle', params: {
-										teammate: teammate,
-										observable: $root.logic.vents_squadmate_1,
-										pool: $root.logic.vents_squadmate_pool_1,
-										role: Role.VentsSquadmate1,
-										icon: "user",
-										supertext: "1"
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'role-toggle', params: {
-										teammate: teammate,
-										observable: $root.logic.vents_squadmate_2,
-										pool: $root.logic.vents_squadmate_pool_2,
-										role: Role.VentsSquadmate2,
-										icon: "user",
-										supertext: "2"
-									} } --><!-- /ko -->
-								</td>
-								<td>
-									<!-- ko component: { name: 'role-toggle', params: {
-										teammate: teammate,
-										observable: $root.logic.long_walk_specialist,
-										pool: $root.logic.long_walk_specialist_pool,
-										role: Role.LongWalkSpecialist,
-										icon: "star",
-										supertext: ""
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'role-toggle', params: {
-										teammate: teammate,
-										observable: $root.logic.long_walk_fireteam_leader,
-										pool: $root.logic.long_walk_fireteam_leader_pool,
-										role: Role.LongWalkFireteamLeader,
-										icon: "fire",
-										supertext: ""
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'role-toggle', params: {
-										teammate: teammate,
-										observable: $root.logic.long_walk_escort,
-										pool: $root.logic.long_walk_escort_pool,
-										role: Role.LongWalkEscort,
-										icon: "heart-empty",
-										supertext: ""
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'role-toggle', params: {
-										teammate: teammate,
-										observable: $root.logic.long_walk_squadmate_1,
-										pool: $root.logic.long_walk_squadmate_pool_1,
-										role: Role.LongWalkSquadmate1,
-										icon: "user",
-										supertext: "1"
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'role-toggle', params: {
-										teammate: teammate,
-										observable: $root.logic.long_walk_squadmate_2,
-										pool: $root.logic.long_walk_squadmate_pool_2,
-										role: Role.LongWalkSquadmate2,
-										icon: "user",
-										supertext: "2"
-									} } --><!-- /ko -->
-								</td>
-								<td>
-									<!-- ko component: { name: 'role-toggle', params: {
-										teammate: teammate,
-										observable: $root.logic.boss_squadmate_1,
-										pool: $root.logic.boss_squadmate_pool_1,
-										role: Role.BossSquadmate1,
-										icon: "user",
-										supertext: "1"
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'role-toggle', params: {
-										teammate: teammate,
-										observable: $root.logic.boss_squadmate_2,
-										pool: $root.logic.boss_squadmate_pool_2,
-										role: Role.BossSquadmate2,
-										icon: "user",
-										supertext: "2"
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'role-static', params: {
-										teammate: teammate,
-										role: Role.BossHoldingTheLine,
-										supertext: "",
-										icon: "flash"
-									} } --><!-- /ko -->
-								</td>
-								<td>
-									<span data-bind="
-							            if: teammate.survives
-							            ">
-							            <span class="glyphicon glyphicon-ok-circle text-success"></span>
-							        </span>
-									<!-- ko component: { name: 'death-role-static', params: {
-										teammate: teammate,
-										role: Role.ApproachShieldsDeath,
-										supertext: "Shield"
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'death-role-static', params: {
-										teammate: teammate,
-										role: Role.ApproachArmorDeath,
-										supertext: "Armour"
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'death-role-static', params: {
-										teammate: teammate,
-										role: Role.ApproachWeaponDeath,
-										supertext: "Weapon"
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'death-role-static', params: {
-										teammate: teammate,
-										role: Role.VentsDeath,
-										supertext: "Vents"
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'death-role-static', params: {
-										teammate: teammate,
-										role: Role.LongWalkSquadmateDeath,
-										supertext: "LW Squadmate"
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'death-role-static', params: {
-										teammate: teammate,
-										role: Role.LongWalkFireteamLeaderDeath,
-										supertext: "LW Leader"
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'death-role-static', params: {
-										teammate: teammate,
-										role: Role.LongWalkEscortDeath,
-										supertext: "Escort"
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'death-role-static', params: {
-										teammate: teammate,
-										role: Role.BossSquadmateDeath,
-										supertext: "Boss Squadmate"
-									} } --><!-- /ko -->
-									<!-- ko component: { name: 'death-role-static', params: {
-										teammate: teammate,
-										role: Role.BossHoldingTheLineDeath,
-										supertext: "HTL"
-									} } --><!-- /ko -->
-								</td>
-							</tr>
+							<!-- ko component: { name: 'teammate-row', params: {
+								teammate: teammate,
+								logic: $root.logic,
+								modal_target: $root.henchman
+							} } --><!-- /ko -->
 						<!-- /ko -->
 						</tbody>
 					</table>
@@ -367,9 +173,11 @@
 						<div class="modal-body">
 							<form class="form-horizontal" role="form">
 								<div class="form-group">
-									<label class="col-sm-6 control-label">Recruitment can be skipped</label>
+									<label class="col-sm-6 control-label">Recruitment essential</label>
 									<div class="col-sm-6">
-										<p class="form-control-static" data-bind="text: Application.renderYesNo(!is_essential)"></p>
+										<!-- ko component: { name: 'yes-no', params: {
+											value: is_essential
+										} } --><!-- /ko -->
 									</div>
 								</div>
 								<fieldset>
@@ -379,13 +187,17 @@
 											<div class="form-group">
 												<label class="col-sm-8 control-label">Tech Expert</label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="text: Application.renderYesNo(is_tech_expert)"></p>
+													<!-- ko component: { name: 'yes-no', params: {
+														value: is_vent_ideal_candidate
+													} } --><!-- /ko -->
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="col-sm-8 control-label">Biotic Expert</label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="text: Application.renderYesNo(is_biotic_expert)"></p>
+													<!-- ko component: { name: 'yes-no', params: {
+														value: is_bubble_ideal_candidate
+													} } --><!-- /ko -->
 												</div>
 											</div>
 										</div>
@@ -393,13 +205,16 @@
 											<div class="form-group">
 												<label class="col-sm-8 control-label">Fireteam Leader</label>
 												<div class="col-sm-4">
-													<p class="form-control-static"><span data-bind="text: Application.renderYesNo(is_leader)"></span><span data-bind="visible: is_super_leader"> ✸</span></p>
+													<!-- ko component: { name: 'yes-no', params: {
+														value: is_leader_ideal_candidate
+													} } --><!-- /ko -->
+													<span data-bind="visible: is_super_leader"> ✸</span></p>
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="col-sm-8 control-label"><abbr title="Hold the line">HTL</abbr> score</label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="text: htl_value"></p>
+													<p class="form-control-static" data-bind="text: hold_the_line_baseline_score"></p>
 												</div>
 											</div>
 										</div>
@@ -412,13 +227,17 @@
 											<div class="form-group">
 												<label class="col-sm-8 control-label">Vents</label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="text: Application.renderYesNo(is_vent_candidate)"></p>
+													<!-- ko component: { name: 'yes-no', params: {
+														value: is_vent_candidate
+													} } --><!-- /ko -->
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="col-sm-8 control-label">Biotic Bubble</label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="text: Application.renderYesNo(is_bubble_candidate)"></p>
+													<!-- ko component: { name: 'yes-no', params: {
+														value: is_bubble_candidate
+													} } --><!-- /ko -->
 												</div>
 											</div>
 										</div>
@@ -426,13 +245,17 @@
 											<div class="form-group">
 												<label class="col-sm-8 control-label">Leader</label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="text: Application.renderYesNo(is_leader_candidate)"></p>
+													<!-- ko component: { name: 'yes-no', params: {
+														value: is_leader_candidate
+													} } --><!-- /ko -->
 												</div>
 											</div>
 											<div class="form-group">
 												<label class="col-sm-8 control-label">Crew Escort</label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="text: Application.renderYesNo(is_escort_candidate)"></p>
+													<!-- ko component: { name: 'yes-no', params: {
+														value: is_escort_candidate
+													} } --><!-- /ko -->
 												</div>
 											</div>
 										</div>
@@ -443,59 +266,77 @@
 									<div class="row">
 										<div class="col-xs-6">
 											<div class="form-group">
-												<label class="col-sm-8 control-label"><a tabindex="0" data-bind="click: Application.showArmourDeathRankPopover">Armour Death</a></label>
+												<label class="col-sm-8 control-label"><a tabindex="0" data-bind="click: function (d, e) { $root.ui.showRankPopover(e, 'armour_death_priority_rank', 'Armour Death Priority'); }">Armour Death</a></label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="text: Application.renderRank(getArmourDeathPriorityRank())"></p>
+													<!-- ko component: { name: 'priority-rank', params: {
+														value: armour_death_priority_rank
+													} } --><!-- /ko -->
 												</div>
 											</div>
 											<div class="form-group">
-												<label class="col-sm-8 control-label"><a tabindex="1" data-bind="click: Application.showShieldingDeathRankPopover">Shielding Death</a></label>
+												<label class="col-sm-8 control-label"><a tabindex="1" data-bind="click: function (d, e) { $root.ui.showRankPopover(e, 'shield_death_priority_rank', 'Shield Death Priority'); }">Shielding Death</a></label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="text: Application.renderRank(getShieldingDeathPriorityRank())"></p>
+													<!-- ko component: { name: 'priority-rank', params: {
+														value: shield_death_priority_rank
+													} } --><!-- /ko -->
 												</div>
 											</div>
 											<div class="form-group">
-												<label class="col-sm-8 control-label"><a tabindex="2" data-bind="click: Application.showCannonDeathRankPopover">Cannon Death</a></label>
+												<label class="col-sm-8 control-label"><a tabindex="2" data-bind="click: function (d, e) { $root.ui.showRankPopover(e, 'weapon_death_priority_rank', 'Weapon Death Priority'); }">Cannon Death</a></label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="text: Application.renderRank(getCannonDeathPriorityRank())"></p>
+													<!-- ko component: { name: 'priority-rank', params: {
+														value: weapon_death_priority_rank
+													} } --><!-- /ko -->
 												</div>
 											</div>
 											<div class="form-group">
-												<label class="col-sm-8 control-label"><a tabindex="3" data-bind="click: Application.showLongWalkDeathRankPopover">Long Walk Death</a></label>
+												<label class="col-sm-8 control-label"><a tabindex="3" data-bind="click: function (d, e) { $root.ui.showRankPopover(e, 'long_walk_death_priority_rank', 'Long Walk Death Priority'); }">Long Walk Death</a></label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="text: Application.renderRank(getLongWalkDeathPriorityRank())"></p>
+													<!-- ko component: { name: 'priority-rank', params: {
+														value: long_walk_death_priority_rank
+													} } --><!-- /ko -->
 												</div>
 											</div>
 											<div class="form-group">
-												<label class="col-sm-8 control-label"><a tabindex="4" data-bind="click: Application.showHTMLDeathRankPopover">HTL Death</a></label>
+												<label class="col-sm-8 control-label"><a tabindex="4" data-bind="click: function (d, e) { $root.ui.showRankPopover(e, 'hold_the_line_death_priority_rank', 'HTL Death Priority'); }">HTL Death</a></label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="text: Application.renderRank(getHTLDeathPriorityRank())"></p>
+													<!-- ko component: { name: 'priority-rank', params: {
+														value: hold_the_line_death_priority_rank
+													} } --><!-- /ko -->
 												</div>
 											</div>
 										</div>
 										<div class="col-xs-6">
 											<div class="form-group">
-												<label class="col-sm-8 control-label"><a tabindex="5" data-bind="click: Application.showDefenceReportRankPopover">Defence Report</a></label>
+												<label class="col-sm-8 control-label"><a tabindex="5" data-bind="click: function (d, e) { $root.ui.showRankPopover(e, 'defence_report_priority_rank', 'Defence Report Priority'); }">Defence Report</a></label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="text: Application.renderRank(getDefenceReportPriorityRank())"></p>
+													<!-- ko component: { name: 'priority-rank', params: {
+														value: defence_report_priority_rank
+													} } --><!-- /ko -->
 												</div>
 											</div>
 											<div class="form-group">
-												<label class="col-sm-8 control-label"><a tabindex="6" data-bind="click: Application.showKeepBaseAdvocateRankPopover">Keep Base Advocate</a></label>
+												<label class="col-sm-8 control-label"><a tabindex="6" data-bind="click: function (d, e) { $root.ui.showRankPopover(e, 'keep_base_priority_rank', 'Advocates Keeping Base Priority'); }">Keep Base Advocate</a></label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="html: Application.renderRank(getKeepBasePriorityRank())"></p>
+													<!-- ko component: { name: 'priority-rank', params: {
+														value: keep_base_priority_rank
+													} } --><!-- /ko -->
 												</div>
 											</div>
 											<div class="form-group">
-												<label class="col-sm-8 control-label"><a tabindex="7" data-bind="click: Application.showDestroyBaseAdvocateRankPopover">Destroy Base Advocate</a></label>
+												<label class="col-sm-8 control-label"><a tabindex="7" data-bind="click: function (d, e) { $root.ui.showRankPopover(e, 'destroy_base_priority_rank', 'Advocates Destroying Base Priority'); }">Destroy Base Advocate</a></label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="html: Application.renderRank(getDestroyBasePriorityRank())"></p>
+													<!-- ko component: { name: 'priority-rank', params: {
+														value: destroy_base_priority_rank
+													} } --><!-- /ko -->
 												</div>
 											</div>
 											<div class="form-group">
-												<label class="col-sm-8 control-label"><a tabindex="8" data-bind="click: Application.showCutsceneRescueRankPopover">Catch Shepard</a></label>
+												<label class="col-sm-8 control-label"><a tabindex="8" data-bind="click: function (d, e) { $root.ui.showRankPopover(e, 'cutscene_rescue_priority_rank', 'Catch Shepard Priority'); }">Catch Shepard</a></label>
 												<div class="col-sm-4">
-													<p class="form-control-static" data-bind="text: Application.renderRank(getCutsceneRescuePriorityRank())"></p>
+													<!-- ko component: { name: 'priority-rank', params: {
+														value: cutscene_rescue_priority_rank
+													} } --><!-- /ko -->
 												</div>
 											</div>
 										</div>

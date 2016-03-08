@@ -42,6 +42,16 @@ export class Teammate {
     public hold_the_line_score: KnockoutComputed<number>;
     public survives: KnockoutComputed<boolean>;
 
+    public armour_death_priority_rank: KnockoutComputed<number>;
+    public shield_death_priority_rank: KnockoutComputed<number>;
+    public weapon_death_priority_rank: KnockoutComputed<number>;
+    public long_walk_death_priority_rank: KnockoutComputed<number>;
+    public cutscene_rescue_priority_rank: KnockoutComputed<number>;
+    public defence_report_priority_rank: KnockoutComputed<number>;
+    public keep_base_priority_rank: KnockoutComputed<number>;
+    public destroy_base_priority_rank: KnockoutComputed<number>;
+    public hold_the_line_death_priority_rank: KnockoutComputed<number>;
+
     public roles: KnockoutObservableArray<Role>;
 
     constructor (
@@ -165,6 +175,23 @@ export class Teammate {
             if (candidates) {
                 return _.contains(candidates, this);
             }
+        });
+
+        this.armour_death_priority_rank = this.deriveRank("armour_death_priority");
+        this.shield_death_priority_rank = this.deriveRank("shield_death_priority");
+        this.weapon_death_priority_rank = this.deriveRank("weapon_death_priority");
+        this.long_walk_death_priority_rank = this.deriveRank("long_walk_death_priority");
+        this.cutscene_rescue_priority_rank = this.deriveRank("cutscene_rescue_priority");
+        this.defence_report_priority_rank = this.deriveRank("defence_report_priority");
+        this.keep_base_priority_rank = this.deriveRank("keep_base_priority");
+        this.destroy_base_priority_rank = this.deriveRank("destroy_base_priority");
+        this.hold_the_line_death_priority_rank = this.deriveRank("hold_the_line_death_priority");
+    }
+
+    private deriveRank (field: string): KnockoutComputed<number> {
+        return ko.pureComputed((): number => {
+            const pool = this.logic.pool();
+            return this[field] > 0 ? (pool.length - _.indexOf<Teammate>(_.sortBy(pool, field), this)) : undefined;
         });
     }
 
@@ -530,6 +557,15 @@ export class Logic {
             if (this.long_walk_evaluatable()) {
                 const leader = this.long_walk_fireteam_leader();
                 if (!leader.is_good_long_walk_fireteam_leader()) {
+
+                    // Even if they are a bad leader, they will survive if:
+                    // a) They are alone &
+                    // b) A squadmate died
+                    const long_walk_fireteam_followers = _.without(this.vents_survivors(), this.long_walk_fireteam_leader(), this.long_walk_escort(), this.long_walk_specialist(), this.long_walk_squadmate_1(), this.long_walk_squadmate_2());
+                    if (long_walk_fireteam_followers.length === 0 && !!this.long_walk_squadmate_death()) {
+                        return undefined;
+                    }
+
                     return leader;
                 }
             }
@@ -708,19 +744,19 @@ export class Logic {
 
         this.pool([
             //                 ID                     Name                    Ess     HTL     HTLD    AD      SD      WD      LWD     CRP     DRP     KBP         DPB     Tech    Biotic      Leader      SLd     EC      VC      BC      LC    Armour   Shield  Weapon
-            new Teammate(this, HenchmanIDs.Garrus,    "Garrus Vakarian",      true,   3,      5,      0,      8,      11,     10,     2,      11,     8,          0,      false,  false,      true,       false,  true,   true,   false,  true, false,   false,  true),
-            new Teammate(this, HenchmanIDs.Grunt,     "Grunt",                false,  3,      0,      0,      6,      9,      8,      4,      9,      12,         0,      false,  false,      false,      false,  true,   false,  false,  true, false,   false,  false),
-            new Teammate(this, HenchmanIDs.Jack,      "Jack",                 true,   0,      8,      12,     5,      8,      11,     1,      12,     0,          8,      false,  true,       false,      false,  true,   false,  true,   true, false,   false,  false),
-            new Teammate(this, HenchmanIDs.Jacob,     "Jacob Taylor",         true,   1,      6,      0,      0,      0,      6,      7,      8,      0,          10,     false,  false,      true,       false,  true,   true,   true,   true, true,    false,  false),
-            new Teammate(this, HenchmanIDs.Kasumi,    "Kasumi Goto",          false,  0,      9,      0,      12,     0,      3,      9,      4,      0,          9,      true,   false,      false,      false,  true,   true,   false,  true, false,   false,  false),
-            new Teammate(this, HenchmanIDs.Legion,    "Legion",               false,  1,      3,      0,      11,     0,      9,      3,      10,     9,          0,      true,   false,      false,      false,  true,   true,   false,  true, false,   false,  false),
-            new Teammate(this, HenchmanIDs.Miranda,   "Miranda Lawson",       true,   1,      7,      0,      0,      0,      -1,     11,     2,      13,         0,      false,  false,      true,       true,   false,  false,  true,   true, false,   false,  false),
-            new Teammate(this, HenchmanIDs.Mordin,    "Mordin Solus",         true,   0,      11,     0,      0,      0,      5,      6,      6,      10,         0,      false,  false,      false,      false,  true,   true,   false,  true, false,   false,  false),
-            //new Teammate(HenchmanIDs.Morinth,   "Morinth",            false,  1,      4,      0,      4,      7,      0,      5,      7,      0,          0,      false,  false,      false,      false,  true,   false,  true,   true),
-            new Teammate(this, HenchmanIDs.Samara,    "Samara",               false,  1,      4,      0,      4,      7,      7,      5,      7,      0,          12,     false,  true,       false,      false,  true,   false,  true,   true, false,   false,  false),
-            new Teammate(this, HenchmanIDs.Tali,      "Tali'zorah",           false,  0,      10,     0,      10,     0,      4,      8,      5,      0,          11,     true,   false,      false,      false,  true,   true,   false,  true, false,   true,   false),
-            new Teammate(this, HenchmanIDs.Thane,     "Thane",                false,  1,      2,      0,      9,      12,     12,     0,      13,     0,          13,     false,  false,      false,      false,  true,   true,   true,   true, false,   false,  false),
-            new Teammate(this, HenchmanIDs.Zaeed,     "Zaeed Masani",         false,  3,      1,      0,      7,      10,     2,      10,     3,      11,         0,      false,  false,      false,      false,  true,   false,  false,  true, false,   false,  false)
+            new Teammate(this, HenchmanIDs.Garrus,    "Garrus Vakarian",      true,   3,      5,      0,      8,      11,     10,     3,      11,     8,          0,      false,  false,      true,       false,  true,   true,   false,  true, false,   false,  true),
+            new Teammate(this, HenchmanIDs.Grunt,     "Grunt",                false,  3,      0,      0,      6,      9,      8,      5,      9,      12,         0,      false,  false,      false,      false,  true,   false,  false,  true, false,   false,  false),
+            new Teammate(this, HenchmanIDs.Jack,      "Jack",                 true,   0,      8,      12,     5,      8,      11,     2,      12,     0,          8,      false,  true,       false,      false,  true,   false,  true,   true, false,   false,  false),
+            new Teammate(this, HenchmanIDs.Jacob,     "Jacob Taylor",         true,   1,      6,      0,      0,      0,      6,      8,      8,      0,          10,     false,  false,      true,       false,  true,   true,   true,   true, true,    false,  false),
+            new Teammate(this, HenchmanIDs.Kasumi,    "Kasumi Goto",          false,  0,      9,      0,      12,     0,      3,      10,     4,      0,          9,      true,   false,      false,      false,  true,   true,   false,  true, false,   false,  false),
+            new Teammate(this, HenchmanIDs.Legion,    "Legion",               false,  1,      3,      0,      11,     0,      9,      4,      10,     9,          0,      true,   false,      false,      false,  true,   true,   false,  true, false,   false,  false),
+            new Teammate(this, HenchmanIDs.Miranda,   "Miranda Lawson",       true,   1,      7,      0,      0,      0,      -1,     12,     2,      13,         0,      false,  false,      true,       true,   false,  false,  true,   true, false,   false,  false),
+            new Teammate(this, HenchmanIDs.Mordin,    "Mordin Solus",         true,   0,      11,     0,      0,      0,      5,      7,      6,      10,         0,      false,  false,      false,      false,  true,   true,   false,  true, false,   false,  false),
+            //new Teammate(HenchmanIDs.Morinth,   "Morinth",            false,  1,      4,      0,      4,      7,      0,      5,      8,      0,          0,      false,  false,      false,      false,  true,   false,  true,   true),
+            new Teammate(this, HenchmanIDs.Samara,    "Samara",               false,  1,      4,      0,      4,      7,      7,      6,      7,      0,          12,     false,  true,       false,      false,  true,   false,  true,   true, false,   false,  false),
+            new Teammate(this, HenchmanIDs.Tali,      "Tali'zorah",           false,  0,      10,     0,      10,     0,      4,      9,      5,      0,          11,     true,   false,      false,      false,  true,   true,   false,  true, false,   true,   false),
+            new Teammate(this, HenchmanIDs.Thane,     "Thane",                false,  1,      2,      0,      9,      12,     12,     1,      13,     0,          13,     false,  false,      false,      false,  true,   true,   true,   true, false,   false,  false),
+            new Teammate(this, HenchmanIDs.Zaeed,     "Zaeed Masani",         false,  3,      1,      0,      7,      10,     2,      11,     3,      11,         0,      false,  false,      false,      false,  true,   false,  false,  true, false,   false,  false)
         ]);
 
         const serialisables: KnockoutObservable<Teammate>[] = [

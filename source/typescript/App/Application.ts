@@ -4,6 +4,7 @@ import { State } from "./ME2/State";
 import { Serialisation } from "./ME2/Serialisation";
 import { Teammate } from "./ME2/Teammate";
 import { Logic } from "./ME2/Logic";
+import { UI } from "./ME2/UI";
 import { SummaryCrewSurvivalOptions, HenchmanIDs, TeammateDeathCauses, NormandyDelayOptions } from "./constants";
 
 export class Application {
@@ -13,8 +14,9 @@ export class Application {
     public share: KnockoutObservable<string>;
     public state: State;
     public serialisation: Serialisation;
+    public logic: Logic;
+    public ui: UI;
     private henchmen: Henchman[];
-    private logic: Logic;
 
     public static renderYesNo (value: boolean): string {
         return value ? "Yes" : "No";
@@ -230,6 +232,7 @@ export class Application {
         }
 
         this.logic = new Logic(this);
+        this.ui = new UI(this);
     }
 
     public getHenchmen (): Henchman[] {
