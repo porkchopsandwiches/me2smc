@@ -1,4 +1,4 @@
-import { Teammate } from "../../App/ME2/Logic";
+import { Teammate } from "../../App/ME2/Teammate";
 
 export const name: string = "teammate-name";
 

@@ -1,4 +1,5 @@
-import { Teammate, Role } from "../../App/ME2/Logic";
+import { Teammate } from "../../App/ME2/Teammate";
+import { Role } from "../../App/constants";
 
 export const name: string = "role-static";
 

@@ -1,10 +1,12 @@
-import { Teammate, Role } from "../../App/ME2/Logic";
+import { Teammate } from "../../App/ME2/Teammate";
+import { Role } from "../../App/constants";
 
 export const name: string = "role-toggle";
 
 interface IParams {
     teammate: Teammate;
     observable: KnockoutObservable<Teammate>;
+    ideal?: KnockoutObservable<boolean>;
     pool: KnockoutObservable<Teammate[]>;
     role: Role;
     icon: string;
@@ -22,13 +24,18 @@ void(((): void => {
             this.available = ko.pureComputed((): boolean => {
                 return _.contains(params.pool(), params.teammate);
             });
+            this.ideal = params.ideal ? params.ideal : ko.observable(false);
+            this.styles = {
+                "role-toggle": true,
+                "ideal": this.ideal,
+                "selected": ko.pureComputed((): boolean => { return params.teammate.hasRole(params.role); }),
+                "available": ko.pureComputed((): boolean => { return this.available(); })
+            };
+            this.styles[params.icon] = true;
         },
         template: `
         <span data-bind="
-            style: {
-                visibility: $data.available() ? 'visible' : 'hidden'
-            },
-            css: {'text-muted': !$data.teammate.hasRole($data.role)},
+            css: styles,
             click: function () {
                 if ($data.observable() === teammate) {
                     $data.observable(undefined);

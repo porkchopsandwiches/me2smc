@@ -20,61 +20,61 @@
 				<div class="panel-heading">
 			    	<h3 class="panel-title">Mass Effect 2 Suicide Mission Calculator</h3>
 			  	</div>
+				<table class="table table-striped table-condensed" data-bind="with: logic">
+					<thead>
+						<tr>
+							<th></th>
+							<th>
+								<span data-bind="click: function () { $data.all_recruited(!$data.all_recruited()); }">
+									<span data-bind="
+										css: {
+											'glyphicon glyphicon-ok': true,
+											'text-muted': !$data.all_recruited()
+										}
+									" class=""></span>
+									Recruited
+								</span>
+							</th>
+							<th>
+								<span data-bind="click: function () { $data.all_loyal(!$data.all_loyal()); }">
+									<span data-bind="
+										css: {
+											'glyphicon glyphicon-heart': true,
+											'text-muted': !$data.all_loyal()
+										}
+									" class=""></span>
+									Loyal
+								</span>
+							</th>
+							<th>
+								<span data-bind="click: function () { $data.all_upgraded(!$data.all_upgraded()); }">
+									<span data-bind="
+										css: {
+											'glyphicon glyphicon-circle-arrow-up': true,
+											'text-muted': !$data.all_upgraded()
+										}
+									" class=""></span>
+									Upgraded
+								</span>
+							</th>
+							<th>Approach</th>
+							<th>Vents</th>
+							<th>Long Walk</th>
+							<th>Boss</th>
+							<th>Outcome</th>
+						</tr>
+					</thead>
+					<tbody>
+					<!-- ko foreach: {data: pool, as: 'teammate'} -->
+						<!-- ko component: { name: 'teammate-row', params: {
+							teammate: teammate,
+							logic: $root.logic,
+							modal_target: $root.ui.teammate
+						} } --><!-- /ko -->
+					<!-- /ko -->
+					</tbody>
+				</table>
 				<div class="panel-body" data-bind="with: logic">
-					<table class="table table-rounded table-striped setup-table table-condensed">
-						<thead>
-							<tr>
-								<th></th>
-								<th>
-									<span data-bind="click: function () { $data.all_recruited(!$data.all_recruited()); }">
-										<span data-bind="
-											css: {
-												'glyphicon glyphicon-ok': true,
-												'text-muted': !$data.all_recruited()
-											}
-										" class=""></span>
-										Recruited
-									</span>
-								</th>
-								<th>
-									<span data-bind="click: function () { $data.all_loyal(!$data.all_loyal()); }">
-										<span data-bind="
-											css: {
-												'glyphicon glyphicon-heart': true,
-												'text-muted': !$data.all_loyal()
-											}
-										" class=""></span>
-										Loyal
-									</span>
-								</th>
-								<th>
-									<span data-bind="click: function () { $data.all_upgraded(!$data.all_upgraded()); }">
-										<span data-bind="
-											css: {
-												'glyphicon glyphicon-circle-arrow-up': true,
-												'text-muted': !$data.all_upgraded()
-											}
-										" class=""></span>
-										Upgraded
-									</span>
-								</th>
-								<th>Approach</th>
-								<th>Vents</th>
-								<th>Long Walk</th>
-								<th>Boss</th>
-								<th>Outcome</th>
-							</tr>
-						</thead>
-						<tbody>
-						<!-- ko foreach: {data: pool, as: 'teammate'} -->
-							<!-- ko component: { name: 'teammate-row', params: {
-								teammate: teammate,
-								logic: $root.logic,
-								modal_target: $root.henchman
-							} } --><!-- /ko -->
-						<!-- /ko -->
-						</tbody>
-					</table>
 					<div class="row" data-bind="if: boss_survivors()">
 						<div class="col-md-4 col-sm-6">
 							<div class="form-group">
@@ -128,7 +128,7 @@
 									<span class="input-group-addon">State</span>
 									<input class="form-control" type="text" data-bind="value: serialised" />
 									<span class="input-group-btn">
-										<button class="btn btn-primary" type="button" data-bind="click: function () { $root.share($data.serialised()) }">Share</button>
+										<button class="btn btn-primary" type="button" data-bind="click: function () { $root.ui.share(true) }">Share</button>
 									</span>
 								</div>
 							</form>
@@ -138,32 +138,30 @@
 			</div>
 		</div>
 
-		<div class="modal fade" tabindex="-2" role="dialog" data-bind="modal: $root.share()">
-			<!-- ko with: $root.share() -->
-				<div class="modal-dialog">
-					<div class="modal-content">
-						<div class="modal-header">
-							<button type="button" class="close" data-dismiss="modal">&times;</button>
-							<h4 class="modal-title">Share URL</h4>
-						</div>
-						<div class="modal-body">
-							<p>Share current state:</p>
-							<form role="form">
-								<div class="form-group">
-									<input type="text" class="form-control" data-bind="attr: {value: 'http://' + window.location.hostname + window.location.pathname + '?' + $data }" />
-								</div>
-							</form>
-						</div>
-						<div class="modal-footer">
-							<button type="button" class="btn btn-primary" data-bind="click: function () { $root.share(undefined); }">Close</button>
-						</div>
+		<div class="modal fade" tabindex="-2" role="dialog" data-bind="modal: $root.ui.share()">
+			<div class="modal-dialog">
+				<div class="modal-content">
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal">&times;</button>
+						<h4 class="modal-title">Share URL</h4>
+					</div>
+					<div class="modal-body">
+						<p>Share current state:</p>
+						<form role="form">
+							<div class="form-group">
+								<input type="text" class="form-control" data-bind="attr: {value: 'http://' + window.location.hostname + window.location.pathname + '?' + $root.logic.serialised() }" />
+							</div>
+						</form>
+					</div>
+					<div class="modal-footer">
+						<button type="button" class="btn btn-primary" data-bind="click: function () { $root.ui.share(false); }">Close</button>
 					</div>
 				</div>
-			<!-- /ko -->
+			</div>
 		</div>
 
-		<div class="modal fade" tabindex="-1" role="dialog" data-bind="modal: $root.henchman()">
-			<!-- ko with: $root.henchman() -->
+		<div class="modal fade" tabindex="-1" role="dialog" data-bind="modal: $root.ui.teammate()">
+			<!-- ko with: $root.ui.teammate() -->
 				<div class="modal-dialog">
 					<div class="modal-content">
 						<div class="modal-header">
@@ -345,7 +343,7 @@
 							</form>
 						</div>
 						<div class="modal-footer">
-							<button type="button" class="btn btn-primary" data-bind="click: function () { $root.henchman(undefined); }">Close</button>
+							<button type="button" class="btn btn-primary" data-bind="click: function () { $root.ui.teammate(undefined); }">Close</button>
 						</div>
 					</div>
 				</div>

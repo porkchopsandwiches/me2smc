@@ -14,10 +14,15 @@ void(((): void => {
                 glyphicon: true
             };
             this.glyphs["glyphicon-" + params.icon] = true;
+            this.css = {
+                "observable-toggle": true,
+                "selected": params.observable
+            };
+            this.css[params.icon] = true;
         },
         template: `
         <span data-bind="
-            css: {'text-muted': !$data.observable()},
+            css: $data.css,
             click: function () {
                 $data.observable(!$data.observable());
             }">

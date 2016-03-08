@@ -1,65 +1,12 @@
-// @import "../../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap";
-// @import "../../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/theme";
-
 @import "../../bower_components/bootstrap-sass-official/assets/stylesheets/bootstrap/variables";
-
-.setup-table{
-	label{
-		width: 100%;
-	}
-}
 
 body{
 	padding-top: 1em;
 }
 
-.setup-table{
-	label a{
-		display: block;
-	}
-}
-
-.summary-table{
-
-
-	.roles{
-		list-style: none;
-		margin: 0;
-		padding: 0;
-
-		li{
-			display: inline-block;
-			padding-right: 1em;
-			margin: 0;
-		}
-	}
-
-	.glyphicon-heart{
-		color: #800;
-	}
-
-	td:nth-child(n + 2),
-	th:nth-child(n + 2) {
-		text-align: center;
-	}
-}
-
 .rank-popover-list{
 	width: 15em;
 }
-
-$border-radius-rounded: 5px;
-
-@media (min-width: $screen-sm-min) {
-	.table-rounded{
-		border: 1px solid $table-border-color;
-		border-radius: $border-radius-large;
-		border-collapse: separate;
-		border-spacing: 0px;
-	}
-}
-
-
 
 .panel-footer{
 	padding-top: 0;
@@ -67,5 +14,61 @@ $border-radius-rounded: 5px;
 
 	.row > *{
 		padding: $panel-heading-padding;
+	}
+}
+
+$toggle-off-color: #aaa;
+
+.role-toggle,
+.observable-toggle{
+	color: #aaa;
+
+	&.selected{
+		color: black;
+	}
+}
+
+.role-toggle{
+	visibility: hidden;
+
+	&.available{
+		visibility: visible;
+	}
+
+	&.ideal{
+		&.fire{
+			color: mix($toggle-off-color, orangered);
+			&.selected{
+				color: orangered;
+			}
+		}
+
+		&.star{
+			color: mix($toggle-off-color, gold);
+			&.selected{
+				color: gold;
+			}
+		}
+	}
+}
+
+.observable-toggle{
+
+	&.heart{
+		&.selected{
+			color: #a00;
+		}
+	}
+
+	&.ok{
+		&.selected{
+			//color: #080;
+		}
+	}
+
+	&.circle-arrow-up{
+		&.selected{
+			//color: #00a;
+		}
 	}
 }

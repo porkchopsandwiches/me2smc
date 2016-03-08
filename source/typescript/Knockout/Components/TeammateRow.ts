@@ -1,4 +1,4 @@
-import { Teammate } from "../../App/ME2/Logic";
+import { Teammate } from "../../App/ME2/Teammate";
 import { Logic } from "../../App/ME2/Logic";
 
 export const name: string = "teammate-row";
@@ -69,6 +69,7 @@ void(((): void => {
                     teammate: teammate,
                     observable: logic.vents_specialist,
                     pool: logic.vents_specialist_pool,
+                    ideal: teammate.is_good_vent_specialist,
                     role: Role.VentsSpecialist,
                     icon: "star",
                     supertext: ""
@@ -77,6 +78,7 @@ void(((): void => {
                     teammate: teammate,
                     observable: logic.vents_fireteam_leader,
                     pool: logic.vents_fireteam_leader_pool,
+                    ideal: teammate.is_good_vent_fireteam_leader,
                     role: Role.VentsFireteamLeader,
                     icon: "fire",
                     supertext: ""
@@ -103,6 +105,7 @@ void(((): void => {
                     teammate: teammate,
                     observable: logic.long_walk_specialist,
                     pool: logic.long_walk_specialist_pool,
+                    ideal: teammate.is_good_long_walk_specialist,
                     role: Role.LongWalkSpecialist,
                     icon: "star",
                     supertext: ""
@@ -111,6 +114,7 @@ void(((): void => {
                     teammate: teammate,
                     observable: logic.long_walk_fireteam_leader,
                     pool: logic.long_walk_fireteam_leader_pool,
+                    ideal: teammate.is_good_long_walk_fireteam_leader,
                     role: Role.LongWalkFireteamLeader,
                     icon: "fire",
                     supertext: ""
@@ -156,12 +160,6 @@ void(((): void => {
                     role: Role.BossSquadmate2,
                     icon: "user",
                     supertext: "2"
-                } } --><!-- /ko -->
-                <!-- ko component: { name: 'role-static', params: {
-                    teammate: teammate,
-                    role: Role.BossHoldingTheLine,
-                    supertext: "",
-                    icon: "flash"
                 } } --><!-- /ko -->
             </td>
             <td>
