@@ -32,6 +32,7 @@ export class Teammate {
     // Derivatives
     public is_recruited: KnockoutObservable<boolean>;
     public is_loyal: KnockoutObservable<boolean>;
+    public is_upgraded: KnockoutObservable<boolean>;
     public is_good_vent_specialist: KnockoutComputed<boolean>;
     public is_good_vent_fireteam_leader: KnockoutComputed<boolean>;
     public is_good_escort: KnockoutComputed<boolean>;
@@ -39,6 +40,7 @@ export class Teammate {
     public is_good_long_walk_fireteam_leader: KnockoutComputed<boolean>;
     public is_good_boss_squadmate: KnockoutComputed<boolean>;
     public hold_the_line_score: KnockoutComputed<number>;
+    public survives: KnockoutComputed<boolean>;
 
     public roles: KnockoutObservableArray<Role>;
 
@@ -68,10 +70,15 @@ export class Teammate {
         public is_escort_candidate: boolean,
         public is_vent_candidate: boolean,
         public is_bubble_candidate: boolean,
-        public is_leader_candidate: boolean
+        public is_leader_candidate: boolean,
+
+        public upgrade_unlocks_armour: boolean,
+        public upgrade_unlocks_shields: boolean,
+        public upgrade_unlocks_weapon: boolean
     ) {
         this.is_recruited = ko.observable(this.is_essential);
         this.is_loyal = ko.observable(false);
+        this.is_upgraded = ko.observable(false);
 
         this.is_recruited.subscribe((is_recruited: boolean): void => {
             if (!is_recruited) {
@@ -80,6 +87,25 @@ export class Teammate {
                 }
 
                 this.is_loyal(false);
+                this.is_upgraded(false);
+            }
+        });
+
+        this.is_loyal.subscribe((is_loyal: boolean): void => {
+            if (is_loyal) {
+                if (!this.is_recruited()) {
+                    this.is_loyal(false);
+                }
+            } else {
+                this.is_upgraded(false);
+            }
+        });
+
+        this.is_upgraded.subscribe((is_upgraded: boolean): void => {
+            if (is_upgraded) {
+                if (!this.is_loyal()) {
+                    this.is_upgraded(false);
+                }
             }
         });
 
@@ -133,6 +159,13 @@ export class Teammate {
         .syncRoleToObservableSet(logic.boss_squadmate_deaths, Role.BossSquadmateDeath)
         .syncRoleToObservableSet(logic.boss_hold_the_line_candidates, Role.BossHoldingTheLine)
         .syncRoleToObservableSet(logic.boss_hold_the_line_deaths, Role.BossHoldingTheLineDeath);
+
+        this.survives = ko.pureComputed((): boolean => {
+            const candidates = logic.boss_survivors();
+            if (candidates) {
+                return _.contains(candidates, this);
+            }
+        });
     }
 
     private switchRole (role: Role, condition: boolean): void {
@@ -176,13 +209,16 @@ export class Logic {
     public pool: KnockoutObservableArray<Teammate>;
 
     // Prep properties
-    public normandy_has_armour: KnockoutObservable<boolean>;
-    public normandy_has_shields: KnockoutObservable<boolean>;
-    public normandy_has_weapon: KnockoutObservable<boolean>;
+    public normandy_has_armour: KnockoutComputed<boolean>;
+    public normandy_has_shields: KnockoutComputed<boolean>;
+    public normandy_has_weapon: KnockoutComputed<boolean>;
     public mission_delay: KnockoutObservable<number>;
     public recruited: KnockoutComputed<Teammate[]>;
+    public loyal: KnockoutComputed<Teammate[]>;
+    public upgraded: KnockoutComputed<Teammate[]>;
     public all_recruited: KnockoutComputed<boolean>;
     public all_loyal: KnockoutComputed<boolean>;
+    public all_upgraded: KnockoutComputed<boolean>;
 
     // Approach
     public approach_squadmate_pool_1: KnockoutComputed<Teammate[]>;
@@ -239,18 +275,56 @@ export class Logic {
     public boss_hold_the_line_deaths: KnockoutComputed<Teammate[]>;
     public boss_survivors: KnockoutComputed<Teammate[]>;
 
+    // Summary
+    public summary_defence_reporter: KnockoutComputed<Teammate>;
+    public summary_advocates_keeping_base: KnockoutComputed<Teammate>;
+    public summary_advocates_destroying_base: KnockoutComputed<Teammate>;
+    public summary_shepard_lives: KnockoutComputed<boolean>;
+    public summary_catches_shepard: KnockoutComputed<Teammate>;
+
     constructor (app: Application) {
 
         // Prep
-        this.normandy_has_armour = ko.observable(true);
-        this.normandy_has_shields = ko.observable(true);
-        this.normandy_has_weapon = ko.observable(true);
+        this.normandy_has_armour = ko.pureComputed({
+            read: (): boolean => {
+                return _.find(this.pool(), "upgrade_unlocks_armour").is_upgraded();
+            },
+            write: (has_armour: boolean): void => {
+                _.find(this.pool(), "upgrade_unlocks_armour").is_upgraded(has_armour);
+            }
+        });
+        this.normandy_has_shields = ko.pureComputed({
+            read: (): boolean => {
+                return _.find(this.pool(), "upgrade_unlocks_shields").is_upgraded();
+            },
+            write: (has_shields: boolean): void => {
+                _.find(this.pool(), "upgrade_unlocks_shields").is_upgraded(has_shields);
+            }
+        });
+        this.normandy_has_weapon = ko.pureComputed({
+            read: (): boolean => {
+                return _.find(this.pool(), "upgrade_unlocks_weapon").is_upgraded();
+            },
+            write: (has_weapon: boolean): void => {
+                _.find(this.pool(), "upgrade_unlocks_weapon").is_upgraded(has_weapon);
+            }
+        });
         this.mission_delay = ko.observable(undefined);
         this.pool = ko.observableArray([]);
 
         this.recruited = ko.pureComputed((): Teammate[] => {
             return _.filter(this.pool(), (teammate: Teammate): boolean => {
                 return teammate.is_recruited();
+            });
+        });
+        this.loyal = ko.pureComputed((): Teammate[] => {
+            return _.filter(this.pool(), (teammate: Teammate): boolean => {
+                return teammate.is_loyal();
+            });
+        });
+        this.upgraded = ko.pureComputed((): Teammate[] => {
+            return _.filter(this.pool(), (teammate: Teammate): boolean => {
+                return teammate.is_upgraded();
             });
         });
 
@@ -268,13 +342,25 @@ export class Logic {
         });
         this.all_loyal = ko.pureComputed({
             read: (): boolean => {
-                return _.all(this.pool(), (teammate: Teammate): boolean => {
+                return _.all(this.recruited(), (teammate: Teammate): boolean => {
                     return teammate.is_loyal();
                 });
             },
             write: (all_loyal: boolean): void => {
-                _.each(this.pool(), (teammate: Teammate): void => {
+                _.each(this.recruited(), (teammate: Teammate): void => {
                     teammate.is_loyal(all_loyal);
+                });
+            }
+        });
+        this.all_upgraded = ko.pureComputed({
+            read: (): boolean => {
+                return _.all(this.loyal(), (teammate: Teammate): boolean => {
+                    return teammate.is_upgraded();
+                });
+            },
+            write: (all_upgraded: boolean): void => {
+                _.each(this.loyal(), (teammate: Teammate): void => {
+                    teammate.is_upgraded(all_upgraded);
                 });
             }
         });
@@ -496,7 +582,11 @@ export class Logic {
             const candidates = this.boss_hold_the_line_candidates();
             const total = this.boss_hold_the_line_total();
             if (candidates) {
-                return total / candidates.length;
+                if (candidates.length > 0) {
+                    return total / candidates.length;
+                } else {
+                    return 0;
+                }
             }
         });
         this.boss_hold_the_line_death_count = ko.pureComputed((): number => {
@@ -562,21 +652,62 @@ export class Logic {
             }
         });
 
+        this.summary_defence_reporter = ko.pureComputed((): Teammate => {
+            const candidates = this.boss_hold_the_line_candidates();
+            if (candidates) {
+                //const candidates = _.sortBy([squadmate_1, squadmate_2], "long_walk_death_priority");
+                return _.last(_.sortBy(candidates, "defence_report_priority"));
+            }
+        });
+
+        this.summary_advocates_keeping_base = ko.pureComputed((): Teammate => {
+            const s1 = this.boss_squadmate_1();
+            const s2 = this.boss_squadmate_2();
+            if (s1 && s2) {
+                return _.last(_.sortBy([s1, s2], "keep_base_priority"));
+            }
+        });
+
+        this.summary_advocates_destroying_base = ko.pureComputed((): Teammate => {
+            const s1 = this.boss_squadmate_1();
+            const s2 = this.boss_squadmate_2();
+            if (s1 && s2) {
+                return _.last(_.sortBy([s1, s2], "destroy_base_priority"));
+            }
+        });
+
+        this.summary_shepard_lives = ko.pureComputed((): boolean => {
+            return this.boss_survivors().length > 2;
+        });
+
+        this.summary_catches_shepard = ko.pureComputed((): Teammate => {
+            let candidates = this.boss_survivors();
+            const s1 = this.boss_squadmate_1();
+            const s2 = this.boss_squadmate_2();
+            if (candidates && candidates.length) {
+                candidates = _.sortBy(candidates, (teammate: Teammate): number => {
+                    const was_squadmate = teammate === s1 || teammate === s2;
+                    return teammate.cutscene_rescue_priority + (was_squadmate ? 100 : 0);
+                });
+                return _.last(candidates);
+            }
+        });
+
         this.pool([
-            //                 ID                     Name                    Ess     HTL     HTLD    AD      SD      WD      LWD     CRP     DRP     KBP         DPB     Tech    Biotic      Leader      SLd     EC      VC      BC      LC
-            new Teammate(this, HenchmanIDs.Garrus,    "Garrus Vakarian",      true,   3,      5,      0,      8,      11,     10,     2,      11,     8,          0,      false,  false,      true,       false,  true,   true,   false,  true),
-            new Teammate(this, HenchmanIDs.Grunt,     "Grunt",                false,  3,      0,      0,      6,      9,      8,      4,      9,      12,         0,      false,  false,      false,      false,  true,   false,  false,  true),
-            new Teammate(this, HenchmanIDs.Jack,      "Jack",                 true,   0,      8,      12,     5,      8,      11,     1,      12,     0,          8,      false,  true,       false,      false,  true,   false,  true,   true),
-            new Teammate(this, HenchmanIDs.Jacob,     "Jacob Taylor",         true,   1,      6,      0,      0,      0,      6,      7,      8,      0,          10,     false,  false,      true,       false,  true,   true,   true,   true),
-            new Teammate(this, HenchmanIDs.Kasumi,    "Kasumi Goto",          false,  0,      9,      0,      12,     0,      3,      9,      4,      0,          9,      true,   false,      false,      false,  true,   true,   false,  true),
-            new Teammate(this, HenchmanIDs.Legion,    "Legion",               false,  1,      3,      0,      11,     0,      9,      3,      10,     9,          0,      true,   false,      false,      false,  true,   true,   false,  true),
-            new Teammate(this, HenchmanIDs.Miranda,   "Miranda Lawson",       true,   1,      7,      0,      0,      0,      -1,     11,     2,      13,         0,      false,  false,      true,       true,   false,  false,  true,   true),
-            new Teammate(this, HenchmanIDs.Mordin,    "Mordin Solus",         true,   0,      11,     0,      0,      0,      5,      6,      6,      10,         0,      false,  false,      false,      false,  true,   true,   false,  true),
+            //                 ID                     Name                    Ess     HTL     HTLD    AD      SD      WD      LWD     CRP     DRP     KBP         DPB     Tech    Biotic      Leader      SLd     EC      VC      BC      LC    Armour   Shield  Weapon
+            new Teammate(this, HenchmanIDs.Garrus,    "Garrus Vakarian",      true,   3,      5,      0,      8,      11,     10,     2,      11,     8,          0,      false,  false,      true,       false,  true,   true,   false,  true, false,   false,  true),
+            new Teammate(this, HenchmanIDs.Grunt,     "Grunt",                false,  3,      0,      0,      6,      9,      8,      4,      9,      12,         0,      false,  false,      false,      false,  true,   false,  false,  true, false,   false,  false),
+            new Teammate(this, HenchmanIDs.Jack,      "Jack",                 true,   0,      8,      12,     5,      8,      11,     1,      12,     0,          8,      false,  true,       false,      false,  true,   false,  true,   true, false,   false,  false),
+            new Teammate(this, HenchmanIDs.Jacob,     "Jacob Taylor",         true,   1,      6,      0,      0,      0,      6,      7,      8,      0,          10,     false,  false,      true,       false,  true,   true,   true,   true, true,    false,  false),
+            new Teammate(this, HenchmanIDs.Kasumi,    "Kasumi Goto",          false,  0,      9,      0,      12,     0,      3,      9,      4,      0,          9,      true,   false,      false,      false,  true,   true,   false,  true, false,   false,  false),
+            new Teammate(this, HenchmanIDs.Legion,    "Legion",               false,  1,      3,      0,      11,     0,      9,      3,      10,     9,          0,      true,   false,      false,      false,  true,   true,   false,  true, false,   false,  false),
+            new Teammate(this, HenchmanIDs.Miranda,   "Miranda Lawson",       true,   1,      7,      0,      0,      0,      -1,     11,     2,      13,         0,      false,  false,      true,       true,   false,  false,  true,   true, false,   false,  false),
+            new Teammate(this, HenchmanIDs.Mordin,    "Mordin Solus",         true,   0,      11,     0,      0,      0,      5,      6,      6,      10,         0,      false,  false,      false,      false,  true,   true,   false,  true, false,   false,  false),
             //new Teammate(HenchmanIDs.Morinth,   "Morinth",            false,  1,      4,      0,      4,      7,      0,      5,      7,      0,          0,      false,  false,      false,      false,  true,   false,  true,   true),
-            new Teammate(this, HenchmanIDs.Samara,    "Samara",               false,  1,      4,      0,      4,      7,      7,      5,      7,      0,          12,     false,  true,       false,      false,  true,   false,  true,   true),
-            new Teammate(this, HenchmanIDs.Tali,      "Tali'zorah",           false,  0,      10,     0,      10,     0,      4,      8,      5,      0,          11,     true,   false,      false,      false,  true,   true,   false,  true),
-            new Teammate(this, HenchmanIDs.Thane,     "Thane",                false,  1,      2,      0,      9,      12,     12,     0,      13,     0,          13,     false,  false,      false,      false,  true,   true,   true,   true),
-            new Teammate(this, HenchmanIDs.Zaeed,     "Zaeed Masani",         false,  3,      1,      0,      7,      10,     2,      10,     3,      11,         0,      false,  false,      false,      false,  true,   false,  false,  true)
+            new Teammate(this, HenchmanIDs.Samara,    "Samara",               false,  1,      4,      0,      4,      7,      7,      5,      7,      0,          12,     false,  true,       false,      false,  true,   false,  true,   true, false,   false,  false),
+            new Teammate(this, HenchmanIDs.Tali,      "Tali'zorah",           false,  0,      10,     0,      10,     0,      4,      8,      5,      0,          11,     true,   false,      false,      false,  true,   true,   false,  true, false,   true,   false),
+            new Teammate(this, HenchmanIDs.Thane,     "Thane",                false,  1,      2,      0,      9,      12,     12,     0,      13,     0,          13,     false,  false,      false,      false,  true,   true,   true,   true, false,   false,  false),
+            new Teammate(this, HenchmanIDs.Zaeed,     "Zaeed Masani",         false,  3,      1,      0,      7,      10,     2,      10,     3,      11,         0,      false,  false,      false,      false,  true,   false,  false,  true, false,   false,  false)
         ]);
     }
 

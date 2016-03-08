@@ -8,331 +8,308 @@
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css" integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
 		<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap-theme.min.css" integrity="sha384-fLW2N01lMqjakBkx3l/M9EahuwpSfeNvV63J5ezn3uZzapT0u7EYsXMjQV+0En5r" crossorigin="anonymous">
 		<link rel="stylesheet" href="/cdn/bundle/assets/bundle.1.0.0.css" />
+		<style>
+		.text-muted{
+			color: #aaa;
+		}
+		</style>
 	</head>
 	<body>
 		<div id="app" class="container">
 			<div class="panel panel-default">
 				<div class="panel-body" data-bind="with: logic">
-					<form>
-						<fieldset>
-							<legend>Setup</legend>
-							<table class="table table-rounded table-striped setup-table table-condensed">
-								<thead>
-									<tr>
-										<th></th>
-										<th>
-											<div class="checkbox">
-												<label><input type="checkbox" data-bind="checked: all_recruited" /> Recruited</label>
-											</div>
-										</th>
-										<th>
-											<div class="checkbox">
-												<label><input type="checkbox" data-bind="checked: all_loyal" /> Loyal</label>
-											</div>
-										</th>
-										<th>Approach</th>
-										<th>Vents</th>
-										<th>Long Walk</th>
-										<th>Boss</th>
-										<th>Outcome</th>
-									</tr>
-								</thead>
-								<tbody>
-								<!-- ko foreach: {data: pool, as: 'teammate'} -->
-									<tr data-bind="css: {'text-muted': !is_recruited() }">
-										<td>
-											<div class="checkbox">
-												<label>
-												<a href="#view-profile" data-bind="click: function () { }">
-													<span data-bind="text: teammate.name"></span>
-													<!-- ko if: teammate.is_loyal() --><span class="glyphicon glyphicon-heart"></span><!-- /ko -->
-												</a>
-												</label>
-											</div>
-										</td>
-										<td>
-											<div class="checkbox">
-												<label>
-													<input type="checkbox" data-bind="attr: { 'disabled': (teammate.is_essential ? 'disabled' : undefined) }, checked: is_recruited" /> &nbsp;
-												</label>
-											</div>
-										</td>
-										<td>
-											<div class="checkbox">
-												<label>
-													<input type="checkbox" data-bind="attr: { 'disabled': (is_recruited() ? undefined : 'disabled') }, checked: is_loyal" /> &nbsp;
-												</label>
-											</div>
-										</td>
-										<td>
-											<!-- ko if: teammate.hasRole(Role.ApproachSquadmate1) -->
-												<span class="glyphicon glyphicon-user"></span><sup>1</sup>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.ApproachSquadmate2) -->
-												<span class="glyphicon glyphicon-user"></span><sup>2</sup>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.ApproachShieldsDeath) -->
-												<span class="glyphicon glyphicon-alert"></span><sup>Shield</sup>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.ApproachArmorDeath) -->
-												<span class="glyphicon glyphicon-alert"></span><sup>Armour</sup>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.ApproachWeaponDeath) -->
-												<span class="glyphicon glyphicon-alert"></span><sup>Weapon</sup>
-											<!-- /ko -->
-										</td>
-										<td>
-											<!-- ko if: teammate.hasRole(Role.VentsSquadmate1) -->
-												<span class="glyphicon glyphicon-user"></span><sup>1</sup>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.VentsSquadmate2) -->
-												<span class="glyphicon glyphicon-user"></span><sup>2</sup>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.VentsSpecialist) -->
-												<span class="glyphicon glyphicon-star"></span>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.VentsFireteamLeader) -->
-												<span class="glyphicon glyphicon-fire"></span>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.VentsDeath) -->
-												<span class="glyphicon glyphicon-alert"></span>
-											<!-- /ko -->
-										</td>
-										<td>
-											<!-- ko if: teammate.hasRole(Role.LongWalkSquadmate1) -->
-												<span class="glyphicon glyphicon-user"></span><sup>1</sup>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.LongWalkSquadmate2) -->
-												<span class="glyphicon glyphicon-user"></span><sup>2</sup>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.LongWalkSpecialist) -->
-												<span class="glyphicon glyphicon-star"></span>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.LongWalkFireteamLeader) -->
-												<span class="glyphicon glyphicon-fire"></span>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.LongWalkEscort) -->
-												<span class="glyphicon glyphicon-heart-empty"></span>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.LongWalkSquadmateDeath) -->
-												<span class="glyphicon glyphicon-alert"></span><sup>Squad</sup>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.LongWalkEscortDeath) -->
-												<span class="glyphicon glyphicon-alert"></span><sup>Escort</sup>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.LongWalkFireteamLeaderDeath) -->
-												<span class="glyphicon glyphicon-alert"></span><sup>Leader</sup>
-											<!-- /ko -->
-										</td>
-										<td>
-											<!-- ko if: teammate.hasRole(Role.BossSquadmate1) -->
-												<span class="glyphicon glyphicon-user"></span><sup>1</sup>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.BossSquadmate2) -->
-												<span class="glyphicon glyphicon-user"></span><sup>2</sup>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.BossHoldingTheLine) -->
-												<span class="glyphicon glyphicon-flash"></span>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.BossSquadmateDeath) -->
-												<span class="glyphicon glyphicon-alert"></span><sup>Squad</sup>
-											<!-- /ko -->
-											<!-- ko if: teammate.hasRole(Role.BossHoldingTheLineDeath) -->
-												<span class="glyphicon glyphicon-alert"></span><sup>HTL</sup>
-											<!-- /ko -->
-										</td>
-										<td>
-										</td>
-									</tr>
-								<!-- /ko -->
-								</tbody>
-							</table>
-							<div class="row">
-								<div class="col-md-3">
-										<div class="form-group">
-											<div class="checkbox">
-												<label><input type="checkbox" data-bind="checked: normandy_has_armour" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Jacob Taylor</em>">Has Armour upgrade?</span></label>
-											</div>
-										</div>
-									</div>
-									<div class="col-md-3">
-										<div class="form-group">
-											<div class="checkbox">
-												<label><input type="checkbox" data-bind="checked: normandy_has_shields" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Tali'zorah</em>">Has Shielding upgrade?</span></label>
-											</div>
-										</div>
-									</div>
-									<div class="col-md-3">
-										<div class="form-group">
-											<div class="checkbox">
-												<label><input type="checkbox" data-bind="checked: normandy_has_weapon" /> <span data-placement="right" data-toggle="tooltip" data-html="true" title="Provided by <em>Garrus Vakarian</em>">Has Thanix Cannon?</span></label>
-											</div>
-										</div>
-									</form>
-								</div>
+					<table class="table table-rounded table-striped setup-table table-condensed">
+						<thead>
+							<tr>
+								<th></th>
+								<th>
+									<span data-bind="click: function () { $data.all_recruited(!$data.all_recruited()); }">
+										<span data-bind="
+											css: {
+												'glyphicon glyphicon-ok': true,
+												'text-muted': !$data.all_recruited()
+											}
+										" class=""></span>
+										Recruited
+									</span>
+								</th>
+								<th>
+									<span data-bind="click: function () { $data.all_loyal(!$data.all_loyal()); }">
+										<span data-bind="
+											css: {
+												'glyphicon glyphicon-heart': true,
+												'text-muted': !$data.all_loyal()
+											}
+										" class=""></span>
+										Loyal
+									</span>
+								</th>
+								<th>
+									<span data-bind="click: function () { $data.all_upgraded(!$data.all_upgraded()); }">
+										<span data-bind="
+											css: {
+												'glyphicon glyphicon-circle-arrow-up': true,
+												'text-muted': !$data.all_upgraded()
+											}
+										" class=""></span>
+										Upgraded
+									</span>
+								</th>
+								<th>Approach</th>
+								<th>Vents</th>
+								<th>Long Walk</th>
+								<th>Boss</th>
+								<th>Outcome</th>
+							</tr>
+						</thead>
+						<tbody>
+						<!-- ko foreach: {data: pool, as: 'teammate'} -->
+							<tr data-bind="css: {'text-muted': !is_recruited() }">
+								<td>
+									<a href="#view-profile" data-bind="click: function () { }">
+										<span data-bind="text: teammate.name"></span>
+									</a>
+								</td>
+								<td>
+									<!-- ko component: { name: 'observable-toggle', params: {
+										observable: teammate.is_recruited,
+										icon: "ok",
+										supertext: ""
+									} } --><!-- /ko -->
+								</td>
+								<td>
+									<span data-bind="if: teammate.is_recruited">
+									<!-- ko component: { name: 'observable-toggle', params: {
+										observable: teammate.is_loyal,
+										icon: "heart",
+										supertext: ""
+									} } --><!-- /ko -->
+									</span>
+								</td>
+								<td>
+									<span data-bind="if: teammate.is_loyal">
+									<!-- ko component: { name: 'observable-toggle', params: {
+										observable: teammate.is_upgraded,
+										icon: "circle-arrow-up",
+										supertext: ""
+									} } --><!-- /ko -->
+									</span>
+								</td>
+								<td>
+									<!-- ko component: { name: 'role-toggle', params: {
+										teammate: teammate,
+										observable: $root.logic.approach_squadmate_1,
+										pool: $root.logic.approach_squadmate_pool_1,
+										role: Role.ApproachSquadmate1,
+										icon: "user",
+										supertext: "1"
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'role-toggle', params: {
+										teammate: teammate,
+										observable: $root.logic.approach_squadmate_2,
+										pool: $root.logic.approach_squadmate_pool_2,
+										role: Role.ApproachSquadmate2,
+										icon: "user",
+										supertext: "2"
+									} } --><!-- /ko -->
+								</td>
+								<td>
+									<!-- ko component: { name: 'role-toggle', params: {
+										teammate: teammate,
+										observable: $root.logic.vents_specialist,
+										pool: $root.logic.vents_specialist_pool,
+										role: Role.VentsSpecialist,
+										icon: "star",
+										supertext: ""
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'role-toggle', params: {
+										teammate: teammate,
+										observable: $root.logic.vents_fireteam_leader,
+										pool: $root.logic.vents_fireteam_leader_pool,
+										role: Role.VentsFireteamLeader,
+										icon: "fire",
+										supertext: ""
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'role-toggle', params: {
+										teammate: teammate,
+										observable: $root.logic.vents_squadmate_1,
+										pool: $root.logic.vents_squadmate_pool_1,
+										role: Role.VentsSquadmate1,
+										icon: "user",
+										supertext: "1"
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'role-toggle', params: {
+										teammate: teammate,
+										observable: $root.logic.vents_squadmate_2,
+										pool: $root.logic.vents_squadmate_pool_2,
+										role: Role.VentsSquadmate2,
+										icon: "user",
+										supertext: "2"
+									} } --><!-- /ko -->
+								</td>
+								<td>
+									<!-- ko component: { name: 'role-toggle', params: {
+										teammate: teammate,
+										observable: $root.logic.long_walk_specialist,
+										pool: $root.logic.long_walk_specialist_pool,
+										role: Role.LongWalkSpecialist,
+										icon: "star",
+										supertext: ""
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'role-toggle', params: {
+										teammate: teammate,
+										observable: $root.logic.long_walk_fireteam_leader,
+										pool: $root.logic.long_walk_fireteam_leader_pool,
+										role: Role.LongWalkFireteamLeader,
+										icon: "fire",
+										supertext: ""
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'role-toggle', params: {
+										teammate: teammate,
+										observable: $root.logic.long_walk_escort,
+										pool: $root.logic.long_walk_escort_pool,
+										role: Role.LongWalkEscort,
+										icon: "heart-empty",
+										supertext: ""
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'role-toggle', params: {
+										teammate: teammate,
+										observable: $root.logic.long_walk_squadmate_1,
+										pool: $root.logic.long_walk_squadmate_pool_1,
+										role: Role.LongWalkSquadmate1,
+										icon: "user",
+										supertext: "1"
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'role-toggle', params: {
+										teammate: teammate,
+										observable: $root.logic.long_walk_squadmate_2,
+										pool: $root.logic.long_walk_squadmate_pool_2,
+										role: Role.LongWalkSquadmate2,
+										icon: "user",
+										supertext: "2"
+									} } --><!-- /ko -->
+								</td>
+								<td>
+									<!-- ko component: { name: 'role-toggle', params: {
+										teammate: teammate,
+										observable: $root.logic.boss_squadmate_1,
+										pool: $root.logic.boss_squadmate_pool_1,
+										role: Role.BossSquadmate1,
+										icon: "user",
+										supertext: "1"
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'role-toggle', params: {
+										teammate: teammate,
+										observable: $root.logic.boss_squadmate_2,
+										pool: $root.logic.boss_squadmate_pool_2,
+										role: Role.BossSquadmate2,
+										icon: "user",
+										supertext: "2"
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'role-static', params: {
+										teammate: teammate,
+										role: Role.BossHoldingTheLine,
+										supertext: "",
+										icon: "flash"
+									} } --><!-- /ko -->
+								</td>
+								<td>
+									<span data-bind="
+							            if: teammate.survives
+							            ">
+							            <span class="glyphicon glyphicon-ok-circle text-success"></span>
+							        </span>
+									<!-- ko component: { name: 'death-role-static', params: {
+										teammate: teammate,
+										role: Role.ApproachShieldsDeath,
+										supertext: "Shield"
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'death-role-static', params: {
+										teammate: teammate,
+										role: Role.ApproachArmorDeath,
+										supertext: "Armour"
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'death-role-static', params: {
+										teammate: teammate,
+										role: Role.ApproachWeaponDeath,
+										supertext: "Weapon"
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'death-role-static', params: {
+										teammate: teammate,
+										role: Role.VentsDeath,
+										supertext: "Vents"
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'death-role-static', params: {
+										teammate: teammate,
+										role: Role.LongWalkSquadmateDeath,
+										supertext: "LW Squadmate"
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'death-role-static', params: {
+										teammate: teammate,
+										role: Role.LongWalkFireteamLeaderDeath,
+										supertext: "LW Leader"
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'death-role-static', params: {
+										teammate: teammate,
+										role: Role.LongWalkEscortDeath,
+										supertext: "Escort"
+									} } --><!-- /ko -->
+									<!-- ko component: { name: 'death-role-static', params: {
+										teammate: teammate,
+										role: Role.BossSquadmateDeath,
+										supertext: "Boss Squadmate"
+									} } --><!-- /ko -->
+								</td>
+							</tr>
+						<!-- /ko -->
+						</tbody>
+					</table>
+					<div class="row" data-bind="if: boss_survivors()">
+						<div class="col-md-4 col-sm-6">
+							<div class="form-group">
+								<label>Reports on defence</label>
+								<!-- ko component: { name: 'teammate-name', params: {
+									teammate: summary_defence_reporter
+								} } --><!-- /ko -->
 							</div>
-						</fieldset>
-						<fieldset>
-							<legend>Approach</legend>
-							<div class="row">
-								<div class="col-md-6">
-									<!-- ko component: { name: 'pick-teammate', params: {
-										target: approach_squadmate_1,
-										pool: approach_squadmate_pool_1,
-										label: "Squadmate #1",
-										id: "approach-squadmate-1"
-									} } --><!-- /ko -->
-								</div>
-								<div class="col-md-6">
-									<!-- ko component: { name: 'pick-teammate', params: {
-										target: approach_squadmate_2,
-										pool: approach_squadmate_pool_2,
-										label: "Squadmate #2",
-										id: "approach-squadmate-2"
-									} } --><!-- /ko -->
-								</div>
+							<div class="form-group">
+								<label>Advocates keeping the base</label>
+								<!-- ko component: { name: 'teammate-name', params: {
+									teammate: summary_advocates_keeping_base
+								} } --><!-- /ko -->
 							</div>
-							<div class="row">
-								<div class="col-md-12">
-									<!-- ko component: { name: "teammate-list", params: {
-										pool: approach_survivors,
-										label: "Survivors"
-									} } --><!-- /ko -->
-								</div>
+							<div class="form-group">
+								<label>Advocates destroying the base</label>
+								<!-- ko component: { name: 'teammate-name', params: {
+									teammate: summary_advocates_destroying_base
+								} } --><!-- /ko -->
 							</div>
-						</fieldset>
-						<fieldset>
-							<legend>Vents</legend>
-							<div class="row">
-								<div class="col-md-6">
-									<!-- ko component: { name: 'pick-teammate', params: {
-										target: vents_specialist,
-										pool: vents_specialist_pool,
-										label: "Specialist",
-										id: "vents-specialist"
-									} } --><!-- /ko -->
-								</div>
-								<div class="col-md-6">
-									<!-- ko component: { name: 'pick-teammate', params: {
-										target: vents_fireteam_leader,
-										pool: vents_fireteam_leader_pool,
-										label: "Fireteam Leader",
-										id: "vents-fireteam-leader"
-									} } --><!-- /ko -->
-								</div>
+						</div>
+						<div class="col-md-4 col-sm-6">
+							<div class="form-group">
+								<label>Shepard lives</label>
+								<p class="form-control-static" data-bind="text: summary_shepard_lives() ? 'Yes' : 'No'"></p>
 							</div>
-							<div class="row">
-								<div class="col-md-6">
-									<!-- ko component: { name: 'pick-teammate', params: {
-										target: vents_squadmate_1,
-										pool: vents_squadmate_pool_1,
-										label: "Squadmate #1",
-										id: "vents-squadmate-1"
-									} } --><!-- /ko -->
-								</div>
-								<div class="col-md-6">
-									<!-- ko component: { name: 'pick-teammate', params: {
-										target: vents_squadmate_2,
-										pool: vents_squadmate_pool_2,
-										label: "Squadmate #2",
-										id: "vents-squadmate-2"
-									} } --><!-- /ko -->
-								</div>
+							<div class="form-group">
+								<label>Shepard caught by</label>
+								<!-- ko component: { name: 'teammate-name', params: {
+									teammate: summary_catches_shepard
+								} } --><!-- /ko -->
 							</div>
-							<div class="row">
-								<div class="col-md-12">
-									<!-- ko component: { name: "teammate-list", params: {
-										pool: vents_survivors,
-										label: "Survivors"
-									} } --><!-- /ko -->
-								</div>
+						</div>
+						<div class="col-md-4 col-sm-12">
+							<div class="form-group">
+								<label>Hold the line score</label>
+								<p class="form-control-static">
+									<span data-bind="text: boss_hold_the_line_total"></span> ÷ <span data-bind="text: boss_hold_the_line_candidates().length"></span> = <span data-bind="text: Math.round(boss_hold_the_line_rating() * 1000) / 1000"></span>
+								</p>
 							</div>
-						</fieldset>
-						<fieldset>
-							<legend>Long Walk</legend>
-							<div class="row">
-								<div class="col-md-4">
-									<!-- ko component: { name: 'pick-teammate', params: {
-										target: long_walk_specialist,
-										pool: long_walk_specialist_pool,
-										label: "Specialist",
-										id: "long-walk-specialist"
-									} } --><!-- /ko -->
-								</div>
-								<div class="col-md-4">
-									<!-- ko component: { name: 'pick-teammate', params: {
-										target: long_walk_fireteam_leader,
-										pool: long_walk_fireteam_leader_pool,
-										label: "Fireteam Leader",
-										id: "long-walk-fireteam-leader"
-									} } --><!-- /ko -->
-								</div>
-								<div class="col-md-4">
-									<!-- ko component: { name: 'pick-teammate', params: {
-										target: long_walk_escort,
-										pool: long_walk_escort_pool,
-										label: "Escort",
-										id: "long-walk-escort"
-									} } --><!-- /ko -->
-								</div>
+							<div class="form-group">
+								<label>Hold the line deaths</label>
+								<p class="form-control-static" data-bind="text: boss_hold_the_line_death_count"></p>
 							</div>
-							<div class="row">
-								<div class="col-md-6">
-									<!-- ko component: { name: 'pick-teammate', params: {
-										target: long_walk_squadmate_1,
-										pool: long_walk_squadmate_pool_1,
-										label: "Squadmate #1",
-										id: "long-walk-squadmate-1"
-									} } --><!-- /ko -->
-								</div>
-								<div class="col-md-6">
-									<!-- ko component: { name: 'pick-teammate', params: {
-										target: long_walk_squadmate_2,
-										pool: long_walk_squadmate_pool_2,
-										label: "Squadmate #2",
-										id: "long-walk-squadmate-2"
-									} } --><!-- /ko -->
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-12">
-									<!-- ko component: { name: "teammate-list", params: {
-										pool: long_walk_survivors,
-										label: "Survivors"
-									} } --><!-- /ko -->
-								</div>
-							</div>
-						</fieldset>
-						<fieldset>
-							<legend>Boss / Hold the Line</legend>
-							<div class="row">
-								<div class="col-md-6">
-									<!-- ko component: { name: 'pick-teammate', params: {
-										target: boss_squadmate_1,
-										pool: boss_squadmate_pool_1,
-										label: "Squadmate #1",
-										id: "boss-squadmate-1"
-									} } --><!-- /ko -->
-								</div>
-								<div class="col-md-6">
-									<!-- ko component: { name: 'pick-teammate', params: {
-										target: boss_squadmate_2,
-										pool: boss_squadmate_pool_2,
-										label: "Squadmate #2",
-										id: "boss-squadmate-2"
-									} } --><!-- /ko -->
-								</div>
-							</div>
-							<div class="row">
-								<div class="col-md-12">
-									<!-- ko component: { name: "teammate-list", params: {
-										pool: boss_survivors,
-										label: "Survivors"
-									} } --><!-- /ko -->
-								</div>
-							</div>
-						</fieldset>
-					</form>
+						</div>
+					</div>
 				</div>
 			</div>
 

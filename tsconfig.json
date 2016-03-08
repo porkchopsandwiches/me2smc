@@ -48,8 +48,13 @@
         "source/typescript/extensions.d.ts",
         "source/typescript/extensions.ts",
         "source/typescript/Knockout/Bindings/Modal.ts",
+        "source/typescript/Knockout/Components/DeathRoleStatic.ts",
+        "source/typescript/Knockout/Components/ObservableToggle.ts",
         "source/typescript/Knockout/Components/PickTeammate.ts",
+        "source/typescript/Knockout/Components/RoleStatic.ts",
+        "source/typescript/Knockout/Components/RoleToggle.ts",
         "source/typescript/Knockout/Components/TeammateList.ts",
+        "source/typescript/Knockout/Components/TeammateName.ts",
         "source/typescript/Knockout/ForcibleComputed.ts",
         "source/typescript/Utilities/ObjectArray.ts",
         "typings/browser.d.ts"
