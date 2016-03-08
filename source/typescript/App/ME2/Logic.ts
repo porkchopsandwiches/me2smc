@@ -508,14 +508,15 @@ export class Logic {
         });
 
         this.summary_shepard_lives = ko.pureComputed((): boolean => {
-            return this.boss_survivors().length > 2;
+            return this.boss_survivors().length >= 2;
         });
 
         this.summary_catches_shepard = ko.pureComputed((): Teammate => {
             let candidates = this.boss_survivors();
             const s1 = this.boss_squadmate_1();
             const s2 = this.boss_squadmate_2();
-            if (candidates && candidates.length) {
+            const shepard_lives = this.summary_shepard_lives();
+            if (shepard_lives && candidates && candidates.length) {
                 candidates = _.sortBy(candidates, (teammate: Teammate): number => {
                     const was_squadmate = teammate === s1 || teammate === s2;
                     return teammate.cutscene_rescue_priority + (was_squadmate ? 100 : 0);
