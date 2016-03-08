@@ -282,6 +282,9 @@ export class Logic {
     public summary_shepard_lives: KnockoutComputed<boolean>;
     public summary_catches_shepard: KnockoutComputed<Teammate>;
 
+    // Serialisation
+    public serialised: KnockoutComputed<string>;
+
     constructor (app: Application) {
 
         // Prep
@@ -369,10 +372,16 @@ export class Logic {
         this.approach_squadmate_1 = ko.observable(undefined);
         this.approach_squadmate_2 = ko.observable(undefined);
         this.approach_squadmate_pool_1 = ko.pureComputed((): Teammate[] => {
-            return _.without(this.recruited(), this.approach_squadmate_2());
+            const candidates = this.recruited();
+            if (candidates.length >= 8) {
+                return _.without(candidates, this.approach_squadmate_2());
+            }
         });
         this.approach_squadmate_pool_2 = ko.pureComputed((): Teammate[] => {
-            return _.without(this.recruited(), this.approach_squadmate_1());
+            const candidates = this.recruited();
+            if (candidates.length >= 8) {
+                return _.without(candidates, this.approach_squadmate_1());
+            }
         });
         this.bindToPool(this.approach_squadmate_1, this.approach_squadmate_pool_1);
         this.bindToPool(this.approach_squadmate_2, this.approach_squadmate_pool_2);
@@ -641,7 +650,11 @@ export class Logic {
                 if (death_count === 0) {
                     return [];
                 } else {
-                    return _.sortBy(candidates, "hold_the_line_death_priority").slice(-death_count);
+                    return _.sortBy(candidates, (teammate: Teammate): number => {
+                        return teammate.hold_the_line_death_priority + (!teammate.is_loyal() ? 100 : 0); // Unloyal team members are prioritised over loyal ones
+                    }).slice(-death_count);
+
+                    //return _.sortBy(candidates, "hold_the_line_death_priority").slice(-death_count);
                 }
             }
         });
@@ -709,6 +722,61 @@ export class Logic {
             new Teammate(this, HenchmanIDs.Thane,     "Thane",                false,  1,      2,      0,      9,      12,     12,     0,      13,     0,          13,     false,  false,      false,      false,  true,   true,   true,   true, false,   false,  false),
             new Teammate(this, HenchmanIDs.Zaeed,     "Zaeed Masani",         false,  3,      1,      0,      7,      10,     2,      10,     3,      11,         0,      false,  false,      false,      false,  true,   false,  false,  true, false,   false,  false)
         ]);
+
+        const serialisables: KnockoutObservable<Teammate>[] = [
+            this.approach_squadmate_1,
+            this.approach_squadmate_2,
+            this.vents_specialist,
+            this.vents_fireteam_leader,
+            this.vents_squadmate_1,
+            this.vents_squadmate_2,
+            this.long_walk_specialist,
+            this.long_walk_fireteam_leader,
+            this.long_walk_escort,
+            this.long_walk_squadmate_1,
+            this.long_walk_squadmate_2,
+            this.boss_squadmate_1,
+            this.boss_squadmate_2
+        ];
+
+        this.serialised = ko.pureComputed({
+            read: (): string => {
+                let serialised: string = _.map(this.pool(), (teammate: Teammate): string => {
+                    return (
+                        (teammate.is_recruited() ? 1 : 0)
+                        + (teammate.is_loyal() ? 2 : 0)
+                        + (teammate.is_upgraded() ? 4 : 0)
+                    ).toString(16);
+                }).join("");
+
+                serialised += _.map<KnockoutObservable<Teammate>, string>(serialisables, (observable: KnockoutObservable<Teammate>): string => {
+                    const teammate = observable();
+                    return (teammate ? teammate.id : 0).toString(16);
+                }).join("");
+
+                return serialised;
+            },
+            write: (serialised: string): void => {
+                const pool = this.pool();
+                for (let i = 0, l = pool.length; i < l; ++i) {
+                    const flags = parseInt(serialised[i], 16);
+                    pool[i].is_recruited(!!(flags & 1));
+                    pool[i].is_loyal(!!(flags & 2));
+                    pool[i].is_upgraded(!!(flags & 4));
+                }
+
+                _.each(serialisables, (observable: KnockoutObservable<Teammate>, index: number): void => {
+                    const id = parseInt(serialised[pool.length + index], 16);
+                    if (id > 0) {
+                        observable(_.find(pool, (teammate: Teammate): boolean => {
+                            return teammate.id === id;
+                        }));
+                    } else {
+                        observable(undefined);
+                    }
+                });
+            }
+        });
     }
 
     private bindToPool (observable: KnockoutObservable<Teammate>, pool: KnockoutComputed<Teammate[]>): void {

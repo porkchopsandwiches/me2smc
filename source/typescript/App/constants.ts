@@ -1,17 +1,17 @@
 export enum HenchmanIDs {
-    Garrus,
-    Grunt,
-    Jack,
-    Jacob,
-    Kasumi,
-    Legion,
-    Miranda,
-    Mordin,
-    Morinth,
-    Samara,
-    Tali,
-    Thane,
-    Zaeed
+    Garrus = 1,
+    Grunt = 2,
+    Jack = 3,
+    Jacob = 4,
+    Kasumi = 5,
+    Legion = 6,
+    Miranda = 7,
+    Mordin = 8,
+    Morinth = 9,
+    Samara = 10,
+    Tali = 11,
+    Thane = 12,
+    Zaeed = 13
 }
 
 export enum NormandyDelayOptions {
